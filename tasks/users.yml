@@ -1,0 +1,10 @@
+---
+
+- name: Create slurm group
+  group:
+    name: "{{ slurm_group }}"
+
+- name: Create slurm user
+  user:
+    name: "{{ slurm_user }}"
+    group: "{{ slurm_group }}"

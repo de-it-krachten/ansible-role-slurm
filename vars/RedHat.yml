@@ -1,0 +1,25 @@
+---
+
+slurm_conf_dir: /etc/slurm
+slurm_log_dir: /var/log/slurm
+
+slurm_packages:
+  slurmctld:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    - slurm-slurmctld
+    - slurm-torque
+    #- slurm-slurmdbd
+  slurmdbd:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    #- slurm-slurmctld
+    #- slurm-torque
+    - slurm-slurmdbd
+  slurmd:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    - slurm-slurmd

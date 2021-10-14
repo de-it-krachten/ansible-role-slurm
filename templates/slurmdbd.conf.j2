@@ -1,0 +1,33 @@
+#
+# Sample /etc/slurmdbd.conf
+#
+ArchiveEvents=yes
+ArchiveJobs=yes
+ArchiveResvs=yes
+ArchiveSteps=no
+ArchiveSuspend=no
+ArchiveTXN=no
+ArchiveUsage=no
+#ArchiveScript=/usr/sbin/slurm.dbd.archive
+AuthInfo={{ munge_socket }}
+AuthType=auth/munge
+DbdHost={{ slurm_db_host }}
+DbdAddr={{ hostvars[slurm_db_host]['ansible_host'] }}
+DbdPort={{ slurm_slurmdbd_port }}
+DebugLevel=info
+PurgeEventAfter=1month
+PurgeJobAfter=12month
+PurgeResvAfter=1month
+PurgeStepAfter=1month
+PurgeSuspendAfter=1month
+PurgeTXNAfter=12month
+PurgeUsageAfter=24month
+LogFile={{ slurm_log_dir }}/slurmdbd.log
+PidFile=/var/run/slurmdbd.pid
+SlurmUser=slurm
+#StoragePass=weetiknogniet
+StorageType=accounting_storage/mysql
+StorageUser={{ mariadb_db_user }}
+StorageHost={{ mariadb_db_host }}
+StorageLoc={{ mariadb_db_name }}
+StoragePort=3306

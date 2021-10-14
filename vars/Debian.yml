@@ -1,0 +1,12 @@
+---
+
+slurm_conf_dir: /etc/slurm-llnl
+slurm_log_dir: /var/log/slurm-llnl
+
+slurm_packages:
+  slurmctld:
+    - slurmctld
+  slurmdbd:
+    - slurmdbd
+  slurmd:
+    - slurmd

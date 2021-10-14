@@ -1,0 +1,66 @@
+---
+
+# ------------------------------------------------------
+# General
+# ------------------------------------------------------
+
+- name: Create directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_group }}"
+    mode: "{{ item.mode | default('0755') }}"
+  loop: "{{ slurm_dirs['slurmdbd'] }}"
+
+
+# ------------------------------------------------------
+# slurmdbd
+# ------------------------------------------------------
+
+- name: Distribute {{ slurm_conf_dir }}/slurmdbd.conf
+  template:
+    src: slurmdbd.conf.j2
+    dest: "{{ slurm_conf_dir }}/slurmdbd.conf"
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_group }}"
+    mode: '0600'
+  register: _slurmdbd
+
+- name: enable the slurmdbd on this control node
+  service:
+    name: slurmdbd
+    enabled: yes
+    state: started
+
+- name: Restart slurmdbd
+  service:
+    name: slurmdbd
+    state: restarted
+  when: _slurmdbd.changed
+
+
+# ------------------------------------------------------
+# Firewall
+# ------------------------------------------------------
+
+- name: Open firewall ports (Debian)
+  ufw:
+    rule: allow
+    port: "{{ (item.port|regex_replace('-',':')) if item.port is defined else omit }}"
+    proto: "{{ item.proto if item.proto is defined else omit }}"
+    name: "{{ item.service if item.service is defined else omit }}"
+    state: enabled
+  loop: "{{ slurm_firewall_ports['slurmdbd'] }}"
+  when: ansible_os_family == 'Debian'
+
+- name: Open firewall ports (RedHat)
+  firewalld:
+    port: "{{ (item.port+'/'+item.proto) if item.port is defined else omit }}"
+    service: "{{ item.service if item.service is defined else omit }}"
+    immediate: yes
+    permanent: yes
+    zone: public
+    state: enabled
+  loop: "{{ slurm_firewall_ports['slurmdbd'] }}"
+  when: ansible_os_family == 'RedHat'

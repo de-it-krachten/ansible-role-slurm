@@ -1,0 +1,49 @@
+---
+
+slurm_roles: []
+slurm_group2role_mapping:
+  - group: slurm_masters
+    role: slurmctld
+  - group: slurm_db
+    role: slurmdbd
+  - group: slurm_nodes
+    role: slurmd
+
+#@#slurm_configure: false
+slurm_configure: true
+slurm_disable_root: 'YES'
+
+slurm_user: slurm
+slurm_group: slurm
+
+slurm_dirs:
+  slurmctld:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+    - { path: /var/spool/slurmctld }
+  slurmdbd:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+  slurmd:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+    - { path: /var/spool/slurmd }
+
+slurm_slurmctld_port: "6817"
+slurm_slurmd_port:    "6818"
+slurm_slurmdbd_port:  "6819"
+
+slurm_firewall_ports:
+  slurmctld:
+    - port: "{{ slurm_slurmctld_port }}"
+      proto: tcp
+    - port: '60001-63000'
+      proto: tcp
+  slurmd:
+    - port: "{{ slurm_slurmd_port }}"
+      proto: tcp
+    - port: '60001-63000'
+      proto: tcp
+  slurmdbd:
+    - port: "{{ slurm_slurmdbd_port }}"
+      proto: tcp

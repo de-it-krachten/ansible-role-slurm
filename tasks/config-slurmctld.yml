@@ -1,0 +1,114 @@
+---
+
+# ------------------------------------------------------
+# General
+# ------------------------------------------------------
+
+- name: Create directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_group }}"
+    mode: "{{ item.mode | default('0755') }}"
+  loop: "{{ slurm_dirs['slurmctld'] }}"
+
+
+# ------------------------------------------------------
+# slurmctld
+# ------------------------------------------------------
+
+- name: Distribute {{ slurm_conf_dir }}/slurm.conf
+  template:
+    src: slurm.conf.j2
+    dest: "{{ slurm_conf_dir }}/slurm.conf"
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_group }}"
+    mode: '0644'
+  register: _slurmctld
+
+- name: Distribute {{ slurm_conf_dir }}/cgroup.conf
+  template:
+    src: cgroup.conf.j2
+    dest: "{{ slurm_conf_dir }}/cgroup.conf"
+    owner: "{{ slurm_user }}"
+    group: "{{ slurm_group }}"
+    mode: '0600'
+  register: _croup
+
+- name: Enable slurmctld
+  service:
+    name: 'slurmctld'
+    enabled: yes
+    state: started
+
+- name: Restart slurmctld
+  service:
+    name: slurmctld
+    state: restarted
+  when: _slurmctld.changed or _croup.changed
+
+- name: Wait for 5 seconds
+  pause:
+    seconds: 5 
+
+# ------------------------------------------------------
+# Cluster + users
+# ------------------------------------------------------
+
+- name: Get slurm clusters
+  command: /usr/bin/sacctmgr -p list cluster
+  check_mode: no
+  changed_when: no
+  register: _slurm_clusters
+
+- name: add slurm cluster
+  command: "/usr/bin/sacctmgr -i create cluster {{ slurm_cluster_name }}"
+  when: _slurm_clusters.stdout is not search(slurm_cluster_name)
+
+- name: Get slurm administrators
+  command: /usr/bin/sacctmgr -p list accounts
+  check_mode: no
+  changed_when: no
+  register: _slurm_administrators
+
+- name: create slurm administrator
+  command: "/usr/bin/sacctmgr -i create account {{ slurm_account_name }}"
+  when: _slurm_administrators.stdout is not search(slurm_account_name)
+
+- name: Get all users
+  command: "/usr/bin/sacctmgr -p list user"
+  check_mode: no
+  changed_when: no
+  register: _slurm_users
+
+- name: Create all users
+  command: "/usr/bin/sacctmgr -i add user {{ item }} defaultaccount={{ slurm_account_name }} adminlevel=admin"
+  loop: "{{ slurm_users }}"
+  when: _slurm_users.stdout is not search(item)
+
+
+# ------------------------------------------------------
+# Firewall
+# ------------------------------------------------------
+
+- name: Open firewall ports (Debian)
+  ufw:
+    rule: allow
+    port: "{{ (item.port|regex_replace('-',':')) if item.port is defined else omit }}"
+    proto: "{{ item.proto if item.proto is defined else omit }}"
+    name: "{{ item.service if item.service is defined else omit }}"
+    state: enabled
+  loop: "{{ slurm_firewall_ports['slurmctld'] }}"
+  when: ansible_os_family == 'Debian'
+
+- name: Open firewall ports (RedHat)
+  firewalld:
+    port: "{{ (item.port+'/'+item.proto) if item.port is defined else omit }}"
+    service: "{{ item.service if item.service is defined else omit }}"
+    immediate: yes
+    permanent: yes
+    zone: public
+    state: enabled
+  loop: "{{ slurm_firewall_ports['slurmctld'] }}"
+  when: ansible_os_family == 'RedHat'

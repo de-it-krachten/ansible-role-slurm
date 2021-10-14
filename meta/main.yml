@@ -1,0 +1,13 @@
+---
+galaxy_info:
+  description: ansible-role-slurm
+  author: Mark van Huijstee
+  company: De IT Krachten BV
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: EL
+      versions:
+        - 7
+        - 8
+dependencies: []

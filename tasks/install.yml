@@ -4,16 +4,10 @@
   dnf:
     name: "{{ slurm_packages[slurm_role] }}"
     state: present
-  loop: "{{ slurm_roles }}"
-  loop_control:
-    loop_var: slurm_role
   when: ansible_os_family == 'RedHat'
 
 - name: Install slurm packages (Debian/Ubuntu)
   apt:
     name: "{{ slurm_packages[slurm_role] }}"
     state: present
-  loop: "{{ slurm_roles }}"
-  loop_control:
-    loop_var: slurm_role
   when: ansible_os_family == 'Debian'

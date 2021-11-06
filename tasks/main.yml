@@ -6,9 +6,9 @@
     params:
       files:
         - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-        - '{{ ansible_distribution }}.yml'
-        - "{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
-        - '{{ ansible_os_family }}.yml'
+        - "{{ ansible_distribution }}.yml"
+        - "family-{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
+        - "family-{{ ansible_os_family }}.yml"
         - default.yml
       paths:
         - 'vars'
@@ -19,6 +19,33 @@
   loop: "{{ slurm_group2role_mapping }}"
   when: item.group in group_names
 
-- include_tasks: users.yml
-- include_tasks: install.yml
-- include_tasks: config.yml
+- name: Add specific repositories
+  include_tasks: pre-install.yml
+
+- name: Install slurmdbd
+  block:
+    - include_tasks: users.yml
+    - include_tasks: install.yml
+    - include_tasks: config.yml
+  vars:
+    slurm_role: slurmdbd
+  when: "'slurmdbd' in slurm_roles"
+
+- name: Install slurmctld
+  block:
+    - include_tasks: users.yml
+    - include_tasks: install.yml
+    - include_tasks: config.yml
+  vars:
+    slurm_role: slurmctld
+  when: "'slurmctld' in slurm_roles"
+
+- name: Install slurmctld
+  block:
+    - include_tasks: users.yml
+    - include_tasks: install.yml
+    - include_tasks: config.yml
+  vars:
+    slurm_role: slurmd
+  when: "'slurmd' in slurm_roles"
+

@@ -1,0 +1,20 @@
+---
+
+- name: Add slurm-drmaa PPA (Ubuntu)
+  apt_repository:
+    repo: ppa:natefoo/slurm-drmaa
+    state: present
+  when:
+    - ansible_distribution == "Ubuntu"
+    - ansible_distribution_version is version('18.04', '>=')
+    - "'slurmctld' in slurm_roles"
+
+- name: Add repository (RedHat)
+  yum_repository:
+    name: galaxy
+    description: Galaxy Packages for Enterprise Linux $releasever - $basearch
+    baseurl: https://depot.galaxyproject.org/yum/el/$releasever/$basearch/
+    gpgcheck: no
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == 7

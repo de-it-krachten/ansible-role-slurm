@@ -10,3 +10,4 @@ slurm_packages:
     - slurmdbd
   slurmd:
     - slurmd
+    - slurm-client

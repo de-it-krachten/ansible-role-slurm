@@ -2,7 +2,7 @@
 # Put this file on all nodes of your cluster.
 # See the slurm.conf man page for more information.
 #
-SlurmctldHost={{ slurm_master_name }}({{ hostvars[slurm_master_name]['ansible_host'] }}) 
+SlurmctldHost={{ slurm_master_name }}({{ slurm_master_ip }}) 
 #SlurmctldHost=
 #
 #DisableRootJobs=NO

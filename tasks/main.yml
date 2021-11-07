@@ -17,7 +17,18 @@
   set_fact:
     slurm_roles: "{{ slurm_roles + [ item.role ] }}"
   loop: "{{ slurm_group2role_mapping }}"
-  when: item.group in group_names
+  when:
+    - slurm_role is undefined
+    - item.group in group_names
+
+- name: Convert slurm_roles from string to list
+  set_fact:
+    slurm_roles: "{{ [ slurm_role ] }}"
+  when: slurm_role is defined
+
+- name: Display all slurm roles
+  debug:
+    var: slurm_roles
 
 - name: Get slurm db ip
   set_fact:
@@ -59,3 +70,10 @@
     slurm_role: slurmd
   when: "'slurmd' in slurm_roles"
 
+- name: Install slurm (client)
+  block:
+    - include_tasks: users.yml
+    - include_tasks: install.yml
+  vars:
+    slurm_role: client
+  when: "'client' in slurm_roles"

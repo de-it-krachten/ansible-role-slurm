@@ -12,5 +12,5 @@ slurm_packages:
     - slurmd
     - slurm-client
   client:
-    - slurmd
+    - slurm-client
     - slurm-drmaa1

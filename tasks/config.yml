@@ -1,4 +1,4 @@
 ---
 
-- name: configure slurm roles
+- name: configure slurm roles {{ slurm_role }}
   include_tasks: config-{{ slurm_role }}.yml

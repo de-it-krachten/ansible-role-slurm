@@ -7,7 +7,7 @@
   when:
     - ansible_distribution == "Ubuntu"
     - ansible_distribution_version is version('18.04', '>=')
-    - "'slurmctld' in slurm_roles"
+    - "'client' in slurm_roles"
 
 - name: Add repository (RedHat)
   yum_repository:

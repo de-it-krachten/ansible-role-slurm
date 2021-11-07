@@ -23,3 +23,6 @@ slurm_packages:
     - slurm-devel
     - slurm-perlapi
     - slurm-slurmd
+  client:
+    - slurm
+    - slurm-drmaa

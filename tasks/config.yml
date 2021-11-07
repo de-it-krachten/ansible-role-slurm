@@ -2,6 +2,3 @@
 
 - name: configure slurm roles
   include_tasks: config-{{ slurm_role }}.yml
-  loop: "{{ slurm_roles }}"
-  loop_control:
-    loop_var: slurm_role

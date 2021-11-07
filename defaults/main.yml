@@ -1,5 +1,8 @@
 ---
 
+slurm_account_name: galaxy
+
+slurm_configless: false
 slurm_roles: []
 slurm_group2role_mapping:
   - group: slurm_masters
@@ -14,7 +17,9 @@ slurm_configure: true
 slurm_disable_root: 'YES'
 
 slurm_user: slurm
+slurm_uid: 64030
 slurm_group: slurm
+slurm_gid: 64030
 
 slurm_dirs:
   slurmctld:

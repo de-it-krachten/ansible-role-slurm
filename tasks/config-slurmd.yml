@@ -9,30 +9,63 @@
     mode: "{{ item.mode | default('0755') }}"
   loop: "{{ slurm_dirs['slurmd'] }}"
 
-- name: add configless to slurm environment file
-  lineinfile:
-    line: SLURMD_OPTIONS='--conf-server {{ slurm_master_name }}:{{ slurm_slurmctld_port }}'
-    path: /etc/sysconfig/slurmd
-    create: yes
-  register: _slurm_opts
+- name: Get slurm version
+  command: slurmd -V
+  changed_when: false
+  register: _slurm_version
 
-- name: Distribute {{ slurm_conf_dir }}/slurm.conf
-  template:
-    src: slurm.conf.j2
-    dest: "{{ slurm_conf_dir }}/slurm.conf"
-    owner: "{{ slurm_user }}"
-    group: "{{ slurm_group }}"
-    mode: '0644'
-  register: _slurmd
+- name: Configless configuration is availabe from 20.02
+  set_fact:
+    slurm_configless: true
+  when: _slurm_version.stdout.split(' ')[1] is version('20.02', '>=')
 
-- name: Distribute {{ slurm_conf_dir }}/cgroup.conf
-  template:
-    src: cgroup.conf.j2
-    dest: "{{ slurm_conf_dir }}/cgroup.conf"
-    owner: "{{ slurm_user }}"
-    group: "{{ slurm_group }}"
-    mode: '0600'
-  register: _cgroup
+- name: Get slurm master ip
+  set_fact:
+    slurm_master_ip: "{{ lookup('dig', slurm_master_name) }}"
+  when: slurm_master_ip is undefined
+
+- block:
+
+    - name: Configure slurm to retrieve config from master
+      lineinfile:
+        line: SLURMD_OPTIONS='--conf-server {{ slurm_master_name }}:{{ slurm_slurmctld_port }}'
+        path: /etc/{{ 'sysconfig' if ansible_os_family == 'RedHat' else 'default' }}/slurmd
+        create: yes
+      notify: Restart slurmd
+
+    - name: Delete obsolete configuratuion files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ slurm_conf_dir }}/slurm.conf"
+        - "{{ slurm_conf_dir }}/cgroup.conf"
+      notify: Restart slurmd
+
+  when: slurm_configless|bool
+
+
+- block:
+
+    - name: Distribute {{ slurm_conf_dir }}/slurm.conf
+      template:
+        src: slurm.conf.j2
+        dest: "{{ slurm_conf_dir }}/slurm.conf"
+        owner: "{{ slurm_user }}"
+        group: "{{ slurm_group }}"
+        mode: '0644'
+      notify: Restart slurmd
+
+    - name: Distribute {{ slurm_conf_dir }}/cgroup.conf
+      template:
+        src: cgroup.conf.j2
+        dest: "{{ slurm_conf_dir }}/cgroup.conf"
+        owner: "{{ slurm_user }}"
+        group: "{{ slurm_group }}"
+        mode: '0600'
+      notify: Restart slurmd
+
+  when: not slurm_configless|bool
 
 - name: Enable slurmd
   service:
@@ -40,11 +73,6 @@
     enabled: yes
     state: started
 
-- name: Restart slurmd
-  service:
-    name: slurmd
-    state: restarted
-  when: _slurmd.changed or _cgroup.changed or _slurm_opts.changed
 
 # ------------------------------------------------------
 # Firewall

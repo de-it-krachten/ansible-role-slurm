@@ -18,6 +18,12 @@
 # slurmdbd
 # ------------------------------------------------------
 
+- name: Get slurm db IP
+  set_fact:
+    slurm_db_ip: "{{ lookup('dig', slurm_db_host) }}"
+  when: slurm_db_ip is undefined
+
+
 - name: Distribute {{ slurm_conf_dir }}/slurmdbd.conf
   template:
     src: slurmdbd.conf.j2

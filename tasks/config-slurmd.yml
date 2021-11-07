@@ -19,11 +19,6 @@
     slurm_configless: true
   when: _slurm_version.stdout.split(' ')[1] is version('20.02', '>=')
 
-- name: Get slurm master ip
-  set_fact:
-    slurm_master_ip: "{{ lookup('dig', slurm_master_name) }}"
-  when: slurm_master_ip is undefined
-
 - block:
 
     - name: Configure slurm to retrieve config from master

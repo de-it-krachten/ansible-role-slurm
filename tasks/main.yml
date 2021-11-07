@@ -19,6 +19,16 @@
   loop: "{{ slurm_group2role_mapping }}"
   when: item.group in group_names
 
+- name: Get slurm db ip
+  set_fact:
+    slurm_db_ip: "{{ lookup('dig', slurm_db_host) }}"
+  when: slurm_db_ip is undefined
+
+- name: Get slurm master ip
+  set_fact:
+    slurm_master_ip: "{{ lookup('dig', slurm_master_name) }}"
+  when: slurm_master_ip is undefined
+
 - name: Add specific repositories
   include_tasks: pre-install.yml
 

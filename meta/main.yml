@@ -1,5 +1,7 @@
 ---
 galaxy_info:
+  role_name: slurm
+  namespace: de_it_krachten
   description: ansible-role-slurm
   author: Mark van Huijstee
   company: De IT Krachten BV
@@ -10,4 +12,8 @@ galaxy_info:
       versions:
         - 7
         - 8
+    - name: Ubuntu
+      versions:
+        - 18.04
+        - 20.04
 dependencies: []

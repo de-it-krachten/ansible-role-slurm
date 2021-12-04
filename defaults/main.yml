@@ -1,9 +1,15 @@
 ---
 
+# slurm account
 slurm_account_name: galaxy
 
+# run slurm workers in configless mode
 slurm_configless: false
+
+# slurm roles
 slurm_roles: []
+
+# slurm group2role mapping (members of these groups will be assigned these roles)
 slurm_group2role_mapping:
   - group: slurm_masters
     role: slurmctld
@@ -12,15 +18,17 @@ slurm_group2role_mapping:
   - group: slurm_nodes
     role: slurmd
 
-#@#slurm_configure: false
-slurm_configure: true
+# Should root be disable from slurm
 slurm_disable_root: 'YES'
 
+# slurm user w/ UID
 slurm_user: slurm
 slurm_uid: 64030
+# slurm group w/ GID
 slurm_group: slurm
 slurm_gid: 64030
 
+# Slurm directories
 slurm_dirs:
   slurmctld:
     - { path: "{{ slurm_conf_dir }}" }
@@ -34,10 +42,12 @@ slurm_dirs:
     - { path: "{{ slurm_log_dir }}" }
     - { path: /var/spool/slurmd }
 
+# Slurm ports
 slurm_slurmctld_port: "6817"
 slurm_slurmd_port:    "6818"
 slurm_slurmdbd_port:  "6819"
 
+# Slurm firewall ports
 slurm_firewall_ports:
   slurmctld:
     - port: "{{ slurm_slurmctld_port }}"

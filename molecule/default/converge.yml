@@ -1,0 +1,95 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: yes
+  become: yes
+  vars:
+    #ansible_python_interpreter: /usr/libexec/platform-python
+    custom_facts_additional:
+      - name: slurm
+        group: slurm_nodes
+
+  roles:
+    - common
+    #- robertdebock.powertools
+    - powertools
+    - robertdebock.epel
+    - chrony
+    - { role: firewalld, when: "ansible_os_family == 'RedHat'" }
+    - { role: ufw, when: "ansible_os_family == 'Debian'" }
+  tasks:
+
+
+    - name: Set hostname
+      hostname:
+        name: "{{ inventory_hostname | regex_replace('_','-') }}"
+
+    - block:
+
+        - name: Register all masters + nodes in /etc/hosts
+          lineinfile:
+            line: "{{ hostvars[item]['ansible_eth1']['ipv4']['address'] }} {{ item }}"
+            path: /etc/hosts
+          loop: "{{ groups['all'] }}"
+
+        - name: Set slurm master ip
+          set_fact:
+            slurm_master_ip: "{{ hostvars[slurm_master_name]['ansible_eth1']['ipv4']['address'] }}"
+
+      when: slurm_uses_dns is defined and not slurm_uses_dns|bool
+
+     
+
+- hosts: slurm_nodes
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: Create custom facts
+      file:
+        path: /etc/ansible/facts.d
+        state: directory
+        mode: "0755"
+    - name: Install slurm node package (RedHat/CentOS)
+      dnf:
+        name: slurm-slurmd
+        state: present
+      when: ansible_os_family == 'RedHat'
+    - name: Install slurm node package (Ubuntu/Debian)
+      apt:
+        name: slurmd
+        state: present
+      when: ansible_os_family == 'Debian'
+    - name: Create custom fact
+      copy:
+        src: templates/facts/slurm.fact.j2
+        dest: /etc/ansible/facts.d/slurm.fact
+        mode: '0755'
+    - name: Obtain node information
+      setup:
+    - name: Display nodeinfo
+      debug: var=ansible_local.slurm.nodeinfo
+
+- hosts: slurm_db
+  become: yes
+  vars:
+    munge_key: tests/munge.key
+  roles:
+    - mariadb
+    - munge
+    #- ansible-role-slurm
+
+- hosts: slurm_masters
+  become: yes
+  vars:
+    munge_key: tests/munge.key
+  roles:
+    - munge
+    #- ansible-role-slurm
+
+- hosts: slurm_nodes
+  become: yes
+  vars:
+    munge_key: tests/munge.key
+  roles:
+    - munge
+    #- ansible-role-slurm

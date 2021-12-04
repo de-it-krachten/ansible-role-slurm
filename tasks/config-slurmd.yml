@@ -26,9 +26,10 @@
         line: SLURMD_OPTIONS='--conf-server {{ slurm_master_name }}:{{ slurm_slurmctld_port }}'
         path: /etc/{{ 'sysconfig' if ansible_os_family == 'RedHat' else 'default' }}/slurmd
         create: yes
+        mode: "0644"
       notify: Restart slurmd
 
-    - name: Delete obsolete configuratuion files
+    - name: Delete obsolete configuration files
       file:
         path: "{{ item }}"
         state: absent

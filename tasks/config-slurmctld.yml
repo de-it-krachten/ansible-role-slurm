@@ -42,7 +42,7 @@
     enabled: yes
     state: started
 
-- name: Restart slurmctld
+- name: Restart slurmctld  # noqa no-handler
   service:
     name: slurmctld
     state: restarted

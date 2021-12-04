@@ -33,7 +33,7 @@
     enabled: yes
     state: started
 
-- name: Restart slurmdbd
+- name: Restart slurmdbd  # noqa no-handler
   service:
     name: slurmdbd
     state: restarted

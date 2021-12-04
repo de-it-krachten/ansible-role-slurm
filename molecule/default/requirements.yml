@@ -1,0 +1,34 @@
+---
+
+# Public - galaxy
+- robertdebock.epel
+
+# Private
+- src: git@github.com:de-it-krachten/ansible-role-common.git
+  name: common
+  version: main
+  scm: git
+- src: git@github.com:de-it-krachten/ansible-role-chrony.git
+  name: chrony
+  version: main
+  scm: git
+- src: git@github.com:de-it-krachten/ansible-role-firewalld.git
+  name: firewalld
+  version: main
+  scm: git
+- src: git@github.com:de-it-krachten/ansible-role-mariadb.git
+  name: mariadb
+  version: main
+  scm: git
+- src: git@github.com:de-it-krachten/ansible-role-munge.git
+  name: munge
+  version: main
+  scm: git
+- src: git@github.com:de-it-krachten/ansible-role-powertools.git
+  name: powertools
+  version: master
+  scm: git
+- src: git@github.com:de-it-krachten/ansible-role-ufw.git
+  name: ufw
+  version: main
+  scm: git

@@ -1,4 +1,97 @@
----
+[![CI](https://github.com/de-it-krachten/ansible-role-slurm/workflows/CI/badge.svg?event=push)](https://github.com/de-it-krachten/ansible-role-slurm/actions?query=workflow%3ACI)
+
+
+# ansible-role-slurm
+
+Installs & configure slurm
+
+
+Platforms
+--------------
+
+Supported platforms
+
+- CentOS 7
+- CentOS 8
+- Ubuntu 18.04 LTS
+- Ubuntu 20.04 LTS
+- Debian 10 (Buster)
+- Debian 11 (Bullseye)
+
+
+
+Role Variables
+--------------
+<pre><code>
+# slurm account
+slurm_account_name: galaxy
+
+# run slurm workers in configless mode
+slurm_configless: false
+
+# slurm roles
+slurm_roles: []
+
+# slurm group2role mapping (members of these groups will be assigned these roles)
+slurm_group2role_mapping:
+  - group: slurm_masters
+    role: slurmctld
+  - group: slurm_db
+    role: slurmdbd
+  - group: slurm_nodes
+    role: slurmd
+
+# Should root be disable from slurm
+slurm_disable_root: 'YES'
+
+# slurm user w/ UID
+slurm_user: slurm
+slurm_uid: 64030
+# slurm group w/ GID
+slurm_group: slurm
+slurm_gid: 64030
+
+# Slurm directories
+slurm_dirs:
+  slurmctld:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+    - { path: /var/spool/slurmctld }
+  slurmdbd:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+  slurmd:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+    - { path: /var/spool/slurmd }
+
+# Slurm ports
+slurm_slurmctld_port: "6817"
+slurm_slurmd_port:    "6818"
+slurm_slurmdbd_port:  "6819"
+
+# Slurm firewall ports
+slurm_firewall_ports:
+  slurmctld:
+    - port: "{{ slurm_slurmctld_port }}"
+      proto: tcp
+    - port: '60001-63000'
+      proto: tcp
+  slurmd:
+    - port: "{{ slurm_slurmd_port }}"
+      proto: tcp
+    - port: '60001-63000'
+      proto: tcp
+  slurmdbd:
+    - port: "{{ slurm_slurmdbd_port }}"
+      proto: tcp
+</pre></code>
+
+
+Example Playbook
+----------------
+
+<pre><code>
 - name: Converge
   hosts: all
   gather_facts: yes
@@ -92,3 +185,4 @@
   roles:
     - munge
     #- ansible-role-slurm
+</pre></code>

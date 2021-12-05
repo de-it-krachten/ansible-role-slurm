@@ -15,7 +15,7 @@
     - common
     - { role: robertdebock.powertools, when: "ansible_os_family == 'RedHat'" }
     - { role: robertdebock.epel, when: "ansible_os_family == 'RedHat'" }
-    - { role: chrony, when: not ansible_module_running_in_container }
+    - { role: chrony, when: "not ansible_module_running_in_container" }
     - { role: firewalld, when: "ansible_os_family == 'RedHat' and not ansible_module_running_in_container" }
     - { role: ufw, when: "ansible_os_family == 'Debian' and not ansible_module_running_in_container" }
   tasks:

@@ -8,14 +8,16 @@
     custom_facts_additional:
       - name: slurm
         group: slurm_nodes
-
+  pre_tasks:
+    - name: Get facts on current container
+      community.docker.current_container_facts:
   roles:
     - common
     - robertdebock.powertools
     - robertdebock.epel
-    - chrony
-    - { role: firewalld, when: "ansible_os_family == 'RedHat'" }
-    - { role: ufw, when: "ansible_os_family == 'Debian'" }
+    - { role: chrony, when: not ansible_module_running_in_container }
+    - { role: firewalld, when: "ansible_os_family == 'RedHat' and not ansible_module_running_in_container" }
+    - { role: ufw, when: "ansible_os_family == 'Debian' and not ansible_module_running_in_container" }
   tasks:
 
 

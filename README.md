@@ -11,20 +11,27 @@ Platforms
 
 Supported platforms
 
-- CentOS 7
 - CentOS 8
-- Ubuntu 18.04 LTS
 - Ubuntu 20.04 LTS
-- Debian 10 (Buster)
-- Debian 11 (Bullseye)
-
 
 
 Role Variables
 --------------
 <pre><code>
-# slurm account
-slurm_account_name: galaxy
+
+
+# slurm cluster name
+slurm_cluster_name: slurm_cl_1
+
+# slurm accounting account
+slurm_account_name: slurm
+
+# slurm accounting users
+slurm_users:
+  - slurm
+
+# Slurm firewall rules should be applied
+slurm_firewall: true
 
 # run slurm workers in configless mode
 slurm_configless: false
@@ -43,6 +50,9 @@ slurm_group2role_mapping:
 
 # Should root be disable from slurm
 slurm_disable_root: 'YES'
+
+# MariaDB host
+mariadb_db_host: localhost
 
 # slurm user w/ UID
 slurm_user: slurm
@@ -85,6 +95,11 @@ slurm_firewall_ports:
   slurmdbd:
     - port: "{{ slurm_slurmdbd_port }}"
       proto: tcp
+
+# slurm partitions
+slurm_partitions:
+  - name: slurmall
+    nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
 </pre></code>
 
 
@@ -92,6 +107,7 @@ Example Playbook
 ----------------
 
 <pre><code>
+
 - name: Converge
   hosts: all
   gather_facts: yes
@@ -101,14 +117,16 @@ Example Playbook
     custom_facts_additional:
       - name: slurm
         group: slurm_nodes
-
+  pre_tasks:
+    - name: Get facts on current container
+      community.docker.current_container_facts:
   roles:
     - common
-    - robertdebock.powertools
-    - robertdebock.epel
-    - chrony
-    - { role: firewalld, when: "ansible_os_family == 'RedHat'" }
-    - { role: ufw, when: "ansible_os_family == 'Debian'" }
+    - { role: robertdebock.powertools, when: "ansible_os_family == 'RedHat'" }
+    - { role: robertdebock.epel, when: "ansible_os_family == 'RedHat'" }
+    - { role: chrony, when: "not ansible_module_running_in_container" }
+    - { role: firewalld, when: "ansible_os_family == 'RedHat' and not ansible_module_running_in_container" }
+    - { role: ufw, when: "ansible_os_family == 'Debian' and not ansible_module_running_in_container" }
   tasks:
 
 
@@ -118,15 +136,25 @@ Example Playbook
 
     - block:
 
+        - name: Fix for /etc/hosts in docker container
+          shell: |
+            if mount | grep -q /etc/hosts
+            then
+              cp /etc/hosts /tmp/hosts
+              umount /etc/hosts
+              cp /tmp/hosts /etc/hosts
+            fi
+          changed_when: false
+            
         - name: Register all masters + nodes in /etc/hosts
           lineinfile:
-            line: "{{ hostvars[item]['ansible_eth1']['ipv4']['address'] }} {{ item }}"
+            line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ item }}"
             path: /etc/hosts
           loop: "{{ groups['all'] }}"
 
         - name: Set slurm master ip
           set_fact:
-            slurm_master_ip: "{{ hostvars[slurm_master_name]['ansible_eth1']['ipv4']['address'] }}"
+            slurm_master_ip: "{{ hostvars[slurm_master_name]['ansible_default_ipv4']['address'] }}"
 
       when: slurm_uses_dns is defined and not slurm_uses_dns|bool
 
@@ -153,7 +181,7 @@ Example Playbook
       when: ansible_os_family == 'Debian'
     - name: Create custom fact
       copy:
-        src: templates/facts/slurm.fact.j2
+        src: slurm.fact.j2
         dest: /etc/ansible/facts.d/slurm.fact
         mode: '0755'
     - name: Obtain node information
@@ -165,24 +193,45 @@ Example Playbook
   become: yes
   vars:
     munge_key: tests/munge.key
+    mariadb_version: 10.4
+    mariadb_root_password: 'Abcd1234'
+    innodb:
+      innodb_buffer_pool_size: 4096M
+      innodb_log_file_size: 64M
+      innodb_lock_wait_timeout: 900
+    mariadb_db_name: testdb
+    mariadb_db_user: testuser
+    slurm_firewall: false
+
   roles:
     - mariadb
     - munge
-    #- ansible-role-slurm
+  tasks:
+    - name: ansible-role-slurm
+      include_role:
+        name: ansible-role-slurm
 
 - hosts: slurm_masters
   become: yes
   vars:
     munge_key: tests/munge.key
+    slurm_firewall: false
   roles:
     - munge
-    #- ansible-role-slurm
+  tasks:
+    - name: ansible-role-slurm
+      include_role:
+        name: ansible-role-slurm
 
 - hosts: slurm_nodes
   become: yes
   vars:
     munge_key: tests/munge.key
+    slurm_firewall: false
   roles:
     - munge
-    #- ansible-role-slurm
+  tasks:
+    - name: ansible-role-slurm
+      include_role:
+        name: ansible-role-slurm
 </pre></code>

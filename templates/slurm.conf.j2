@@ -162,7 +162,7 @@ SlurmdLogFile={{ slurm_log_dir }}/slurmd.log
 #
 # COMPUTE NODES
 {% for node in groups['slurm_nodes'] %}
-{% if hostvars[node]['slurm_node_active'] %}
+{% if (hostvars[node]['slurm_node_active']|default(slurm_node_active)) %}
 {{ hostvars[node]['ansible_local']['slurm']['nodeinfo'] }}
 {% endif %}
 {% endfor %}

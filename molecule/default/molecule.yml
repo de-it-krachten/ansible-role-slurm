@@ -44,15 +44,25 @@ provisioner:
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
   inventory:
+    group_vars:
+      all:
+        slurm_uses_dns: false
+        slurm_node_active: true
     host_vars:
       slurm-${MOLECULE_DISTRO:-centos8}-db:
+        slurm_db_host: "slurm-${MOLECULE_DISTRO:-centos8}-db"
         slurm_db_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-db']['ansible_default_ipv4']['address'] }}"
+        slurm_master_name: "slurm-${MOLECULE_DISTRO:-centos8}-master"
         slurm_master_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-master']['ansible_default_ipv4']['address'] }}"
       slurm-${MOLECULE_DISTRO:-centos8}-master:
+        slurm_db_host: "slurm-${MOLECULE_DISTRO:-centos8}-db"
         slurm_db_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-db']['ansible_default_ipv4']['address'] }}"
+        slurm_master_name: "slurm-${MOLECULE_DISTRO:-centos8}-master"
         slurm_master_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-master']['ansible_default_ipv4']['address'] }}"
       slurm-${MOLECULE_DISTRO:-centos8}-worker:
+        slurm_db_host: "slurm-${MOLECULE_DISTRO:-centos8}-db"
         slurm_db_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-db']['ansible_default_ipv4']['address'] }}"
+        slurm_master_name: "slurm-${MOLECULE_DISTRO:-centos8}-master"
         slurm_master_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-master']['ansible_default_ipv4']['address'] }}"
 scenario:
   name: default

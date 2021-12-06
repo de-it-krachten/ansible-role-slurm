@@ -1,7 +1,17 @@
 ---
 
-# slurm account
-slurm_account_name: galaxy
+# slurm cluster name
+slurm_cluster_name: slurm_cl_1
+
+# slurm accounting account
+slurm_account_name: slurm
+
+# slurm accounting users
+slurm_users:
+  - slurm
+
+# Slurm firewall rules should be applied
+slurm_firewall: true
 
 # run slurm workers in configless mode
 slurm_configless: false
@@ -20,6 +30,9 @@ slurm_group2role_mapping:
 
 # Should root be disable from slurm
 slurm_disable_root: 'YES'
+
+# MariaDB host
+mariadb_db_host: localhost
 
 # slurm user w/ UID
 slurm_user: slurm
@@ -62,3 +75,11 @@ slurm_firewall_ports:
   slurmdbd:
     - port: "{{ slurm_slurmdbd_port }}"
       proto: tcp
+
+# slurm partitions
+slurm_partitions:
+  - name: slurmall
+    nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
+
+# Set node to active
+slurm_node_active: true

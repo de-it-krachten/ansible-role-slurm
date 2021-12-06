@@ -6,8 +6,7 @@ on:
   pull_request:
   push:
   schedule:
-    #- cron: "52 9 * * 1"
-    - cron: "30 04 * * 1"
+    - cron: "0 7 * * 1"
 
 defaults:
   run:
@@ -29,8 +28,12 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Show runner info
+        run: |
+          hostname -f
+
       - name: Install test dependencies.
-        run: pip3 install ansible ansible-lint yamllint
+        run: pip3 install ansible ansible-lint yamllint jmespath
 
       - name: Lint code.
         run: |
@@ -39,22 +42,12 @@ jobs:
           ansible-lint
 
 
-  molecule:
-    name: Molecule
+  molecule-centos8:
+    name: Molecule-centos8
+    needs: lint
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        include:
-          - distro: centos8
-            playbook: converge.yml
-          - distro: ubuntu1804
-            playbook: converge.yml
-          - distro: ubuntu2004
-            playbook: converge.yml
-          - distro: debian10
-            playbook: converge.yml
-          - distro: debian11
-            playbook: converge.yml
+      fail-fast: false
 
     steps:
       - name: Check out the codebase.
@@ -67,13 +60,62 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Show runner info
+        run: |
+          hostname -f
+
       - name: Install test dependencies.
-        run: pip3 install ansible ansible-lint molecule[docker] docker
+        run: pip3 install ansible ansible-lint molecule[docker] docker yamllint jmespath
+
+      - name: disable apparmor for mysql
+        run: sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+
+      - name: parse apparmor for mysql
+        run: sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
 
       - name: Run Molecule tests.
         run: molecule test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DISTRO: ${{ matrix.distro }}
-          MOLECULE_PLAYBOOK: ${{ matrix.playbook }}
+          MOLECULE_DISTRO: centos8
+          MOLECULE_PLAYBOOK: converge.yml
+
+  molecule-ubuntu2004:
+    name: Molecule-ubuntu2004
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
+        with:
+          path: "${{ github.repository }}"
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Show runner info
+        run: |
+          hostname -f
+
+      - name: Install test dependencies.
+        run: pip3 install ansible ansible-lint molecule[docker] docker yamllint jmespath
+
+      - name: disable apparmor for mysql
+        run: sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+
+      - name: parse apparmor for mysql
+        run: sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+
+      - name: Run Molecule tests.
+        run: molecule test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
+          MOLECULE_DISTRO: ubuntu2004
+          MOLECULE_PLAYBOOK: converge.yml

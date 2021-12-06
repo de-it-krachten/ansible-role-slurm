@@ -1,0 +1,4 @@
+#!/bin/sh
+slurm_nodeinfo=`/usr/sbin/slurmd -C 2>/dev/null | head -1`
+slurm_nodeinfo=${slurm_nodeinfo:-'NA'}
+echo "{ \"nodeinfo\": \"$slurm_nodeinfo\" }"

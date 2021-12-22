@@ -1,0 +1,127 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: yes
+  become: yes
+  vars:
+    #ansible_python_interpreter: /usr/libexec/platform-python
+    custom_facts_additional:
+      - name: slurm
+        group: slurm_nodes
+  roles:
+    - common
+    - { role: robertdebock.powertools, when: "ansible_os_family == 'RedHat'" }
+    - { role: robertdebock.epel, when: "ansible_os_family == 'RedHat'" }
+    - { role: chrony, when: "github_actions is undefined" }
+  tasks:
+
+    - name: Set hostname
+      hostname:
+        name: "{{ inventory_hostname | regex_replace('_','-') }}"
+      when: ansible_virtualization_type not in [ 'docker', 'container', 'containerd' ]
+
+    - block:
+
+        - name: Fix for /etc/hosts in docker container
+          shell: |
+            if mount | grep -q /etc/hosts
+            then
+              cp /etc/hosts /tmp/hosts
+              umount /etc/hosts
+              cp /tmp/hosts /etc/hosts
+            fi
+          changed_when: false
+          when: ansible_virtualization_type in [ 'docker', 'container', 'containerd' ]
+
+            
+        - name: Register all masters + nodes in /etc/hosts
+          lineinfile:
+            line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ item }}"
+            path: /etc/hosts
+          loop: "{{ groups['all'] }}"
+
+        - name: Set slurm master ip
+          set_fact:
+            slurm_master_ip: "{{ hostvars[slurm_master_name]['ansible_default_ipv4']['address'] }}"
+
+      when: slurm_uses_dns is defined and not slurm_uses_dns|bool
+
+     
+
+- hosts: slurm_nodes
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: Create custom facts
+      file:
+        path: /etc/ansible/facts.d
+        state: directory
+        mode: "0755"
+    - name: Install slurm node package (RedHat/CentOS)
+      package:
+        name: slurm-slurmd
+        state: present
+      when: ansible_os_family == 'RedHat'
+    - name: Install slurm node package (Ubuntu/Debian)
+      apt:
+        name: slurmd
+        state: present
+      when: ansible_os_family == 'Debian'
+    - name: Create custom fact
+      copy:
+        src: slurm.fact.j2
+        dest: /etc/ansible/facts.d/slurm.fact
+        mode: '0755'
+    - name: Obtain node information
+      setup:
+    - name: Display nodeinfo
+      debug: var=ansible_local.slurm.nodeinfo
+
+- hosts: slurm_db
+  become: yes
+  vars:
+    munge_key: tests/munge.key
+    mariadb_version: 10.4
+    mariadb_root_password: 'Abcd1234'
+    innodb:
+      innodb_buffer_pool_size: 4096M
+      innodb_log_file_size: 64M
+      innodb_lock_wait_timeout: 900
+    mariadb_db_name: testdb
+    mariadb_db_user: testuser
+#    slurm_firewall: false
+
+  roles:
+    - mariadb
+    - munge
+#    - ansible-role-slurm
+  tasks:
+    - name: x
+      include_role:
+        name: ansible-role-slurm
+
+- hosts: slurm_masters
+  become: yes
+  vars:
+    munge_key: tests/munge.key
+#    slurm_firewall: false
+  roles:
+    - munge
+#    - ansible-role-slurm
+  tasks:
+    - name: x
+      include_role:
+        name: ansible-role-slurm
+
+- hosts: slurm_nodes
+  become: yes
+  vars:
+    munge_key: tests/munge.key
+#    slurm_firewall: false
+  roles:
+    - munge
+#    - ansible-role-slurm
+  tasks:
+    - name: x
+      include_role:
+        name: ansible-role-slurm

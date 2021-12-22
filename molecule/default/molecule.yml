@@ -1,0 +1,70 @@
+---
+
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+platforms:
+  - name: slurm-${MOLECULE_DISTRO:-centos8}-db
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos8}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+    groups:
+      - slurm_db
+  - name: slurm-${MOLECULE_DISTRO:-centos8}-master
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos8}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+    groups:
+      - slurm_masters
+  - name: slurm-${MOLECULE_DISTRO:-centos8}-worker
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos8}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+    groups:
+      - slurm_nodes
+
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
+  inventory:
+    group_vars:
+      all:
+        slurm_uses_dns: false
+        slurm_node_active: true
+    host_vars:
+      slurm-${MOLECULE_DISTRO:-centos8}-db:
+        slurm_db_host: "slurm-${MOLECULE_DISTRO:-centos8}-db"
+        slurm_db_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-db']['ansible_default_ipv4']['address'] }}"
+        slurm_master_name: "slurm-${MOLECULE_DISTRO:-centos8}-master"
+        slurm_master_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-master']['ansible_default_ipv4']['address'] }}"
+      slurm-${MOLECULE_DISTRO:-centos8}-master:
+        slurm_db_host: "slurm-${MOLECULE_DISTRO:-centos8}-db"
+        slurm_db_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-db']['ansible_default_ipv4']['address'] }}"
+        slurm_master_name: "slurm-${MOLECULE_DISTRO:-centos8}-master"
+        slurm_master_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-master']['ansible_default_ipv4']['address'] }}"
+      slurm-${MOLECULE_DISTRO:-centos8}-worker:
+        slurm_db_host: "slurm-${MOLECULE_DISTRO:-centos8}-db"
+        slurm_db_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-db']['ansible_default_ipv4']['address'] }}"
+        slurm_master_name: "slurm-${MOLECULE_DISTRO:-centos8}-master"
+        slurm_master_ip: "{{ hostvars['slurm-${MOLECULE_DISTRO:-centos8}-master']['ansible_default_ipv4']['address'] }}"
+scenario:
+  name: default
+verifier:
+  name: ansible

@@ -1,13 +1,6 @@
 ---
 
-- name: Install slurm packages {{ slurm_role }} (RedHat/CentOS)
-  dnf:
+- name: Install slurm packages {{ slurm_role }}
+  package:
     name: "{{ slurm_packages[slurm_role] }}"
     state: present
-  when: ansible_os_family == 'RedHat'
-
-- name: Install slurm packages {{ slurm_role }} (Debian/Ubuntu)
-  apt:
-    name: "{{ slurm_packages[slurm_role] }}"
-    state: present
-  when: ansible_os_family == 'Debian'

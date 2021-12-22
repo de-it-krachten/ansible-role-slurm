@@ -26,9 +26,10 @@
         line: SLURMD_OPTIONS='--conf-server {{ slurm_master_name }}:{{ slurm_slurmctld_port }}'
         path: /etc/{{ 'sysconfig' if ansible_os_family == 'RedHat' else 'default' }}/slurmd
         create: yes
+        mode: "0644"
       notify: Restart slurmd
 
-    - name: Delete obsolete configuratuion files
+    - name: Delete obsolete configuration files
       file:
         path: "{{ item }}"
         state: absent
@@ -73,23 +74,35 @@
 # Firewall
 # ------------------------------------------------------
 
-- name: Open firewall ports (Debian)
-  ufw:
-    rule: allow
-    port: "{{ (item.port|regex_replace('-',':')) if item.port is defined else omit }}"
-    proto: "{{ item.proto if item.proto is defined else omit }}"
-    name: "{{ item.service if item.service is defined else omit }}"
-    state: enabled
-  loop: "{{ slurm_firewall_ports['slurmd'] }}"
-  when: ansible_os_family == 'Debian'
+- name: Open firewall ports
+  include_role:
+    name: firewall
+  vars:
+    firewall_ports: "{{ slurm_firewall_ports['slurmd'] }}"
+  when:
+    - slurm_firewall|bool
 
-- name: Open firewall ports (RedHat)
-  firewalld:
-    port: "{{ (item.port+'/'+item.proto) if item.port is defined else omit }}"
-    service: "{{ item.service if item.service is defined else omit }}"
-    immediate: yes
-    permanent: yes
-    zone: public
-    state: enabled
-  loop: "{{ slurm_firewall_ports['slurmd'] }}"
-  when: ansible_os_family == 'RedHat'
+# - name: Open firewall ports (Debian)
+#   ufw:
+#     rule: allow
+#     port: "{{ (item.port|regex_replace('-',':')) if item.port is defined else omit }}"
+#     proto: "{{ item.proto if item.proto is defined else omit }}"
+#     name: "{{ item.service if item.service is defined else omit }}"
+#     state: enabled
+#   loop: "{{ slurm_firewall_ports['slurmd'] }}"
+#   when:
+#     - ansible_os_family == 'Debian'
+#     - slurm_firewall|bool
+
+# - name: Open firewall ports (RedHat)
+#   firewalld:
+#     port: "{{ (item.port+'/'+item.proto) if item.port is defined else omit }}"
+#     service: "{{ item.service if item.service is defined else omit }}"
+#     immediate: yes
+#     permanent: yes
+#     zone: public
+#     state: enabled
+#   loop: "{{ slurm_firewall_ports['slurmd'] }}"
+#   when:
+#     - ansible_os_family == 'RedHat'
+#     - slurm_firewall|bool

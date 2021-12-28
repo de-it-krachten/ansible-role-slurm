@@ -3,7 +3,8 @@
 
 # ansible-role-slurm
 
-Installs & configure slurm
+Installs & configures Slurm (HPC cluster software)<br>
+See https://slurm.schedmd.com/documentation.html 
 
 
 Platforms
@@ -15,11 +16,10 @@ Supported platforms
 - Ubuntu 20.04 LTS
 
 
+
 Role Variables
 --------------
 <pre><code>
-
-
 # slurm cluster name
 slurm_cluster_name: slurm_cl_1
 
@@ -100,6 +100,9 @@ slurm_firewall_ports:
 slurm_partitions:
   - name: slurmall
     nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
+
+# Set node to active
+slurm_node_active: true
 </pre></code>
 
 
@@ -107,7 +110,6 @@ Example Playbook
 ----------------
 
 <pre><code>
-
 - name: Converge
   hosts: all
   gather_facts: yes
@@ -118,47 +120,24 @@ Example Playbook
       - name: slurm
         group: slurm_nodes
   pre_tasks:
-    - name: Get facts on current container
-      community.docker.current_container_facts:
-  roles:
-    - common
-    - { role: robertdebock.powertools, when: "ansible_os_family == 'RedHat'" }
-    - { role: robertdebock.epel, when: "ansible_os_family == 'RedHat'" }
-    - { role: chrony, when: "not ansible_module_running_in_container" }
-    - { role: firewalld, when: "ansible_os_family == 'RedHat' and not ansible_module_running_in_container" }
-    - { role: ufw, when: "ansible_os_family == 'Debian' and not ansible_module_running_in_container" }
-  tasks:
-
 
     - name: Set hostname
       hostname:
         name: "{{ inventory_hostname | regex_replace('_','-') }}"
+      when: ansible_virtualization_type not in [ 'docker', 'container', 'containerd' ]
 
-    - block:
-
-        - name: Fix for /etc/hosts in docker container
-          shell: |
-            if mount | grep -q /etc/hosts
-            then
-              cp /etc/hosts /tmp/hosts
-              umount /etc/hosts
-              cp /tmp/hosts /etc/hosts
-            fi
-          changed_when: false
-            
-        - name: Register all masters + nodes in /etc/hosts
-          lineinfile:
-            line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }} {{ item }}"
-            path: /etc/hosts
-          loop: "{{ groups['all'] }}"
-
-        - name: Set slurm master ip
-          set_fact:
-            slurm_master_ip: "{{ hostvars[slurm_master_name]['ansible_default_ipv4']['address'] }}"
-
+    - name: Set slurm master ip
+      set_fact:
+        slurm_master_ip: "{{ hostvars[slurm_master_name]['ansible_default_ipv4']['address'] }}"
       when: slurm_uses_dns is defined and not slurm_uses_dns|bool
 
-     
+  roles:
+    - { role: facts }
+    - { role: robertdebock.powertools, when: "ansible_os_family == 'RedHat'" }
+    - { role: robertdebock.epel, when: "ansible_os_family == 'RedHat'" }
+    - { role: chrony, when: "github_actions is undefined" }
+    - { role: hosts, when: "slurm_uses_dns is defined and not slurm_uses_dns|bool" }
+
 
 - hosts: slurm_nodes
   gather_facts: yes
@@ -170,7 +149,7 @@ Example Playbook
         state: directory
         mode: "0755"
     - name: Install slurm node package (RedHat/CentOS)
-      dnf:
+      package:
         name: slurm-slurmd
         state: present
       when: ansible_os_family == 'RedHat'
@@ -201,13 +180,12 @@ Example Playbook
       innodb_lock_wait_timeout: 900
     mariadb_db_name: testdb
     mariadb_db_user: testuser
-    slurm_firewall: false
 
   roles:
     - mariadb
     - munge
   tasks:
-    - name: ansible-role-slurm
+    - name: slurm
       include_role:
         name: ansible-role-slurm
 
@@ -215,11 +193,10 @@ Example Playbook
   become: yes
   vars:
     munge_key: tests/munge.key
-    slurm_firewall: false
   roles:
     - munge
   tasks:
-    - name: ansible-role-slurm
+    - name: slurm
       include_role:
         name: ansible-role-slurm
 
@@ -227,11 +204,10 @@ Example Playbook
   become: yes
   vars:
     munge_key: tests/munge.key
-    slurm_firewall: false
   roles:
     - munge
   tasks:
-    - name: ansible-role-slurm
+    - name: slurm
       include_role:
         name: ansible-role-slurm
 </pre></code>

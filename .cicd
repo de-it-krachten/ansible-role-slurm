@@ -4,7 +4,7 @@
 role: ansible-role-slurm
 role_short: slurm
 role_description: |
-  Installs & configures SLurm (HPC cluster software)<br>
+  Installs & configures Slurm (HPC cluster software)<br>
   See https://slurm.schedmd.com/documentation.html 
 
 # Supported platform

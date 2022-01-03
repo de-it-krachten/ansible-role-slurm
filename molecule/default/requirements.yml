@@ -5,12 +5,12 @@
 - robertdebock.powertools
 
 # Private
-- name: common
-  src: https://github.com/de-it-krachten/ansible-role-common.git
-  version: main
-  scm: git
 - name: chrony
   src: https://github.com/de-it-krachten/ansible-role-chrony.git
+  version: main
+  scm: git
+- name: facts
+  src: https://github.com/de-it-krachten/ansible-role-facts.git
   version: main
   scm: git
 - name: firewall
@@ -19,6 +19,10 @@
   scm: git
 - name: firewalld
   src: https://github.com/de-it-krachten/ansible-role-firewalld.git
+  version: main
+  scm: git
+- name: hosts
+  src: https://github.com/de-it-krachten/ansible-role-hosts.git
   version: main
   scm: git
 - name: iptables

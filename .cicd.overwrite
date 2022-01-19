@@ -1,0 +1,31 @@
+generic:
+  role_description: |
+    Installs & configures Slurm (HPC cluster software)<br>
+    See https://slurm.schedmd.com/documentation.html 
+ci_templates:
+  converge.yml:
+    force: false
+  molecule.yml:
+    force: false
+  requirements.yml:
+    force: false
+github:
+  fail_fast: false
+  parallel: false
+molecule:
+  platforms:
+    - centos8
+    - rockylinux8
+    - ubuntu2004
+  prepare:
+    vars:
+      prepare_firewall: true
+platforms:
+  - name: CentOS 8
+    image: centos8
+  - name: RockyLinux 8
+    image: rockylinux8
+  - name: AlmaLinux 8
+    image: almalinux8
+  - name: Ubuntu 20.04 LTS
+    image: ubuntu2004

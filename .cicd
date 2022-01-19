@@ -1,26 +1,30 @@
 ---
 
 # Generic
-role: ansible-role-slurm
-role_short: slurm
-role_description: |
-  Installs & configures Slurm (HPC cluster software)<br>
-  See https://slurm.schedmd.com/documentation.html 
+generic:
+  role: ansible-role-slurm
+  role_short: slurm
+  role_description: |
+    <put description in .cicd.overwrite>
 
-# Supported platform
+# Supported platforms
 platforms:
-#  - name: CentOS 7
-#    image: centos7
+  - name: CentOS 7
+    image: centos7
   - name: CentOS 8
     image: centos8
-#  - name: Debian 10 (Buster)
-#    image: debian10
-#  - name: Debian 11 (Bullseye)
-#    image: debian11
-#  - name: Ubuntu 18.04 LTS
-#    image: ubuntu1804
+  - name: RockyLinux 8
+    image: rockylinux8
+  - name: AlmaLinux 8
+    image: almalinux8
+  - name: Debian 10 (Buster)
+    image: debian10
+  - name: Debian 11 (Bullseye)
+    image: debian11
+  - name: Ubuntu 18.04 LTS
+    image: ubuntu1804
   - name: Ubuntu 20.04 LTS
-    image: ubuntu2014
+    image: ubuntu2004
 
 # Ansible galaxy
 galaxy:
@@ -34,22 +38,23 @@ galaxy:
   platforms:
     - name: EL
       versions:
-#        - 7
+        - 7
         - 8
-#    - name: Debian
-#      versions:
-#        - buster
-#        - bullseye
+    - name: Debian
+      versions:
+        - buster
+        - bullseye
     - name: Ubuntu
       versions:
-#        - 18.04
+        - 18.04
         - 20.04
 
 # Github
 github:
   active: true
-  parallel: false
   self_hosted: false
+  fail_fast: true
+  parallel: true
   owner: de-it-krachten
   repo: ansible-role-slurm
 
@@ -61,49 +66,69 @@ gitlab:
 molecule:
   active: true
   platforms:
-#    - centos7
+    - centos7
     - centos8
-#    - debian10
-#    - debian11
-#    - ubuntu1804
+    - rockylinux8
+    - debian10
+    - debian11
+    - ubuntu1804
     - ubuntu2004
   converge:
     playbooks: []
     vars: {}
   prepare:
     playbooks: []
-    vars:
-      prepare_firewall: true
+    vars: {}
 
 # templates
 ci_templates:
-  - src:  galaxy/templates/meta-main.yml
+  meta-main.yml:
+    src: galaxy/templates/meta-main.yml
     dest: meta/main.yml
-  - src:  yamllint/templates/yamllint
+  yamllint:
+    src: yamllint/templates/yamllint
     dest: .yamllint
-  - src:  github/templates/ci.yml
+  ci.yml:
+    src: github/templates/ci.yml
     dest: .github/workflows/ci.yml
     when: github_runner_cloud
-  - src:  github/templates/ci-self-hosted.yml
+  ci-self-hosted.yml:
+    src: github/templates/ci-self-hosted.yml
     dest: .github/workflows/ci.yml
     when: github_runner_self_hosted
-  - src:  gitlab/templates/gitlab-ci.yml
+  release.yml:
+    src: github/templates/release.yml
+    dest: .github/workflows/release.yml
+    when: github_runner_cloud
+  releaserc.yml:
+    src: github/templates/releaserc.yml
+    dest: .releaserc.yml
+    when: github_runner_cloud
+  gitlab-ci.yml:
+    src: gitlab/templates/gitlab-ci.yml
     dest: .gitlab-ci.yml
     when: gitlab_active
-  - src:  molecule/templates/prepare.yml
+  prepare.yml:
+    src: molecule/templates/prepare.yml
     dest: molecule/default/prepare.yml
     when: molecule_active
-  - src:  molecule/templates/molecule.yml
+  molecule.yml:
+    src: molecule/templates/molecule.yml
     dest: molecule/default/molecule.yml
-    force: false
     when: molecule_active
-  - src:  molecule/templates/converge.yml
+  converge.yml:
+    src: molecule/templates/converge.yml
     dest: molecule/default/converge.yml
-    force: false
     when: molecule_active
-#  - src:  molecule/templates/requirements.tmpl
+#  requirements.tmpl:
+#    src: molecule/templates/requirements.tmpl
 #    dest: molecule/default/requirements.tmpl
 #    when: molecule_active
-  - src:  git/templates/gitignore
+  requirements.yml:
+    src: molecule/templates/requirements.yml
+    dest: molecule/default/requirements.yml
+    when: molecule_active
+  gitignore:
+    src: git/templates/gitignore
     dest: .gitignore
     force: false

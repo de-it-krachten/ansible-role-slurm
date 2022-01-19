@@ -1,43 +1,45 @@
 ---
 
-# Public - galaxy
-- robertdebock.epel
-- robertdebock.powertools
+roles:
 
-# Private
-- name: chrony
-  src: https://github.com/de-it-krachten/ansible-role-chrony.git
-  version: main
-  scm: git
-- name: facts
-  src: https://github.com/de-it-krachten/ansible-role-facts.git
-  version: main
-  scm: git
-- name: firewall
-  src: https://github.com/de-it-krachten/ansible-role-firewall.git
-  version: main
-  scm: git
-- name: firewalld
-  src: https://github.com/de-it-krachten/ansible-role-firewalld.git
-  version: main
-  scm: git
-- name: hosts
-  src: https://github.com/de-it-krachten/ansible-role-hosts.git
-  version: main
-  scm: git
-- name: iptables
-  src: https://github.com/de-it-krachten/ansible-role-iptables.git
-  version: main
-  scm: git
-- name: mariadb
-  src: https://github.com/de-it-krachten/ansible-role-mariadb.git
-  version: main
-  scm: git
-- name: munge
-  src: https://github.com/de-it-krachten/ansible-role-munge.git
-  version: main
-  scm: git
-- name: ufw
-  src: https://github.com/de-it-krachten/ansible-role-ufw.git
-  version: main
-  scm: git
+  # Public - galaxy
+  - robertdebock.epel
+  - robertdebock.powertools
+
+  # Private
+  - name: chrony
+    src: https://github.com/de-it-krachten/ansible-role-chrony.git
+    version: main
+    scm: git
+  - name: facts
+    src: https://github.com/de-it-krachten/ansible-role-facts.git
+    version: main
+    scm: git
+  - name: firewall
+    src: https://github.com/de-it-krachten/ansible-role-firewall.git
+    version: main
+    scm: git
+  - name: firewalld
+    src: https://github.com/de-it-krachten/ansible-role-firewalld.git
+    version: main
+    scm: git
+  - name: hosts
+    src: https://github.com/de-it-krachten/ansible-role-hosts.git
+    version: main
+    scm: git
+  - name: iptables
+    src: https://github.com/de-it-krachten/ansible-role-iptables.git
+    version: main
+    scm: git
+  - name: mariadb
+    src: https://github.com/de-it-krachten/ansible-role-mariadb.git
+    version: main
+    scm: git
+  - name: munge
+    src: https://github.com/de-it-krachten/ansible-role-munge.git
+    version: main
+    scm: git
+  - name: ufw
+    src: https://github.com/de-it-krachten/ansible-role-ufw.git
+    version: main
+    scm: git

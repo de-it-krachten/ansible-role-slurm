@@ -13,6 +13,8 @@ Platforms
 Supported platforms
 
 - CentOS 8
+- RockyLinux 8
+- AlmaLinux 8
 - Ubuntu 20.04 LTS
 
 
@@ -110,7 +112,7 @@ Example Playbook
 ----------------
 
 <pre><code>
-- name: Converge
+- name: sample playbook for role 'slurm'
   hosts: all
   gather_facts: yes
   become: yes
@@ -187,7 +189,7 @@ Example Playbook
   tasks:
     - name: slurm
       include_role:
-        name: ansible-role-slurm
+        name: slurm
 
 - hosts: slurm_masters
   become: yes
@@ -198,7 +200,7 @@ Example Playbook
   tasks:
     - name: slurm
       include_role:
-        name: ansible-role-slurm
+        name: slurm
 
 - hosts: slurm_nodes
   become: yes
@@ -209,5 +211,5 @@ Example Playbook
   tasks:
     - name: slurm
       include_role:
-        name: ansible-role-slurm
+        name: slurm
 </pre></code>

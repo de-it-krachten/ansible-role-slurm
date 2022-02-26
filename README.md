@@ -12,7 +12,6 @@ Platforms
 
 Supported platforms
 
-- CentOS 8
 - RockyLinux 8
 - AlmaLinux 8
 - Ubuntu 20.04 LTS

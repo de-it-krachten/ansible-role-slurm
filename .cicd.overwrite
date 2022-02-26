@@ -14,15 +14,12 @@ github:
   parallel: false
 molecule:
   platforms:
-    - centos8
     - rockylinux8
     - ubuntu2004
   prepare:
     vars:
       prepare_firewall: true
 platforms:
-  - name: CentOS 8
-    image: centos8
   - name: RockyLinux 8
     image: rockylinux8
   - name: AlmaLinux 8

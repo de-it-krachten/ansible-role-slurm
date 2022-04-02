@@ -13,10 +13,31 @@
     mode: "{{ item.mode | default('0755') }}"
   loop: "{{ slurm_dirs['slurmctld'] }}"
 
+- name: Get slurmctl version
+  command: slurmctld -V
+  changed_when: false
+  failed_when: false
+  register: _slurmctl_version
+
+# - name: JWT token authentication is available from 20.02
+#   set_fact:
+#     slurm_jwt: true
+#   when: _slurmctl_version.stdout.split(' ')[1] is version('20.02', '>=')
+
 
 # ------------------------------------------------------
 # slurmctld
 # ------------------------------------------------------
+
+- name: Distribute JWT token
+  copy:
+    src: "{{ slurm_jwt_token }}"
+    dest: /etc/slurm/jwt_hs256.key
+    owner: root
+    group: root
+    mode: "0600"
+  when: slurm_jwt
+  register: _slurm_jwt
 
 - name: Distribute {{ slurm_conf_dir }}/slurm.conf
   template:
@@ -46,11 +67,11 @@
   service:
     name: slurmctld
     state: restarted
-  when: _slurmctld.changed or _croup.changed
+  when: _slurm_jwt.changed or _slurmctld.changed or _croup.changed
 
-- name: Wait for 5 seconds
+- name: Wait for 15 seconds
   pause:
-    seconds: 5 
+    seconds: 15
 
 # ------------------------------------------------------
 # Cluster + users

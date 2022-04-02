@@ -1,5 +1,9 @@
 ---
 
+# ---------------------------------------------------------
+# General
+# ---------------------------------------------------------
+
 - name: Create directories
   file:
     path: "{{ item.path }}"
@@ -12,12 +16,28 @@
 - name: Get slurm version
   command: slurmd -V
   changed_when: false
+  failed_when: false
   register: _slurm_version
 
 - name: Configless configuration is availabe from 20.02
   set_fact:
     slurm_configless: true
   when: _slurm_version.stdout.split(' ')[1] is version('20.02', '>=')
+
+
+# ---------------------------------------------------------
+# slurmd
+# ---------------------------------------------------------
+
+- name: Distribute JWT token
+  copy:
+    src: "{{ slurm_jwt_token }}"
+    dest: /etc/slurm/jwt_hs256.key
+    owner: root
+    group: root
+    mode: "0600"
+  when: slurm_jwt
+  notify: Restart slurmd
 
 - block:
 

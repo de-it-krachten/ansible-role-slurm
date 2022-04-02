@@ -13,6 +13,17 @@
     mode: "{{ item.mode | default('0755') }}"
   loop: "{{ slurm_dirs['slurmdbd'] }}"
 
+- name: Get slurmdb version
+  command: slurmdbd -V
+  changed_when: false
+  failed_when: false
+  register: _slurmdb_version
+
+# - name: JWT token authentication is avaialble from 20.02
+#   set_fact:
+#     slurm_jwt: true
+#   when: _slurmdb_version.stdout.split(' ')[1] is version('20.02', '>=')
+
 
 # ------------------------------------------------------
 # slurmdbd
@@ -33,11 +44,21 @@
     enabled: yes
     state: started
 
+- name: Distribute JWT token
+  copy:
+    src: "{{ slurm_jwt_token }}"
+    dest: /etc/slurm/jwt_hs256.key
+    owner: root
+    group: root
+    mode: "0600"
+  when: slurm_jwt
+  register: _slurm_jwt
+
 - name: Restart slurmdbd  # noqa no-handler
   service:
     name: slurmdbd
     state: restarted
-  when: _slurmdbd.changed
+  when: _slurmdbd.changed or _slurm_jwt.changed
 
 
 # ------------------------------------------------------

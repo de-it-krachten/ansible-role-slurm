@@ -11,6 +11,10 @@ ArchiveUsage=no
 #ArchiveScript=/usr/sbin/slurm.dbd.archive
 AuthInfo={{ munge_socket }}
 AuthType=auth/munge
+{% if slurm_jwt %}
+AuthAltTypes=auth/jwt
+AuthAltParameters=jwt_key=/etc/slurm/jwt_hs256.key
+{% endif %}
 DbdHost={{ slurm_db_host }}
 DbdAddr={{ slurm_db_ip }}
 DbdPort={{ slurm_slurmdbd_port }}

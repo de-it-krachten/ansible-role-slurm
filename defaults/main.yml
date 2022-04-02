@@ -83,3 +83,9 @@ slurm_partitions:
 
 # Set node to active
 slurm_node_active: true
+
+# Activate JWT authentication
+slurm_jwt: false
+
+# token to be used
+slurm_jwt_token: jwt_hs256.key

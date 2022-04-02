@@ -48,9 +48,9 @@
     state: restarted
   when: _slurmctld.changed or _croup.changed
 
-- name: Wait for 5 seconds
+- name: Wait for 15 seconds
   pause:
-    seconds: 5 
+    seconds: 15
 
 # ------------------------------------------------------
 # Cluster + users

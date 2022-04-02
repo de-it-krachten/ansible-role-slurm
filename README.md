@@ -16,7 +16,8 @@ Supported platforms
 - AlmaLinux 8
 - Ubuntu 20.04 LTS
 
-
+Note:
+<sup>1</sup> : no automated testing is performed on these platforms
 
 Role Variables
 --------------

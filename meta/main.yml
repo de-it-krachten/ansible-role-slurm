@@ -11,14 +11,12 @@ galaxy_info:
   platforms:
     - name: EL
       versions:
-        - 7
         - 8
     - name: Debian
       versions:
-        - buster
         - bullseye
     - name: Ubuntu
       versions:
-        - 18.04
         - 20.04
+        - 22.04
 dependencies: []

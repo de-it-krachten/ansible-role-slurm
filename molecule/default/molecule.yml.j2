@@ -1,0 +1,80 @@
+---
+
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+platforms:
+{% for platform in MOLECULE_DISTROS %}
+  - name: slurm-{{ platform.name }}-db
+    image: "{{ platform.image }}"
+    rhsm: {{ platform.rhsm | default(False) }}
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: {{ platform.privileged | default(True) }}
+    pre_build_image: {{ platform.pre_build_image | default(True) }}
+    dockerfile: Dockerfile.{{ platform.name }}.j2
+    groups: ['slurm_db']
+  - name: slurm-{{ platform.name }}-master
+    image: "{{ platform.image }}"
+    rhsm: {{ platform.rhsm | default(False) }}
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: {{ platform.privileged | default(True) }}
+    pre_build_image: {{ platform.pre_build_image | default(True) }}
+    dockerfile: Dockerfile.{{ platform.name }}.j2
+    groups: ['slurm_masters']
+  - name: slurm-{{ platform.name }}-worker
+    image: "{{ platform.image }}"
+    rhsm: {{ platform.rhsm | default(False) }}
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: {{ platform.privileged | default(True) }}
+    pre_build_image: {{ platform.pre_build_image | default(True) }}
+    dockerfile: Dockerfile.{{ platform.name }}.j2
+    groups: ['slurm_nodes']
+{% endfor %}
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_PIPELINING: "True"
+  lint:
+    name: ansible-lint
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
+  inventory:
+    group_vars:
+      all:
+        slurm_node_active: true
+        slurm_uses_dns: false
+
+    host_vars:
+{% for platform in MOLECULE_DISTROS %}
+      slurm-{{ platform.name }}-db:
+        slurm_db_host: slurm-{{ platform.name }}-db
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_master_name: slurm-{{ platform.name }}-master
+      slurm-{{ platform.name }}-master:
+        slurm_db_host: slurm-{{ platform.name }}-db
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_master_name: slurm-{{ platform.name }}-master
+      slurm-{{ platform.name }}-worker:
+        slurm_db_host: slurm-{{ platform.name }}-db
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_master_name: slurm-{{ platform.name }}-master
+
+{% endfor %}
+scenario:
+  name: default
+verifier:
+  name: ansible

@@ -4,20 +4,74 @@
   hosts: all
   become: yes
   vars:
-    proxy_use: "{{ lookup('env', 'proxy_use') | default(False, True) | bool }}"
-    proxy_url: "{{ lookup('env', 'proxy_url') | default('http://127.0.0.1:3128', True) }}"
-    molecule_distro: "{{ lookup('env', 'MOLECULE_DISTRO') }}"
+
+    proxy_use: "{{ True if ( https_proxy is defined and https_proxy|length > 0 ) else False }}"
+    https_proxy: "{{ lookup('env', 'HTTPS_PROXY') | default('') }}"
+    http_proxy: "{{ lookup('env', 'HTTP_PROXY') | default('') }}"
+    no_proxy: "{{ lookup('env', 'NO_PROXY') | default('127.0.0.1,localhost') }}"
+
+    iptables_distros:
+      - debian10
+      - ubuntu1804
+      - rhel7
+      - centos7
+
+    ufw_distros:
+      - debian11
+      - ubuntu2004
+      - ubuntu2204
+
+    firewalld_distros:
+      - fedora35
+      - fedora36
+      - centos8
+      - centos9
+      - oraclelinux8
+      - oraclelinux9
+      - rocky8
+      - rocky9
+      - almalinux8
+      - almalinux9
+
+    systemctl_alternative: False
     prepare_firewall: True
   tasks:
+
+    - name: Create remote_tmp
+      file:
+        path: /root/.ansible/tmp
+        state: directory
+        mode: "0700"
+
+    - name: Define molecule distro (Ubuntu)
+      set_fact:
+        molecule_distro: "{{ (ansible_distribution|lower) + (ansible_distribution_version|regex_replace('\\.')) }}"
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Define molecule distro (Rest)
+      set_fact:
+        molecule_distro: "{{ (ansible_distribution|lower) + ansible_distribution_major_version }}"
+      when: ansible_distribution != 'Ubuntu'
+
+    - name: Show settings
+      debug:
+        msg:
+          molecule_distro: "{{ molecule_distro }}"
+          proxy_use: "{{ proxy_use }}"
+          https_proxy: "{{ https_proxy }}"
+          http_proxy: "{{ http_proxy }}"
+          no_proxy: "{{ no_proxy }}"
+          prepare_firewall: "{{ prepare_firewall | default(False) }}"
+          update_all: "{{ update_all | default(False) }}"
 
     - block:
 
         - name: Configure APT to use proxy
           copy:
             content: |
-              Acquire::http::proxy "{{ proxy_url }}/";
-              Acquire::https::proxy "{{ proxy_url }}/";
-              Acquire::gtp::proxy "{{ proxy_url }}/";
+              Acquire::http::proxy "{{ http_proxy }}/";
+              Acquire::https::proxy "{{ https_proxy }}/";
+              Acquire::gtp::proxy "{{ https_proxy }}/";
             dest: /etc/apt/apt.conf.d/80proxy
             owner: root
             group: root
@@ -27,19 +81,22 @@
         - name: Update APT cache
           apt:
             update_cache: yes
-            cache_valid_time: 1
+            cache_valid_time: 0
+
+        - name: Upgrade APT packages
+          apt:
+            force_apt_get: yes
+            upgrade: yes
+          when: update_all is defined and update_all|bool
 
         - name: Install default packages
           package:
             name:
+              - lsb-release
+              - netbase
               - gnupg
               - ssh
             state: present
-
-        - name: Update APT cache
-          apt:
-            update_cache: yes
-            cache_valid_time: 1
 
       when: ansible_os_family == 'Debian'
 
@@ -48,13 +105,21 @@
         - name: Configure YUM to use proxy
           lineinfile:
             path: /etc/yum.conf
-            line: "proxy={{ proxy_url }}"
+            line: "proxy={{ https_proxy }}"
             regexp: "^proxy=.*$"
           when: proxy_use is defined and proxy_use|bool
 
         - name: Update YUM cache  # noqa command-instead-of-module
           command: yum makecache
           changed_when: false
+          args:
+            warn: false
+
+        - name: Upgrade YUM packages  # noqa package-latest
+          yum:
+            name: '*'
+            state: latest
+          when: update_all is defined and update_all|bool
 
         - name: Install default packages
           package:
@@ -62,21 +127,50 @@
               - openssh-server
               - openssh-clients
               - iproute
+              - hostname
             state: present
 
         - name: Activate epel repository
           include_role:
-            name: robertdebock.epel
+            name: epel
           when: activate_epel is defined and activate_epel|bool
 
       when: ansible_os_family == 'RedHat' and (ansible_distribution_major_version|int) < 8
 
     - block:
 
+        # Switch to CentOS 8 vault mirrors
+        - name: Get all repo files
+          find:
+            paths: /etc/yum.repos.d
+            patterns: 'CentOS-Linux-*'
+          register: _repo
+          when: ansible_distribution == 'CentOS'
+
+        - name: Update repo files to point to CentOS vault mirror (1)
+          replace:
+            path: "{{ item.path }}"
+            regexp: "^mirrorlist"
+            replace: "#mirrorlist"
+          loop: "{{ _repo.files }}"
+          loop_control:
+            label: "{{ item.path }}"
+          when: ansible_distribution == 'CentOS'
+
+        - name: Update repo files to point to CentOS vault mirror (2)
+          replace:
+            path: "{{ item.path }}"
+            regexp: "^#baseurl=http://mirror.centos.org"
+            replace: "baseurl=http://vault.epel.cloud"
+          loop: "{{ _repo.files }}"
+          loop_control:
+            label: "{{ item.path }}"
+          when: ansible_distribution == 'CentOS'
+
         - name: Configure DNF to use proxy
           lineinfile:
             path: /etc/dnf/dnf.conf
-            line: "proxy={{ proxy_url }}"
+            line: "proxy={{ https_proxy }}"
             regexp: "^proxy=.*$"
           when: proxy_use is defined and proxy_use|bool
 
@@ -84,9 +178,16 @@
           dnf:
             update_cache: yes
 
+        - name: Upgrade DNF packages  # noqa package-latest
+          dnf:
+            name: '*'
+            state: latest
+          when: update_all is defined and update_all|bool
+
         - name: Install default packages
           package:
             name:
+              - hostname
               - openssh-server
               - openssh-clients
               - iproute
@@ -94,13 +195,8 @@
 
         - name: Activate epel repository
           include_role:
-            name: robertdebock.epel
-          when: activate_epel is defined and activate_epel|bool
-
-        - name: Activate powertools repository
-          include_role:
-            name: robertdebock.powertools
-          when: activate_powertools is defined and activate_powertools|bool
+            name: epel
+          when: activate_epel is defined and activate_epel|bool and ansible_distribution != 'Fedora'
 
       when: ansible_os_family == 'RedHat' and (ansible_distribution_major_version|int) >= 8
 
@@ -110,17 +206,17 @@
         - name: Install iptables
           include_role:
             name: iptables
-          when: molecule_distro in [ 'debian10', 'ubuntu1804', 'centos7' ]
+          when: molecule_distro in iptables_distros
 
         - name: Install ufw
           include_role:
             name: ufw
-          when: molecule_distro in [ 'debian11', 'ubuntu2004' ]
+          when: molecule_distro in ufw_distros
 
         - name: Install firewalld
           include_role:
             name: firewalld
-          when: molecule_distro in [ 'fedora34', 'fedora35', 'fedora36', 'centos8', 'oraclelinux8', 'rockylinux8', 'almalinux8' ]
+          when: molecule_distro in firewalld_distros
 
       when: prepare_firewall is defined and prepare_firewall|bool
 

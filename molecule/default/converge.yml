@@ -22,8 +22,7 @@
 
   roles:
     - { role: facts }
-    - { role: robertdebock.powertools, when: "ansible_os_family == 'RedHat'" }
-    - { role: robertdebock.epel, when: "ansible_os_family == 'RedHat'" }
+    - { role: epel, when: "ansible_os_family == 'RedHat'" }
     - { role: chrony, when: "github_actions is undefined" }
     - { role: hosts, when: "slurm_uses_dns is defined and not slurm_uses_dns|bool" }
 

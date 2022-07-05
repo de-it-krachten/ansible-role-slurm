@@ -1,8 +1,12 @@
 ---
 
+# slurm configuration directory
 slurm_conf_dir: /etc/slurm-llnl
+
+# slurm logging directory
 slurm_log_dir: /var/log/slurm-llnl
 
+# list of slurm packages
 slurm_packages:
   slurmctld:
     - slurmctld
@@ -13,4 +17,4 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
-    - slurm-drmaa1
+    - slurm-drmaa

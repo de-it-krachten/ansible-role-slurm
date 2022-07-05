@@ -9,7 +9,25 @@
     - ansible_distribution_version is version('18.04', '>=')
     - "'client' in slurm_roles"
 
-- name: Add repository (RedHat)
+- block:
+
+    - name: Import GPG key (Debian)
+      apt_key:
+        keyserver: hkp://pool.sks-keyservers.net
+        id: 18381AC8832160AF
+
+    - name: Add slurm-drmaa (Debian)
+      apt_repository:
+        repo: "deb https://depot.galaxyproject.org/apt/ {{ ansible_distribution_release }} main"
+        state: present
+        filename: galaxy-depot
+
+  when:
+    - ansible_distribution == "Debian"
+    - ansible_distribution_version is version('11', '>=')
+    - "'client' in slurm_roles"
+
+- name: Add repository (RedHat 7)
   yum_repository:
     name: galaxy
     description: Galaxy Packages for Enterprise Linux $releasever - $basearch
@@ -17,4 +35,13 @@
     gpgcheck: no
   when:
     - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == 7
+    - ansible_distribution_major_version|int == 7
+
+# - name: Add repository (RedHat >= 8)
+#   dnf:
+#     name: https://github.com/natefoo/slurm-drmaa/releases/download/1.1.3/slurm-drmaa-1.1.3-20.11.el8.x86_64.rpm
+#     state: present
+#     disable_gpg_check: yes
+#   when:
+#     - ansible_os_family == "RedHat"
+#     - ansible_distribution_major_version|int >=  8

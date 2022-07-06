@@ -13,17 +13,6 @@
     mode: "{{ item.mode | default('0755') }}"
   loop: "{{ slurm_dirs['slurmd'] }}"
 
-- name: Get slurm version
-  command: slurmd -V
-  changed_when: false
-  failed_when: false
-  register: _slurm_version
-
-- name: Configless configuration is availabe from 20.02
-  set_fact:
-    slurm_configless: true
-  when: _slurm_version.stdout.split(' ')[1] is version('20.02', '>=')
-
 
 # ---------------------------------------------------------
 # slurmd

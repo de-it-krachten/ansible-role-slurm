@@ -75,7 +75,9 @@ AuthAltParameters=jwt_key=/etc/slurm/jwt_hs256.key
 AuthInfo=socket={{ munge_socket }},ttl=300,cred_expire=1200
 CredType=cred/munge
 CoreSpecPlugin=core_spec/none
+{% if slurm_configless|bool %}
 SlurmctldParameters=enable_configless
+{% endif %}
 #
 #
 # TIMERS

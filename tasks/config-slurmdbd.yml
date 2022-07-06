@@ -22,7 +22,7 @@
 # - name: JWT token authentication is avaialble from 20.02
 #   set_fact:
 #     slurm_jwt: true
-#   when: _slurmdb_version.stdout.split(' ')[1] is version('20.02', '>=')
+#   when: slurmdb_version is version('20.02', '>=')
 
 
 # ------------------------------------------------------

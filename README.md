@@ -38,7 +38,7 @@ slurm_users:
 slurm_firewall: true
 
 # run slurm workers in configless mode
-slurm_configless: false
+slurm_configless: auto
 
 # slurm roles
 slurm_roles: []

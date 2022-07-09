@@ -7,20 +7,22 @@ Installs & configures Slurm (HPC cluster software)<br>
 See https://slurm.schedmd.com/documentation.html 
 
 
-Platforms
---------------
+## Platforms
 
 Supported platforms
 
+- Red Hat Enterprise Linux 8<sup>1</sup>
 - RockyLinux 8
+- OracleLinux 8
 - AlmaLinux 8
+- Debian 11 (Bullseye)
 - Ubuntu 20.04 LTS
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
 
-Role Variables
---------------
+## Role Variables
+### defaults/main.yml
 <pre><code>
 # slurm cluster name
 slurm_cluster_name: slurm_cl_1
@@ -36,7 +38,7 @@ slurm_users:
 slurm_firewall: true
 
 # run slurm workers in configless mode
-slurm_configless: false
+slurm_configless: auto
 
 # slurm roles
 slurm_roles: []
@@ -105,12 +107,84 @@ slurm_partitions:
 
 # Set node to active
 slurm_node_active: true
+
+# Activate JWT authentication
+slurm_jwt: false
+
+# token to be used
+slurm_jwt_token: jwt_hs256.key
+</pre></code>
+
+### vars/Debian.yml
+<pre><code>
+slurm_conf_dir: /etc/slurm
+slurm_log_dir: /var/log/slurm
+
+slurm_packages:
+  slurmctld:
+    - slurmctld
+  slurmdbd:
+    - slurmdbd
+  slurmd:
+    - slurmd
+    - slurm-client
+  client:
+    - slurm-client
+    - slurm-drmaa
+</pre></code>
+
+### vars/family-RedHat.yml
+<pre><code>
+slurm_conf_dir: /etc/slurm
+slurm_log_dir: /var/log/slurm
+
+slurm_packages:
+  slurmctld:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    - slurm-slurmctld
+    - slurm-torque
+    #- slurm-slurmdbd
+  slurmdbd:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    #- slurm-slurmctld
+    #- slurm-torque
+    - slurm-slurmdbd
+  slurmd:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    - slurm-slurmd
+  client:
+    - slurm
+    # - slurm-drmaa
+</pre></code>
+
+### vars/Ubuntu.yml
+<pre><code>
+slurm_conf_dir: /etc/slurm-llnl
+slurm_log_dir: /var/log/slurm-llnl
+
+slurm_packages:
+  slurmctld:
+    - slurmctld
+  slurmdbd:
+    - slurmdbd
+  slurmd:
+    - slurmd
+    - slurm-client
+  client:
+    - slurm-client
+    - slurm-drmaa
 </pre></code>
 
 
-Example Playbook
-----------------
 
+## Example Playbook
+### molecule/default/converge.yml
 <pre><code>
 - name: sample playbook for role 'slurm'
   hosts: all
@@ -135,8 +209,7 @@ Example Playbook
 
   roles:
     - { role: facts }
-    - { role: robertdebock.powertools, when: "ansible_os_family == 'RedHat'" }
-    - { role: robertdebock.epel, when: "ansible_os_family == 'RedHat'" }
+    - { role: epel, when: "ansible_os_family == 'RedHat'" }
     - { role: chrony, when: "github_actions is undefined" }
     - { role: hosts, when: "slurm_uses_dns is defined and not slurm_uses_dns|bool" }
 
@@ -174,6 +247,7 @@ Example Playbook
   become: yes
   vars:
     munge_key: tests/munge.key
+    munge_socket_mode: "0666"
     mariadb_version: 10.4
     mariadb_root_password: 'Abcd1234'
     innodb:
@@ -195,6 +269,7 @@ Example Playbook
   become: yes
   vars:
     munge_key: tests/munge.key
+    munge_socket_mode: "0666"
   roles:
     - munge
   tasks:
@@ -206,6 +281,7 @@ Example Playbook
   become: yes
   vars:
     munge_key: tests/munge.key
+    munge_socket_mode: "0666"
   roles:
     - munge
   tasks:

@@ -1,18 +1,8 @@
 ---
 
 roles:
-
-  # Public - galaxy
-  - robertdebock.epel
-  - robertdebock.powertools
-
-  # Private
-  - name: chrony
-    src: https://github.com/de-it-krachten/ansible-role-chrony.git
-    version: main
-    scm: git
-  - name: facts
-    src: https://github.com/de-it-krachten/ansible-role-facts.git
+  - name: epel
+    src: https://github.com/de-it-krachten/ansible-role-epel.git
     version: main
     scm: git
   - name: firewall
@@ -23,12 +13,28 @@ roles:
     src: https://github.com/de-it-krachten/ansible-role-firewalld.git
     version: main
     scm: git
-  - name: hosts
-    src: https://github.com/de-it-krachten/ansible-role-hosts.git
-    version: main
-    scm: git
   - name: iptables
     src: https://github.com/de-it-krachten/ansible-role-iptables.git
+    version: main
+    scm: git
+  - name: ufw
+    src: https://github.com/de-it-krachten/ansible-role-ufw.git
+    version: main
+    scm: git
+  - name: unbound
+    src: https://github.com/de-it-krachten/ansible-role-unbound.git
+    version: main
+    scm: git
+  - name: chrony
+    src: https://github.com/de-it-krachten/ansible-role-chrony.git
+    version: main
+    scm: git
+  - name: facts
+    src: https://github.com/de-it-krachten/ansible-role-facts.git
+    version: main
+    scm: git
+  - name: hosts
+    src: https://github.com/de-it-krachten/ansible-role-hosts.git
     version: main
     scm: git
   - name: mariadb
@@ -39,7 +45,7 @@ roles:
     src: https://github.com/de-it-krachten/ansible-role-munge.git
     version: main
     scm: git
-  - name: ufw
-    src: https://github.com/de-it-krachten/ansible-role-ufw.git
+  - name: unbound
+    src: https://github.com/de-it-krachten/ansible-role-unbound.git
     version: main
     scm: git

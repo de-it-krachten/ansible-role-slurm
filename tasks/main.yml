@@ -13,6 +13,45 @@
       paths:
         - 'vars'
 
+- block:
+
+    - name: Get slurm version (Debian)  # noqa no-changed-when
+      shell: |
+        set -o pipefail
+        apt show slurmd 2>/dev/null | awk '/Version:/ {print $2}' | cut -f1-2 -d.
+      args:
+        executable: /bin/bash
+      changed_when: false
+      register: _slurm_version
+
+    - name: Save slurm version
+      set_fact:
+        slurm_version: "{{ _slurm_version.stdout }}"
+
+  when: ansible_os_family == 'Debian'
+
+- block:
+
+    - name: Get slurm version (RedHat)  # noqa no-changed-when
+      shell: |
+        set -o pipefail
+        dnf info slurm | awk '/^Version/ {print $NF}' | cut -f1-2 -d.
+      args:
+        executable: /bin/bash
+      changed_when: false
+      register: _slurm_version
+
+    - name: Save slurm version
+      set_fact:
+        slurm_version: "{{ _slurm_version.stdout }}"
+
+  when: ansible_os_family == 'RedHat'
+
+- name: Configless configuration is available from 20.02
+  set_fact:
+    slurm_configless: >-
+      {{ true if (slurm_configless == 'auto' and slurm_version is version('20.02', '>=')) else (slurm_configless|bool) }}
+
 - name: Add slurm roles based on groups
   set_fact:
     slurm_roles: "{{ slurm_roles + [ item.role ] }}"
@@ -26,10 +65,6 @@
     slurm_roles: "{{ [ slurm_role ] }}"
   when: slurm_role is defined
 
-- name: Display all slurm roles
-  debug:
-    var: slurm_roles
-
 - name: Get slurm db ip
   set_fact:
     slurm_db_ip: "{{ lookup('dig', slurm_db_host) }}"
@@ -39,6 +74,18 @@
   set_fact:
     slurm_master_ip: "{{ lookup('dig', slurm_master_name) }}"
   when: slurm_master_ip is undefined
+
+- name: Show settings
+  debug:
+    msg:
+      slurm:
+        version: "{{ slurm_version }}"
+        configless: "{{ slurm_configless }}"
+        roles: "{{ slurm_roles }}"
+        master_ip: "{{ slurm_master_ip }}"
+        db_ip: "{{ slurm_db_ip }}"
+
+
 
 - name: Add specific repositories
   include_tasks: pre-install.yml

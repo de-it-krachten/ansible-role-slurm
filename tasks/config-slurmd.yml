@@ -13,17 +13,6 @@
     mode: "{{ item.mode | default('0755') }}"
   loop: "{{ slurm_dirs['slurmd'] }}"
 
-- name: Get slurm version
-  command: slurmd -V
-  changed_when: false
-  failed_when: false
-  register: _slurm_version
-
-- name: Configless configuration is availabe from 20.02
-  set_fact:
-    slurm_configless: true
-  when: _slurm_version.stdout.split(' ')[1] is version('20.02', '>=')
-
 
 # ---------------------------------------------------------
 # slurmd
@@ -48,6 +37,29 @@
         create: yes
         mode: "0644"
       notify: Restart slurmd
+
+    - name: Create systemd custom path
+      file:
+        path: /etc/systemd/system/slurmd.service.d
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Change systemd configuration to skip check for slurm.conf
+      copy:
+        content: |
+          [Unit]
+          ConditionPathExists=
+        dest: /etc/systemd/system/slurmd.service.d/override.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart slurmd
+
+    - name: Reload systemd configuration
+      systemd:
+        daemon_reload: true
 
     - name: Delete obsolete configuration files
       file:

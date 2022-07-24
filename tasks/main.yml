@@ -13,7 +13,8 @@
       paths:
         - 'vars'
 
-- block:
+- name: Get slurm version (Debian)
+  block:
 
     - name: Get slurm version (Debian)  # noqa no-changed-when
       shell: |
@@ -30,7 +31,8 @@
 
   when: ansible_os_family == 'Debian'
 
-- block:
+- name: Get slurm version (RedHat)
+  block:
 
     - name: Get slurm version (RedHat)  # noqa no-changed-when
       shell: |

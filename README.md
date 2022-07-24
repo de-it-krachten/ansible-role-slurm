@@ -13,6 +13,7 @@ Supported platforms
 
 - Red Hat Enterprise Linux 8<sup>1</sup>
 - RockyLinux 8
+- RockyLinux 9
 - OracleLinux 8
 - AlmaLinux 8
 - Debian 11 (Bullseye)
@@ -117,9 +118,13 @@ slurm_jwt_token: jwt_hs256.key
 
 ### vars/Debian.yml
 <pre><code>
+# slurm configuration directory
 slurm_conf_dir: /etc/slurm
+
+# slurm logging directory
 slurm_log_dir: /var/log/slurm
 
+# list of slurm packages
 slurm_packages:
   slurmctld:
     - slurmctld
@@ -135,9 +140,13 @@ slurm_packages:
 
 ### vars/family-RedHat.yml
 <pre><code>
+# slurm configuration directory
 slurm_conf_dir: /etc/slurm
+
+# slurm logging directory
 slurm_log_dir: /var/log/slurm
 
+# list of slurm packages
 slurm_packages:
   slurmctld:
     - slurm
@@ -165,9 +174,13 @@ slurm_packages:
 
 ### vars/Ubuntu.yml
 <pre><code>
+# slurm configuration directory
 slurm_conf_dir: /etc/slurm-llnl
+
+# slurm logging directory
 slurm_log_dir: /var/log/slurm-llnl
 
+# list of slurm packages
 slurm_packages:
   slurmctld:
     - slurmctld
@@ -192,6 +205,7 @@ slurm_packages:
   become: yes
   vars:
     #ansible_python_interpreter: /usr/libexec/platform-python
+    slurmd_package: "{{ 'slurm-slurmd' if ansible_os_family == 'RedHat' else 'slurmd' }}"
     custom_facts_additional:
       - name: slurm
         group: slurm_nodes
@@ -207,6 +221,12 @@ slurm_packages:
         slurm_master_ip: "{{ hostvars[slurm_master_name]['ansible_default_ipv4']['address'] }}"
       when: slurm_uses_dns is defined and not slurm_uses_dns|bool
 
+    - name: Install slurmd on nodes
+      package:
+        name: "{{ slurmd_package }}"
+        state: present
+      when: "'slurm_nodes' in group_names"
+     
   roles:
     - { role: facts }
     - { role: epel, when: "ansible_os_family == 'RedHat'" }
@@ -218,28 +238,7 @@ slurm_packages:
   gather_facts: yes
   become: yes
   tasks:
-    - name: Create custom facts
-      file:
-        path: /etc/ansible/facts.d
-        state: directory
-        mode: "0755"
-    - name: Install slurm node package (RedHat/CentOS)
-      package:
-        name: slurm-slurmd
-        state: present
-      when: ansible_os_family == 'RedHat'
-    - name: Install slurm node package (Ubuntu/Debian)
-      apt:
-        name: slurmd
-        state: present
-      when: ansible_os_family == 'Debian'
-    - name: Create custom fact
-      copy:
-        src: slurm.fact.j2
-        dest: /etc/ansible/facts.d/slurm.fact
-        mode: '0755'
-    - name: Obtain node information
-      setup:
+
     - name: Display nodeinfo
       debug: var=ansible_local.slurm.nodeinfo
 

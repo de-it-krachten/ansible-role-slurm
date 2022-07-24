@@ -7,15 +7,16 @@ galaxy_info:
   author: Mark van Huijstee
   company: De IT Krachten BV
   license: MIT
-  min_ansible_version: 2.9
+  min_ansible_version: '2.9'
   platforms:
     - name: EL
       versions:
-        - 8
+        - '8'
+        - '9'
     - name: Debian
       versions:
         - bullseye
     - name: Ubuntu
       versions:
-        - 20.04
+        - '20.04'
 dependencies: []

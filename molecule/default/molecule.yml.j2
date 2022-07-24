@@ -43,6 +43,12 @@ platforms:
 {% endfor %}
 provisioner:
   name: ansible
+{% if MOLECULE_ANSIBLE_ARGS is defined %}
+  ansible_args:
+{% for molecule_ansible_arg in MOLECULE_ANSIBLE_ARGS %}
+    - {{ molecule_ansible_arg }}
+{% endfor %}
+{% endif %}
   env:
     ANSIBLE_PIPELINING: "True"
   lint:

@@ -12,11 +12,10 @@ galaxy_info:
     - name: EL
       versions:
         - '8'
-        - '9'
     - name: Debian
       versions:
         - bullseye
     - name: Ubuntu
       versions:
-        - '20.04'
+        - focal
 dependencies: []

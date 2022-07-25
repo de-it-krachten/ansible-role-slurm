@@ -86,10 +86,6 @@ jobs:
             playbook: converge.yml
             # continue_on_error: false
             # failfast: true
-          - distro: rockylinux9
-            playbook: converge.yml
-            # continue_on_error: false
-            # failfast: true
           - distro: oraclelinux8
             playbook: converge.yml
             # continue_on_error: false

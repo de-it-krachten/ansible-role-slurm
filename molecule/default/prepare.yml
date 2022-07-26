@@ -48,9 +48,11 @@
       set_fact:
         molecule_distro: >-
           {%- if ansible_distribution == 'Ubuntu' -%}
-          {{ (ansible_distribution|lower) + (ansible_distribution_version|regex_replace('\\.')) }}
+          {{ (ansible_distribution | lower) + (ansible_distribution_version | regex_replace('\\.')) }}
+          {%- elif ansible_distribution == 'CentOS' and ansible_distribution_release == 'Stream' -%}
+          {{ (ansible_distribution | lower) + ansible_distribution_major_version + 's' }}
           {%- else -%}
-          {{ (ansible_distribution|lower) + ansible_distribution_major_version }}
+          {{ (ansible_distribution | lower) + ansible_distribution_major_version }}
           {%- endif -%}
 
     - name: Show settings
@@ -64,7 +66,8 @@
           prepare_firewall: "{{ prepare_firewall | default(False) }}"
           update_all: "{{ update_all | default(False) }}"
 
-    - block:
+    - name: family Debian
+      block:
 
         - name: Configure APT to use proxy
           copy:
@@ -100,7 +103,8 @@
 
       when: ansible_os_family == 'Debian'
 
-    - block:
+    - name: family RedHat < 8
+      block:
 
         - name: Configure YUM to use proxy
           lineinfile:
@@ -137,7 +141,8 @@
 
       when: ansible_os_family == 'RedHat' and (ansible_distribution_major_version|int) < 8
 
-    - block:
+    - name: family RedHat 8+
+      block:
 
         # Switch to CentOS 8 vault mirrors
         - name: Get all repo files
@@ -145,7 +150,7 @@
             paths: /etc/yum.repos.d
             patterns: 'CentOS-Linux-*'
           register: _repo
-          when: ansible_distribution == 'CentOS'
+          when: molecule_distro == 'centos8'
 
         - name: Update repo files to point to CentOS vault mirror (1)
           replace:
@@ -155,7 +160,7 @@
           loop: "{{ _repo.files }}"
           loop_control:
             label: "{{ item.path }}"
-          when: ansible_distribution == 'CentOS'
+          when: molecule_distro == 'centos8'
 
         - name: Update repo files to point to CentOS vault mirror (2)
           replace:
@@ -165,7 +170,7 @@
           loop: "{{ _repo.files }}"
           loop_control:
             label: "{{ item.path }}"
-          when: ansible_distribution == 'CentOS'
+          when: molecule_distro == 'centos8'
 
         - name: Configure DNF to use proxy
           lineinfile:
@@ -201,7 +206,8 @@
       when: ansible_os_family == 'RedHat' and (ansible_distribution_major_version|int) >= 8
 
 
-    - block:
+    - name: Firewall
+      block:
 
         - name: Install iptables
           include_role:
@@ -225,7 +231,8 @@
     - name: re-run setup
       setup:
 
-    - block:
+    - name: localhosts
+      block:
 
         - name: Register all nodes in /etc/hosts
           include_role:

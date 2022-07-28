@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.2.0...v1.3.0) (2022-07-28)
+
+
+### Features
+
+* Implement ansible-lint v6 support ([be1988e](https://github.com/de-it-krachten/ansible-role-slurm/commit/be1988ec1bfabfb3fca120c4161b42c312aae3de))
+
 # [1.2.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.1.0...v1.2.0) (2022-07-09)
 
 

@@ -9,7 +9,8 @@
     - ansible_distribution_version is version('18.04', '>=')
     - "'client' in slurm_roles"
 
-- block:
+- name: Activate slurm repo (Debian)
+  block:
 
     - name: Import GPG key (Debian)
       apt_key:

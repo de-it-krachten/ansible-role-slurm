@@ -28,7 +28,8 @@
   when: slurm_jwt
   notify: Restart slurmd
 
-- block:
+- name: Configless configuration
+  block:
 
     - name: Configure slurm to retrieve config from master
       lineinfile:
@@ -73,7 +74,8 @@
   when: slurm_configless|bool
 
 
-- block:
+- name: Non-configless configuration
+  block:
 
     - name: Distribute {{ slurm_conf_dir }}/slurm.conf
       template:

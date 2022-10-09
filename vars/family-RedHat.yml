@@ -14,13 +14,13 @@ slurm_packages:
     - slurm-perlapi
     - slurm-slurmctld
     - slurm-torque
-    #- slurm-slurmdbd
+    # - slurm-slurmdbd
   slurmdbd:
     - slurm
     - slurm-devel
     - slurm-perlapi
-    #- slurm-slurmctld
-    #- slurm-torque
+    # - slurm-slurmctld
+    # - slurm-torque
     - slurm-slurmdbd
   slurmd:
     - slurm

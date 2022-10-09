@@ -5,7 +5,7 @@
 # ---------------------------------------------------------
 
 - name: Create directories
-  file:
+  ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
     owner: "{{ slurm_user }}"
@@ -19,7 +19,7 @@
 # ---------------------------------------------------------
 
 - name: Distribute JWT token
-  copy:
+  ansible.builtin.copy:
     src: "{{ slurm_jwt_token }}"
     dest: /etc/slurm/jwt_hs256.key
     owner: root
@@ -29,10 +29,11 @@
   notify: Restart slurmd
 
 - name: Configless configuration
+  when: slurm_configless | bool
   block:
 
     - name: Configure slurm to retrieve config from master
-      lineinfile:
+      ansible.builtin.lineinfile:
         line: SLURMD_OPTIONS='--conf-server {{ slurm_master_name }}:{{ slurm_slurmctld_port }}'
         path: /etc/{{ 'sysconfig' if ansible_os_family == 'RedHat' else 'default' }}/slurmd
         create: yes
@@ -40,7 +41,7 @@
       notify: Restart slurmd
 
     - name: Create systemd custom path
-      file:
+      ansible.builtin.file:
         path: /etc/systemd/system/slurmd.service.d
         state: directory
         owner: root
@@ -48,7 +49,7 @@
         mode: "0755"
 
     - name: Change systemd configuration to skip check for slurm.conf
-      copy:
+      ansible.builtin.copy:
         content: |
           [Unit]
           ConditionPathExists=
@@ -59,11 +60,11 @@
       notify: Restart slurmd
 
     - name: Reload systemd configuration
-      systemd:
+      ansible.builtin.systemd:
         daemon_reload: true
 
     - name: Delete obsolete configuration files
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: absent
       loop:
@@ -71,14 +72,13 @@
         - "{{ slurm_conf_dir }}/cgroup.conf"
       notify: Restart slurmd
 
-  when: slurm_configless|bool
-
 
 - name: Non-configless configuration
+  when: not slurm_configless | bool
   block:
 
-    - name: Distribute {{ slurm_conf_dir }}/slurm.conf
-      template:
+    - name: Distribute {{ slurm_conf_dir }}/slurm.conf  # noqa name[template]
+      ansible.builtin.template:
         src: slurm.conf.j2
         dest: "{{ slurm_conf_dir }}/slurm.conf"
         owner: "{{ slurm_user }}"
@@ -86,8 +86,8 @@
         mode: '0644'
       notify: Restart slurmd
 
-    - name: Distribute {{ slurm_conf_dir }}/cgroup.conf
-      template:
+    - name: Distribute {{ slurm_conf_dir }}/cgroup.conf  # noqa name[template]
+      ansible.builtin.template:
         src: cgroup.conf.j2
         dest: "{{ slurm_conf_dir }}/cgroup.conf"
         owner: "{{ slurm_user }}"
@@ -95,10 +95,8 @@
         mode: '0600'
       notify: Restart slurmd
 
-  when: not slurm_configless|bool
-
 - name: Enable slurmd
-  service:
+  ansible.builtin.service:
     name: 'slurmd'
     enabled: yes
     state: started
@@ -109,9 +107,9 @@
 # ------------------------------------------------------
 
 - name: Open firewall ports
-  include_role:
+  ansible.builtin.include_role:
     name: firewall
   vars:
     firewall_ports: "{{ slurm_firewall_ports['slurmd'] }}"
   when:
-    - slurm_firewall|bool
+    - slurm_firewall | bool

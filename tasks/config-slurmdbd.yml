@@ -5,7 +5,7 @@
 # ------------------------------------------------------
 
 - name: Create directories
-  file:
+  ansible.builtin.file:
     path: "{{ item.path }}"
     state: directory
     owner: "{{ slurm_user }}"
@@ -14,7 +14,7 @@
   loop: "{{ slurm_dirs['slurmdbd'] }}"
 
 - name: Get slurmdb version
-  command: slurmdbd -V
+  ansible.builtin.command: slurmdbd -V
   changed_when: false
   failed_when: false
   register: _slurmdb_version
@@ -29,8 +29,8 @@
 # slurmdbd
 # ------------------------------------------------------
 
-- name: Distribute {{ slurm_conf_dir }}/slurmdbd.conf
-  template:
+- name: Distribute {{ slurm_conf_dir }}/slurmdbd.conf  # noqa name[template]
+  ansible.builtin.template:
     src: slurmdbd.conf.j2
     dest: "{{ slurm_conf_dir }}/slurmdbd.conf"
     owner: "{{ slurm_user }}"
@@ -38,14 +38,14 @@
     mode: '0600'
   register: _slurmdbd
 
-- name: enable the slurmdbd on this control node
-  service:
+- name: Enable the slurmdbd on this control node
+  ansible.builtin.service:
     name: slurmdbd
     enabled: yes
     state: started
 
 - name: Distribute JWT token
-  copy:
+  ansible.builtin.copy:
     src: "{{ slurm_jwt_token }}"
     dest: /etc/slurm/jwt_hs256.key
     owner: root
@@ -55,7 +55,7 @@
   register: _slurm_jwt
 
 - name: Restart slurmdbd  # noqa no-handler
-  service:
+  ansible.builtin.service:
     name: slurmdbd
     state: restarted
   when: _slurmdbd.changed or _slurm_jwt.changed
@@ -66,9 +66,9 @@
 # ------------------------------------------------------
 
 - name: Open firewall ports
-  include_role:
+  ansible.builtin.include_role:
     name: firewall
   vars:
     firewall_ports: "{{ slurm_firewall_ports['slurmdbd'] }}"
   when:
-    - slurm_firewall|bool
+    - slurm_firewall | bool

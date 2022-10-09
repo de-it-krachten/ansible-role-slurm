@@ -1,7 +1,7 @@
 ---
 
 - name: Load variables based on OS type
-  include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
       files:
@@ -14,10 +14,11 @@
         - 'vars'
 
 - name: Get slurm version (Debian)
+  when: ansible_os_family == 'Debian'
   block:
 
     - name: Get slurm version (Debian)  # noqa no-changed-when
-      shell: |
+      ansible.builtin.shell: |
         set -o pipefail
         apt show slurmd 2>/dev/null | awk '/Version:/ {print $2}' | cut -f1-2 -d.
       args:
@@ -26,16 +27,15 @@
       register: _slurm_version
 
     - name: Save slurm version
-      set_fact:
+      ansible.builtin.set_fact:
         slurm_version: "{{ _slurm_version.stdout }}"
 
-  when: ansible_os_family == 'Debian'
-
 - name: Get slurm version (RedHat)
+  when: ansible_os_family == 'RedHat'
   block:
 
     - name: Get slurm version (RedHat)  # noqa no-changed-when
-      shell: |
+      ansible.builtin.shell: |
         set -o pipefail
         dnf info slurm | awk '/^Version/ {print $NF}' | cut -f1-2 -d.
       args:
@@ -44,41 +44,39 @@
       register: _slurm_version
 
     - name: Save slurm version
-      set_fact:
+      ansible.builtin.set_fact:
         slurm_version: "{{ _slurm_version.stdout }}"
 
-  when: ansible_os_family == 'RedHat'
-
 - name: Configless configuration is available from 20.02
-  set_fact:
+  ansible.builtin.set_fact:
     slurm_configless: >-
-      {{ true if (slurm_configless == 'auto' and slurm_version is version('20.02', '>=')) else (slurm_configless|bool) }}
+      {{ true if (slurm_configless == 'auto' and slurm_version is version('20.02', '>=')) else (slurm_configless | bool) }}
 
 - name: Add slurm roles based on groups
-  set_fact:
-    slurm_roles: "{{ slurm_roles + [ item.role ] }}"
+  ansible.builtin.set_fact:
+    slurm_roles: "{{ slurm_roles + [item.role] }}"
   loop: "{{ slurm_group2role_mapping }}"
   when:
     - slurm_role is undefined
     - item.group in group_names
 
 - name: Convert slurm_roles from string to list
-  set_fact:
-    slurm_roles: "{{ [ slurm_role ] }}"
+  ansible.builtin.set_fact:
+    slurm_roles: "{{ [slurm_role] }}"
   when: slurm_role is defined
 
 - name: Get slurm db ip
-  set_fact:
+  ansible.builtin.set_fact:
     slurm_db_ip: "{{ lookup('dig', slurm_db_host) }}"
   when: slurm_db_ip is undefined
 
 - name: Get slurm master ip
-  set_fact:
+  ansible.builtin.set_fact:
     slurm_master_ip: "{{ lookup('dig', slurm_master_name) }}"
   when: slurm_master_ip is undefined
 
 - name: Show settings
-  debug:
+  ansible.builtin.debug:
     msg:
       slurm:
         version: "{{ slurm_version }}"
@@ -90,39 +88,50 @@
 
 
 - name: Add specific repositories
-  include_tasks: pre-install.yml
+  ansible.builtin.include_tasks: pre-install.yml
 
 - name: Install slurmdbd
-  block:
-    - include_tasks: users.yml
-    - include_tasks: install.yml
-    - include_tasks: config.yml
+  when: "'slurmdbd' in slurm_roles"
   vars:
     slurm_role: slurmdbd
-  when: "'slurmdbd' in slurm_roles"
+  block:
+    - name: Include users.yml
+      ansible.builtin.include_tasks: users.yml
+    - name: Include install.yml
+      ansible.builtin.include_tasks: install.yml
+    - name: Include config.yml
+      ansible.builtin.include_tasks: config.yml
 
 - name: Install slurmctld
-  block:
-    - include_tasks: users.yml
-    - include_tasks: install.yml
-    - include_tasks: config.yml
+  when: "'slurmctld' in slurm_roles"
   vars:
     slurm_role: slurmctld
-  when: "'slurmctld' in slurm_roles"
+  block:
+    - name: Include users.yml
+      ansible.builtin.include_tasks: users.yml
+    - name: Include install.yml
+      ansible.builtin.include_tasks: install.yml
+    - name: Include config.yml
+      ansible.builtin.include_tasks: config.yml
 
 - name: Install slurmctld
-  block:
-    - include_tasks: users.yml
-    - include_tasks: install.yml
-    - include_tasks: config.yml
+  when: "'slurmd' in slurm_roles"
   vars:
     slurm_role: slurmd
-  when: "'slurmd' in slurm_roles"
+  block:
+    - name: Include users.yml
+      ansible.builtin.include_tasks: users.yml
+    - name: Include install.yml
+      ansible.builtin.include_tasks: install.yml
+    - name: Include config.yml
+      ansible.builtin.include_tasks: config.yml
 
 - name: Install slurm (client)
-  block:
-    - include_tasks: users.yml
-    - include_tasks: install.yml
+  when: "'client' in slurm_roles"
   vars:
     slurm_role: client
-  when: "'client' in slurm_roles"
+  block:
+    - name: Include users.yml
+      ansible.builtin.include_tasks: users.yml
+    - name: Include install.yml
+      ansible.builtin.include_tasks: install.yml

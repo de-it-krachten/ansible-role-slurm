@@ -24,7 +24,7 @@ Supported platforms
 - RockyLinux 8
 - OracleLinux 8
 - AlmaLinux 8
-- Debian 11 (Bullseye)
+- Debian 11 (Bullseye)<sup>1</sup>
 - Ubuntu 20.04 LTS
 
 Note:

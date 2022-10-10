@@ -47,7 +47,8 @@ platforms:
     ci: false
     supported: false
   debian11:
-    ci: true
+    # ci: true
+    ci: false
     supported: true
   ubuntu1804:
     ci: false

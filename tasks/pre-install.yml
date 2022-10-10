@@ -1,7 +1,7 @@
 ---
 
 - name: Add slurm-drmaa PPA (Ubuntu)
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: ppa:natefoo/slurm-drmaa
     state: present
   when:
@@ -10,33 +10,32 @@
     - "'client' in slurm_roles"
 
 - name: Activate slurm repo (Debian)
-  block:
-
-    - name: Import GPG key (Debian)
-      apt_key:
-        keyserver: hkp://pool.sks-keyservers.net
-        id: 18381AC8832160AF
-
-    - name: Add slurm-drmaa (Debian)
-      apt_repository:
-        repo: "deb https://depot.galaxyproject.org/apt/ {{ ansible_distribution_release }} main"
-        state: present
-        filename: galaxy-depot
-
   when:
     - ansible_distribution == "Debian"
     - ansible_distribution_version is version('11', '>=')
     - "'client' in slurm_roles"
+  block:
+
+    - name: Import GPG key (Debian)
+      ansible.builtin.apt_key:
+        keyserver: hkp://pool.sks-keyservers.net
+        id: 18381AC8832160AF
+
+    - name: Add slurm-drmaa (Debian)
+      ansible.builtin.apt_repository:
+        repo: "deb https://depot.galaxyproject.org/apt/ {{ ansible_distribution_release }} main"
+        state: present
+        filename: galaxy-depot
 
 - name: Add repository (RedHat 7)
-  yum_repository:
+  ansible.builtin.yum_repository:
     name: galaxy
     description: Galaxy Packages for Enterprise Linux $releasever - $basearch
     baseurl: https://depot.galaxyproject.org/yum/el/$releasever/$basearch/
     gpgcheck: no
   when:
     - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version|int == 7
+    - ansible_distribution_major_version | int == 7
 
 # - name: Add repository (RedHat >= 8)
 #   dnf:
@@ -45,4 +44,4 @@
 #     disable_gpg_check: yes
 #   when:
 #     - ansible_os_family == "RedHat"
-#     - ansible_distribution_major_version|int >=  8
+#     - ansible_distribution_major_version | int >=  8

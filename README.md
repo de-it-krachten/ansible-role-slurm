@@ -7,6 +7,15 @@ Installs & configures Slurm (HPC cluster software)<br>
 See https://slurm.schedmd.com/documentation.html 
 
 
+
+## Dependencies
+
+#### Roles
+None
+
+#### Collections
+- community.general
+
 ## Platforms
 
 Supported platforms
@@ -15,7 +24,7 @@ Supported platforms
 - RockyLinux 8
 - OracleLinux 8
 - AlmaLinux 8
-- Debian 11 (Bullseye)
+- Debian 11 (Bullseye)<sup>1</sup>
 - Ubuntu 20.04 LTS
 
 Note:
@@ -81,8 +90,8 @@ slurm_dirs:
 
 # Slurm ports
 slurm_slurmctld_port: "6817"
-slurm_slurmd_port:    "6818"
-slurm_slurmdbd_port:  "6819"
+slurm_slurmd_port: "6818"
+slurm_slurmdbd_port: "6819"
 
 # Slurm firewall ports
 slurm_firewall_ports:
@@ -114,6 +123,7 @@ slurm_jwt: false
 # token to be used
 slurm_jwt_token: jwt_hs256.key
 </pre></code>
+
 
 ### vars/Debian.yml
 <pre><code>
@@ -153,13 +163,13 @@ slurm_packages:
     - slurm-perlapi
     - slurm-slurmctld
     - slurm-torque
-    #- slurm-slurmdbd
+    # - slurm-slurmdbd
   slurmdbd:
     - slurm
     - slurm-devel
     - slurm-perlapi
-    #- slurm-slurmctld
-    #- slurm-torque
+    # - slurm-slurmctld
+    # - slurm-torque
     - slurm-slurmdbd
   slurmd:
     - slurm
@@ -203,7 +213,7 @@ slurm_packages:
   gather_facts: yes
   become: yes
   vars:
-    #ansible_python_interpreter: /usr/libexec/platform-python
+    # ansible_python_interpreter: /usr/libexec/platform-python
     slurmd_package: "{{ 'slurm-slurmd' if ansible_os_family == 'RedHat' else 'slurmd' }}"
     custom_facts_additional:
       - name: slurm
@@ -225,7 +235,7 @@ slurm_packages:
         name: "{{ slurmd_package }}"
         state: present
       when: "'slurm_nodes' in group_names"
-     
+
   roles:
     - { role: facts }
     - { role: epel, when: "ansible_os_family == 'RedHat'" }

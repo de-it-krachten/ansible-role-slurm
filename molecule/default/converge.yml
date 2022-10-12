@@ -5,7 +5,7 @@
   gather_facts: yes
   become: yes
   vars:
-    #ansible_python_interpreter: /usr/libexec/platform-python
+    # ansible_python_interpreter: /usr/libexec/platform-python
     slurmd_package: "{{ 'slurm-slurmd' if ansible_os_family == 'RedHat' else 'slurmd' }}"
     custom_facts_additional:
       - name: slurm
@@ -27,7 +27,7 @@
         name: "{{ slurmd_package }}"
         state: present
       when: "'slurm_nodes' in group_names"
-     
+
   roles:
     - { role: facts }
     - { role: epel, when: "ansible_os_family == 'RedHat'" }

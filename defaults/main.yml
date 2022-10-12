@@ -57,8 +57,8 @@ slurm_dirs:
 
 # Slurm ports
 slurm_slurmctld_port: "6817"
-slurm_slurmd_port:    "6818"
-slurm_slurmdbd_port:  "6819"
+slurm_slurmd_port: "6818"
+slurm_slurmdbd_port: "6819"
 
 # Slurm firewall ports
 slurm_firewall_ports:

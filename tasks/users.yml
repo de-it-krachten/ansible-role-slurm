@@ -1,12 +1,12 @@
 ---
 
 - name: Create slurm group
-  group:
+  ansible.builtin.group:
     name: "{{ slurm_group }}"
     gid: "{{ slurm_gid }}"
 
 - name: Create slurm user
-  user:
+  ansible.builtin.user:
     name: "{{ slurm_user }}"
     group: "{{ slurm_group }}"
     uid: "{{ slurm_uid }}"

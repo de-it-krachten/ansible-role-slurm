@@ -1,3 +1,16 @@
+# [1.4.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.3.0...v1.4.0) (2022-10-12)
+
+
+### Bug Fixes
+
+* Disable CI on Debian11 as it fails ([51590b6](https://github.com/de-it-krachten/ansible-role-slurm/commit/51590b6e2c533ad1948c754563d35fee326f3f31))
+
+
+### Features
+
+* Move to FQCN ([764669c](https://github.com/de-it-krachten/ansible-role-slurm/commit/764669cf8ce97b29874dbc34091f683b95d38425))
+* Update CI to latest standards ([b00ef6f](https://github.com/de-it-krachten/ansible-role-slurm/commit/b00ef6f6142b32f2b1865486e2516820a908a096))
+
 # [1.3.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.2.0...v1.3.0) (2022-07-28)
 
 

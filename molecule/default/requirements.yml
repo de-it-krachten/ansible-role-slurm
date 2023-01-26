@@ -17,6 +17,10 @@ roles:
     src: https://github.com/de-it-krachten/ansible-role-firewalld.git
     version: main
     scm: git
+  - name: deitkrachten.hosts
+    src: https://github.com/de-it-krachten/ansible-role-hosts.git
+    version: main
+    scm: git
   - name: deitkrachten.iptables
     src: https://github.com/de-it-krachten/ansible-role-iptables.git
     version: main
@@ -41,27 +45,15 @@ roles:
     src: https://github.com/de-it-krachten/ansible-role-unbound.git
     version: main
     scm: git
-  - name: chrony
+  - name: deitkrachten.chrony
     src: https://github.com/de-it-krachten/ansible-role-chrony.git
     version: main
     scm: git
-  - name: facts
-    src: https://github.com/de-it-krachten/ansible-role-facts.git
-    version: main
-    scm: git
-  - name: hosts
-    src: https://github.com/de-it-krachten/ansible-role-hosts.git
-    version: main
-    scm: git
-  - name: mariadb
+  - name: deitkrachten.mariadb
     src: https://github.com/de-it-krachten/ansible-role-mariadb.git
     version: main
     scm: git
-  - name: munge
+  - name: deitkrachten.munge
     src: https://github.com/de-it-krachten/ansible-role-munge.git
-    version: main
-    scm: git
-  - name: unbound
-    src: https://github.com/de-it-krachten/ansible-role-unbound.git
     version: main
     scm: git

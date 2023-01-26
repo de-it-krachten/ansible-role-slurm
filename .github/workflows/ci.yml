@@ -150,19 +150,6 @@ jobs:
             ansible: "ansible-core>2.13,<2.14"
             ansible_lint: "ansible-lint>6,<7"
 
-          - name: oraclelinux9_2.9
-            runs_on: ubuntu-latest
-            distro: oraclelinux9
-            playbook: converge.yml
-            ansible: "ansible==2.9.27"
-            ansible_lint: "ansible-lint==5.4.0"
-          - name: oraclelinux9_2.13
-            runs_on: ubuntu-latest
-            distro: oraclelinux9
-            playbook: converge.yml
-            ansible: "ansible-core>2.13,<2.14"
-            ansible_lint: "ansible-lint>6,<7"
-
           - name: almalinux8_2.9
             runs_on: ubuntu-latest
             distro: almalinux8

@@ -23,7 +23,6 @@ Supported platforms
 - Red Hat Enterprise Linux 8<sup>1</sup>
 - RockyLinux 8
 - OracleLinux 8
-- OracleLinux 9
 - AlmaLinux 8
 - Debian 11 (Bullseye)<sup>1</sup>
 - Ubuntu 20.04 LTS
@@ -238,10 +237,10 @@ slurm_packages:
       when: "'slurm_nodes' in group_names"
 
   roles:
-    - { role: facts }
-    - { role: epel, when: "ansible_os_family == 'RedHat'" }
-    - { role: chrony, when: "github_actions is undefined" }
-    - { role: hosts, when: "slurm_uses_dns is defined and not slurm_uses_dns|bool" }
+    - { role: deitkrachten.facts }
+    - { role: deitkrachten.epel, when: "ansible_os_family == 'RedHat'" }
+    - { role: deitkrachten.chrony, when: "github_actions is undefined" }
+    - { role: deitkrachten.hosts, when: "slurm_uses_dns is defined and not slurm_uses_dns|bool" }
 
 
 - hosts: slurm_nodes
@@ -267,8 +266,8 @@ slurm_packages:
     mariadb_db_user: testuser
 
   roles:
-    - mariadb
-    - munge
+    - deitkrachten.mariadb
+    - deitkrachten.munge
   tasks:
     - name: slurm
       include_role:
@@ -280,7 +279,7 @@ slurm_packages:
     munge_key: tests/munge.key
     munge_socket_mode: "0666"
   roles:
-    - munge
+    - deitkrachten.munge
   tasks:
     - name: slurm
       include_role:
@@ -292,7 +291,7 @@ slurm_packages:
     munge_key: tests/munge.key
     munge_socket_mode: "0666"
   roles:
-    - munge
+    - deitkrachten.munge
   tasks:
     - name: slurm
       include_role:

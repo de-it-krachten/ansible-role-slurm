@@ -37,6 +37,9 @@ platforms:
   oraclelinux8:
     ci: true
     supported: true
+  oraclelinux9:
+    ci: false
+    supported: false
   almalinux8:
     ci: true
     supported: true
@@ -59,10 +62,10 @@ platforms:
   ubuntu2204:
     ci: false
     supported: false
-  fedora35:
+  fedora36:
     ci: false
     supported: false
-  fedora36:
+  fedora37:
     ci: false
     supported: false
   alpine:
@@ -77,12 +80,12 @@ molecule:
   dns_server: false
   requirements:
     roles_extra:
-      - chrony
-      - facts
-      - hosts
-      - mariadb
-      - munge
-      - unbound
+      - deitkrachten.chrony
+      - deitkrachten.facts
+      - deitkrachten.hosts
+      - deitkrachten.mariadb
+      - deitkrachten.munge
+      - deitkrachten.unbound
   prepare:
     vars:
       prepare_firewall: true

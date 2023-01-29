@@ -40,8 +40,12 @@ jobs:
             ansible_lint: "ansible-lint>6,<7"
           - name: "ansible_2.13"
             # ansible: "ansible>6,<7"
-            ansible: "ansible-core<2.13,<2.14"
+            ansible: "ansible-core>2.13,<2.14"
             ansible_lint: "ansible-lint>6,<7"
+          - name: "ansible_2.14"
+            # ansible: "ansible>6,<7"
+            ansible: "ansible-core>2.14,<2.15"
+            ansible_lint: "ansible-lint"
 
     steps:
       - name: Check out the codebase.
@@ -50,7 +54,7 @@ jobs:
           path: "${{ github.repository }}"
 
       - name: Set up Python 3.
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
@@ -67,14 +71,20 @@ jobs:
 
       - name: Install test dependencies.
         run: |
+          sudo rm -f /usr/bin/yq
           pip3 install "${{ matrix.ansible }}" "${{ matrix.ansible_lint }}" yamllint jmespath e2j2 yq
+
+      - name: Retrieve & install wrapper scripts
+        run: |
+          set -e
+          sudo apt install curl
+          curl -s -o /tmp/install.sh \
+            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/install.sh
+          bash /tmp/install.sh
 
       - name: Install required galaxy collections
         run: |
-          ansible-galaxy collection install community.docker
-          ansible-galaxy collection install community.general
-          ansible-galaxy collection install ansible.posix
-          ansible-galaxy collection install -r .collections
+          /usr/local/bin/ansible-collections.sh
 
       - name: For ansible 2.9, we need to perform some tweaking
         run: |
@@ -93,26 +103,6 @@ jobs:
             echo "No need to patch it"
           fi
 
-      - name: Retrieve wrapper scripts
-        run: |
-          set -e
-          sudo apt install curl
-          sudo curl -s -o /usr/local/bin/functions_ansible.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/functions_ansible.sh
-          sudo curl -s -o /usr/local/bin/ansible-galaxy.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/ansible-galaxy.sh
-          sudo curl -s -o /usr/local/bin/ansible-lint.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/ansible-lint.sh
-          sudo curl -s -o /usr/local/bin/ansible-requirements-clean.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/ansible-requirements-clean.sh
-          sudo curl -s -o /usr/local/bin/molecule-test.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/molecule-test.sh
-          sudo chmod 644 /usr/local/bin/functions_ansible.sh
-          sudo chmod 755 /usr/local/bin/ansible-galaxy.sh
-          sudo chmod 755 /usr/local/bin/ansible-lint.sh
-          sudo chmod 755 /usr/local/bin/ansible-requirements-clean.sh
-          sudo chmod 755 /usr/local/bin/molecule-test.sh
-
       - name: Show component versions
         run: |
           ansible --version
@@ -127,7 +117,7 @@ jobs:
 
   molecule:
     name: "${{ matrix.name }}"
-    runs-on: ubuntu-latest
+    runs-on: "${{ matrix.runs_on }}"
     needs: lint
     # continue-on-error: ${{ matrix.continue_on_error }}
     strategy:
@@ -135,44 +125,52 @@ jobs:
       matrix:
         include:
           - name: rockylinux8_2.9
+            runs_on: ubuntu-latest
             distro: rockylinux8
             playbook: converge.yml
             ansible: "ansible==2.9.27"
             ansible_lint: "ansible-lint==5.4.0"
           - name: rockylinux8_2.13
+            runs_on: ubuntu-latest
             distro: rockylinux8
             playbook: converge.yml
             ansible: "ansible-core>2.13,<2.14"
             ansible_lint: "ansible-lint>6,<7"
 
           - name: oraclelinux8_2.9
+            runs_on: ubuntu-latest
             distro: oraclelinux8
             playbook: converge.yml
             ansible: "ansible==2.9.27"
             ansible_lint: "ansible-lint==5.4.0"
           - name: oraclelinux8_2.13
+            runs_on: ubuntu-latest
             distro: oraclelinux8
             playbook: converge.yml
             ansible: "ansible-core>2.13,<2.14"
             ansible_lint: "ansible-lint>6,<7"
 
           - name: almalinux8_2.9
+            runs_on: ubuntu-latest
             distro: almalinux8
             playbook: converge.yml
             ansible: "ansible==2.9.27"
             ansible_lint: "ansible-lint==5.4.0"
           - name: almalinux8_2.13
+            runs_on: ubuntu-latest
             distro: almalinux8
             playbook: converge.yml
             ansible: "ansible-core>2.13,<2.14"
             ansible_lint: "ansible-lint>6,<7"
 
           - name: ubuntu2004_2.9
+            runs_on: ubuntu-latest
             distro: ubuntu2004
             playbook: converge.yml
             ansible: "ansible==2.9.27"
             ansible_lint: "ansible-lint==5.4.0"
           - name: ubuntu2004_2.13
+            runs_on: ubuntu-latest
             distro: ubuntu2004
             playbook: converge.yml
             ansible: "ansible-core>2.13,<2.14"
@@ -180,13 +178,15 @@ jobs:
 
 
     steps:
+
       - name: Check out the codebase.
         uses: actions/checkout@v3
         with:
           path: "${{ github.repository }}"
 
+
       - name: Set up Python 3.
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
@@ -203,14 +203,20 @@ jobs:
 
       - name: Install test dependencies.
         run: |
-          pip3 install "${{ matrix.ansible }}" "${{ matrix.ansible_lint }}" molecule[docker] molecule-hetznercloud docker yamllint jmespath e2j2 yq
+          sudo rm -f /usr/bin/yq
+          pip3 install "${{ matrix.ansible }}" "${{ matrix.ansible_lint }}" molecule[docker] yamllint jmespath e2j2 yq
+
+      - name: Retrieve & install wrapper scripts
+        run: |
+          set -e
+          sudo apt install curl
+          curl -s -o /tmp/install.sh \
+            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/install.sh
+          bash /tmp/install.sh
 
       - name: Install required galaxy collections
         run: |
-          ansible-galaxy collection install community.docker
-          ansible-galaxy collection install community.general
-          ansible-galaxy collection install ansible.posix
-          ansible-galaxy collection install -r .collections
+          /usr/local/bin/ansible-collections.sh
 
       - name: For ansible 2.9, we need to perform some tweaking
         run: |
@@ -232,26 +238,6 @@ jobs:
       - name: Set-up github runner
         run: |
           sudo modprobe ip6table_filter
-
-      - name: Retrieve wrapper scripts
-        run: |
-          set -e
-          sudo apt install curl
-          sudo curl -s -o /usr/local/bin/functions_ansible.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/functions_ansible.sh
-          sudo curl -s -o /usr/local/bin/ansible-galaxy.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/ansible-galaxy.sh
-          sudo curl -s -o /usr/local/bin/ansible-lint.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/ansible-lint.sh
-          sudo curl -s -o /usr/local/bin/ansible-requirements-clean.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/ansible-requirements-clean.sh
-          sudo curl -s -o /usr/local/bin/molecule-test.sh \
-            https://raw.githubusercontent.com/de-it-krachten/ansible-role-molecule/dev/files/molecule-test.sh
-          sudo chmod 644 /usr/local/bin/functions_ansible.sh
-          sudo chmod 755 /usr/local/bin/ansible-galaxy.sh
-          sudo chmod 755 /usr/local/bin/ansible-lint.sh
-          sudo chmod 755 /usr/local/bin/ansible-requirements-clean.sh
-          sudo chmod 755 /usr/local/bin/molecule-test.sh
 
       - name: Show component versions
         run: |

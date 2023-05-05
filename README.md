@@ -125,13 +125,13 @@ slurm_jwt_token: jwt_hs256.key
 </pre></code>
 
 
-### vars/Debian.yml
+### vars/Ubuntu.yml
 <pre><code>
 # slurm configuration directory
-slurm_conf_dir: /etc/slurm
+slurm_conf_dir: /etc/slurm-llnl
 
 # slurm logging directory
-slurm_log_dir: /var/log/slurm
+slurm_log_dir: /var/log/slurm-llnl
 
 # list of slurm packages
 slurm_packages:
@@ -144,7 +144,7 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
-    - slurm-drmaa
+    - slurm-drmaa1
 </pre></code>
 
 ### vars/family-RedHat.yml
@@ -181,13 +181,13 @@ slurm_packages:
     # - slurm-drmaa
 </pre></code>
 
-### vars/Ubuntu.yml
+### vars/Debian.yml
 <pre><code>
 # slurm configuration directory
-slurm_conf_dir: /etc/slurm-llnl
+slurm_conf_dir: /etc/slurm
 
 # slurm logging directory
-slurm_log_dir: /var/log/slurm-llnl
+slurm_log_dir: /var/log/slurm
 
 # list of slurm packages
 slurm_packages:
@@ -200,7 +200,7 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
-    - slurm-drmaa1
+    - slurm-drmaa
 </pre></code>
 
 

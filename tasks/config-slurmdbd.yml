@@ -65,7 +65,7 @@
 # Firewall
 # ------------------------------------------------------
 
-- name: Open firewall ports
+- name: Open firewall ports for Slurm DB
   ansible.builtin.include_role:
     name: deitkrachten.firewall
   vars:

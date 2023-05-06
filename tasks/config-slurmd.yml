@@ -106,9 +106,9 @@
 # Firewall
 # ------------------------------------------------------
 
-- name: Open firewall ports
+- name: Open firewall ports for Slurm client daemon
   ansible.builtin.include_role:
-    name: firewall
+    name: deitkrachten.firewall
   vars:
     firewall_ports: "{{ slurm_firewall_ports['slurmd'] }}"
   when:

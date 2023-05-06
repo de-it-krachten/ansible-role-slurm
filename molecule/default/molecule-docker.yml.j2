@@ -14,30 +14,117 @@ platforms:
 {% for platform in MOLECULE_DISTROS %}
   - name: slurm-{{ platform.name }}-db
     image: "{{ platform.image }}"
+{% if platform.kernel_memory is defined %}
+    kernel_memory: {{ platform.kernel_memory }}
+{% endif %}
+{% if platform.memory is defined %}
+    memory: {{ platform.memory }}
+{% endif %}
     rhsm: {{ platform.rhsm | default(False) }}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
+{% if platform.environment is defined %}
+    environment:
+{% for key, value in platform.environment.items() %}
+      {{ key }}: "{{ value }}"
+{% endfor %}
+{% endif %}
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+{% for volume in platform.volumes %}
+      - {{ volume }}
+{% endfor %}
+{% if platform.networks is defined %}
+    networks:
+{% for network in platform.networks %}
+      - name: slurm-{{ network }}
+{% endfor %}
+{% endif %}
+{% if platform.ports is defined %}
+    published_ports:
+{% for port in platform.ports %}
+      - {{ port }}
+{% endfor %}
+{% endif %}
+{% if platform.cgroupns_mode is defined %}
+    cgroupns_mode: {{ platform.cgroupns_mode }}
+{% endif %}
     privileged: {{ platform.privileged | default(True) }}
     pre_build_image: {{ platform.pre_build_image | default(True) }}
     dockerfile: Dockerfile.{{ platform.name }}.j2
     groups: ['slurm_db']
   - name: slurm-{{ platform.name }}-master
     image: "{{ platform.image }}"
+{% if platform.kernel_memory is defined %}
+    kernel_memory: {{ platform.kernel_memory }}
+{% endif %}
+{% if platform.memory is defined %}
+    memory: {{ platform.memory }}
+{% endif %}
     rhsm: {{ platform.rhsm | default(False) }}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
+{% if platform.environment is defined %}
+    environment:
+{% for key, value in platform.environment.items() %}
+      {{ key }}: "{{ value }}"
+{% endfor %}
+{% endif %}
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+{% for volume in platform.volumes %}
+      - {{ volume }}
+{% endfor %}
+{% if platform.networks is defined %}
+    networks:
+{% for network in platform.networks %}
+      - name: slurm-{{ network }}
+{% endfor %}
+{% endif %}
+{% if platform.ports is defined %}
+    published_ports:
+{% for port in platform.ports %}
+      - {{ port }}
+{% endfor %}
+{% endif %}
+{% if platform.cgroupns_mode is defined %}
+    cgroupns_mode: {{ platform.cgroupns_mode }}
+{% endif %}
     privileged: {{ platform.privileged | default(True) }}
     pre_build_image: {{ platform.pre_build_image | default(True) }}
     dockerfile: Dockerfile.{{ platform.name }}.j2
     groups: ['slurm_masters']
   - name: slurm-{{ platform.name }}-worker
     image: "{{ platform.image }}"
+{% if platform.kernel_memory is defined %}
+    kernel_memory: {{ platform.kernel_memory }}
+{% endif %}
+{% if platform.memory is defined %}
+    memory: {{ platform.memory }}
+{% endif %}
     rhsm: {{ platform.rhsm | default(False) }}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
+{% if platform.environment is defined %}
+    environment:
+{% for key, value in platform.environment.items() %}
+      {{ key }}: "{{ value }}"
+{% endfor %}
+{% endif %}
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+{% for volume in platform.volumes %}
+      - {{ volume }}
+{% endfor %}
+{% if platform.networks is defined %}
+    networks:
+{% for network in platform.networks %}
+      - name: slurm-{{ network }}
+{% endfor %}
+{% endif %}
+{% if platform.ports is defined %}
+    published_ports:
+{% for port in platform.ports %}
+      - {{ port }}
+{% endfor %}
+{% endif %}
+{% if platform.cgroupns_mode is defined %}
+    cgroupns_mode: {{ platform.cgroupns_mode }}
+{% endif %}
     privileged: {{ platform.privileged | default(True) }}
     pre_build_image: {{ platform.pre_build_image | default(True) }}
     dockerfile: Dockerfile.{{ platform.name }}.j2

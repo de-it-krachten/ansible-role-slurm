@@ -125,13 +125,13 @@ slurm_jwt_token: jwt_hs256.key
 </pre></code>
 
 
-### vars/Debian.yml
+### vars/Ubuntu.yml
 <pre><code>
 # slurm configuration directory
-slurm_conf_dir: /etc/slurm
+slurm_conf_dir: /etc/slurm-llnl
 
 # slurm logging directory
-slurm_log_dir: /var/log/slurm
+slurm_log_dir: /var/log/slurm-llnl
 
 # list of slurm packages
 slurm_packages:
@@ -144,7 +144,7 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
-    - slurm-drmaa
+    - slurm-drmaa1
 </pre></code>
 
 ### vars/family-RedHat.yml
@@ -181,13 +181,13 @@ slurm_packages:
     # - slurm-drmaa
 </pre></code>
 
-### vars/Ubuntu.yml
+### vars/Debian.yml
 <pre><code>
 # slurm configuration directory
-slurm_conf_dir: /etc/slurm-llnl
+slurm_conf_dir: /etc/slurm
 
 # slurm logging directory
-slurm_log_dir: /var/log/slurm-llnl
+slurm_log_dir: /var/log/slurm
 
 # list of slurm packages
 slurm_packages:
@@ -237,10 +237,10 @@ slurm_packages:
       when: "'slurm_nodes' in group_names"
 
   roles:
-    - { role: facts }
-    - { role: epel, when: "ansible_os_family == 'RedHat'" }
-    - { role: chrony, when: "github_actions is undefined" }
-    - { role: hosts, when: "slurm_uses_dns is defined and not slurm_uses_dns|bool" }
+    - { role: deitkrachten.facts }
+    - { role: deitkrachten.epel, when: "ansible_os_family == 'RedHat'" }
+    - { role: deitkrachten.chrony, when: "github_actions is undefined" }
+    - { role: deitkrachten.hosts, when: "slurm_uses_dns is defined and not slurm_uses_dns|bool" }
 
 
 - hosts: slurm_nodes
@@ -266,8 +266,8 @@ slurm_packages:
     mariadb_db_user: testuser
 
   roles:
-    - mariadb
-    - munge
+    - deitkrachten.mariadb
+    - deitkrachten.munge
   tasks:
     - name: slurm
       include_role:
@@ -279,7 +279,7 @@ slurm_packages:
     munge_key: tests/munge.key
     munge_socket_mode: "0666"
   roles:
-    - munge
+    - deitkrachten.munge
   tasks:
     - name: slurm
       include_role:
@@ -291,7 +291,7 @@ slurm_packages:
     munge_key: tests/munge.key
     munge_socket_mode: "0666"
   roles:
-    - munge
+    - deitkrachten.munge
   tasks:
     - name: slurm
       include_role:

@@ -85,6 +85,7 @@
 
 - name: Add slurm cluster
   ansible.builtin.command: "/usr/bin/sacctmgr -i add cluster {{ slurm_cluster_name }}"
+  changed_when: true
   when: _slurm_clusters.stdout is not search(slurm_cluster_name)
   notify: Restart slurmctld
 
@@ -96,6 +97,7 @@
 
 - name: Create slurm accounts
   ansible.builtin.command: "/usr/bin/sacctmgr -i add account {{ slurm_account_name }}"
+  changed_when: true
   when: _slurm_administrators.stdout is not search(slurm_account_name)
   notify: Restart slurmctld
 
@@ -107,18 +109,19 @@
 
 - name: Create all users  # noqa no-free-form
   ansible.builtin.command: "/usr/bin/sacctmgr -i add user {{ item }} defaultaccount={{ slurm_account_name }} adminlevel=admin"
-  loop: "{{ slurm_users }}"
+  changed_when: true
   when: _slurm_users.stdout is not search(item)
   notify: Restart slurmctld
+  loop: "{{ slurm_users }}"
 
 
 # ------------------------------------------------------
 # Firewall
 # ------------------------------------------------------
 
-- name: Open firewall ports
+- name: Open firewall ports for Slurm master
   ansible.builtin.include_role:
-    name: firewall
+    name: deitkrachten.firewall
   vars:
     firewall_ports: "{{ slurm_firewall_ports['slurmctld'] }}"
   when:

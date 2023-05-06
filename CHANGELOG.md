@@ -1,3 +1,15 @@
+# [1.5.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.4.0...v1.5.0) (2023-05-06)
+
+
+### Bug Fixes
+
+* Change slurm-drmaa -> slurm-drmaa1 ([e263e66](https://github.com/de-it-krachten/ansible-role-slurm/commit/e263e66c72d4173a2f5a9b083dde982f10535331))
+
+
+### Features
+
+* Move to namespaced role names ([f7cb258](https://github.com/de-it-krachten/ansible-role-slurm/commit/f7cb258b8e3fcf2f32555a64c2a37c017efc265e))
+
 # [1.4.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.3.0...v1.4.0) (2022-10-12)
 
 

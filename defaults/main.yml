@@ -19,6 +19,9 @@ slurm_configless: auto
 # slurm roles
 slurm_roles: []
 
+# Should slurm.conf be updated
+slurm_conf_update: true
+
 # slurm group2role mapping (members of these groups will be assigned these roles)
 slurm_group2role_mapping:
   - group: slurm_masters

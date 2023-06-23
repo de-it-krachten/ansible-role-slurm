@@ -21,10 +21,11 @@ None
 Supported platforms
 
 - Red Hat Enterprise Linux 8<sup>1</sup>
+- Red Hat Enterprise Linux 9<sup>1</sup>
 - RockyLinux 8
 - OracleLinux 8
 - AlmaLinux 8
-- Debian 11 (Bullseye)<sup>1</sup>
+- Debian 11 (Bullseye)
 - Ubuntu 20.04 LTS
 
 Note:
@@ -51,6 +52,9 @@ slurm_configless: auto
 
 # slurm roles
 slurm_roles: []
+
+# Should slurm.conf be updated
+slurm_conf_update: true
 
 # slurm group2role mapping (members of these groups will be assigned these roles)
 slurm_group2role_mapping:

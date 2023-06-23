@@ -63,11 +63,12 @@ jobs:
         run: |
           hostname -f
 
-      - name: disable apparmor for mysql
-        run: sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
-
-      - name: parse apparmor for mysql
-        run: sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+      - name: Disable specific apparmor profiles
+        run: |
+          sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+          sudo ln -s /etc/apparmor.d/usr.sbin.chronyd /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.chronyd
 
       - name: Install test dependencies.
         run: |
@@ -172,6 +173,22 @@ jobs:
             ansible_lint: "ansible-lint>6,<7"
             hetznercloud: False
 
+          # - name: debian11_2.9
+          #   runs_on: ubuntu-latest
+          #   distro: debian11
+          #   playbook: converge.yml
+          #   ansible: "ansible==2.9.27"
+          #   ansible_lint: "ansible-lint==5.4.0"
+          #   hetznercloud: True
+          # - name: debian11_2.14
+          - name: debian11
+            runs_on: ubuntu-latest
+            distro: debian11
+            playbook: converge.yml
+            ansible: "ansible-core>2.14,<2.15"
+            ansible_lint: "ansible-lint>6,<7"
+            hetznercloud: True
+
           # - name: ubuntu2004_2.9
           #   runs_on: ubuntu-latest
           #   distro: ubuntu2004
@@ -207,11 +224,12 @@ jobs:
         run: |
           hostname -f
 
-      - name: disable apparmor for mysql
-        run: sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
-
-      - name: parse apparmor for mysql
-        run: sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+      - name: Disable specific apparmor profiles
+        run: |
+          sudo ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+          sudo ln -s /etc/apparmor.d/usr.sbin.chronyd /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.chronyd
 
       - name: Install test dependencies.
         run: |

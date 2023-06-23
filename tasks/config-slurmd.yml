@@ -85,6 +85,7 @@
         group: "{{ slurm_group }}"
         mode: '0644'
       notify: Restart slurmd
+      when: slurm_conf_update | bool
 
     - name: Distribute {{ slurm_conf_dir }}/cgroup.conf  # noqa name[template]
       ansible.builtin.template:

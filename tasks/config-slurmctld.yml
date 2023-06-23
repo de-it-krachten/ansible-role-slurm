@@ -47,6 +47,7 @@
     group: "{{ slurm_group }}"
     mode: '0644'
   register: _slurmctld
+  when: slurm_conf_update | bool
 
 - name: Distribute {{ slurm_conf_dir }}/cgroup.conf  # noqa name[template]
   ansible.builtin.template:
@@ -107,12 +108,35 @@
   changed_when: no
   register: _slurm_users
 
+- name: Recreate list of users that should be present of absent
+  ansible.builtin.set_fact:
+    __slurm_users: >-
+      [
+        {% for user in slurm_users %}
+        {% if user.name is undefined %}
+        {
+          "name": "{{ user }}",
+          "state": "present"
+        }{% if not loop.last %},{%endif %}
+        {% else %}
+        {{ user }}{% if not loop.last %},{%endif %}
+        {% endif %}
+        {% endfor %}
+      ]
+
 - name: Create all users  # noqa no-free-form
-  ansible.builtin.command: "/usr/bin/sacctmgr -i add user {{ item }} defaultaccount={{ slurm_account_name }} adminlevel=admin"
+  ansible.builtin.command: "/usr/bin/sacctmgr -i add user {{ item.name }} defaultaccount={{ slurm_account_name }} adminlevel=admin"
   changed_when: true
-  when: _slurm_users.stdout is not search(item)
+  when: item.state == 'present' and _slurm_users.stdout is not search(item.name)
   notify: Restart slurmctld
-  loop: "{{ slurm_users }}"
+  loop: "{{ __slurm_users }}"
+
+- name: Delete all users  # noqa no-free-form
+  ansible.builtin.command: "/usr/bin/sacctmgr -i remove user {{ item.name }} defaultaccount={{ slurm_account_name }} adminlevel=admin"
+  changed_when: true
+  when: item.state == 'absent' and _slurm_users.stdout is search(item.name)
+  notify: Restart slurmctld
+  loop: "{{ __slurm_users }}"
 
 
 # ------------------------------------------------------

@@ -10,55 +10,55 @@ platforms:
   rhel7:
     ci: false
     supported: false
-  rhel8:
-    ci: false
-    supported: true
-  rhel9:
-    ci: false
-    supported: false
+#  rhel8:
+#    ci: false
+#    supported: true
+#  rhel9:
+#    ci: false
+#    supported: false
   centos7:
     ci: false
     supported: false
-  centos8:
-    ci: false
-    supported: false
-  centos8s:
-    ci: false
-    supported: false
-  centos9s:
-    ci: false
-    supported: false
-  rockylinux8:
-    ci: true
-    supported: true
+#  centos8:
+#    ci: false
+#    supported: false
+#  centos8s:
+#    ci: false
+#    supported: false
+#  centos9s:
+#    ci: false
+#    supported: false
+#  rockylinux8:
+#    ci: true
+#    supported: true
   rockylinux9:
     ci: false
     supported: false
-  oraclelinux8:
-    ci: true
-    supported: true
+#  oraclelinux8:
+#    ci: true
+#    supported: true
   oraclelinux9:
     ci: false
     supported: false
-  almalinux8:
-    ci: true
-    supported: true
+#  almalinux8:
+#    ci: true
+#    supported: true
   almalinux9:
     ci: false
     supported: false
   debian10:
     ci: false
     supported: false
-  debian11:
-    # ci: true
-    ci: false
-    supported: true
-  ubuntu1804:
-    ci: false
-    supported: false
-  ubuntu2004:
-    ci: true
-    supported: true
+#  debian11:
+#    # ci: true
+#    ci: false
+#    supported: true
+#  ubuntu1804:
+#    ci: false
+#    supported: false
+#  ubuntu2004:
+#    ci: true
+#    supported: true
   ubuntu2204:
     ci: false
     supported: false
@@ -66,6 +66,9 @@ platforms:
     ci: false
     supported: false
   fedora37:
+    ci: false
+    supported: false
+  fedora38:
     ci: false
     supported: false
   alpine:
@@ -119,3 +122,8 @@ molecule:
       slurm_db_ip: "hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']"
       slurm_master_name: "slurm-{{ platform.name }}-master"
       slurm_master_ip: "hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']"
+
+# Github
+github:
+  apparmor_profiles:
+    - usr.sbin.chronyd

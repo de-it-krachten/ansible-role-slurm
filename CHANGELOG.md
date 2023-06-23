@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.5.0...v1.6.0) (2023-06-23)
+
+
+### Features
+
+* Add support for user removal from slurm ([41e080b](https://github.com/de-it-krachten/ansible-role-slurm/commit/41e080b3f7d69688c2b76ba87a3f120c2e8d9383))
+
 # [1.5.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.4.0...v1.5.0) (2023-05-06)
 
 

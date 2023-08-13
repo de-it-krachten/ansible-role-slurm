@@ -25,8 +25,12 @@ Supported platforms
 - RockyLinux 8
 - OracleLinux 8
 - AlmaLinux 8
+- SUSE Linux Enterprise 15<sup>1</sup>
+- openSUSE Leap 15
 - Debian 11 (Bullseye)
+- Debian 12 (Bookworm)
 - Ubuntu 20.04 LTS
+- Fedora 37
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms

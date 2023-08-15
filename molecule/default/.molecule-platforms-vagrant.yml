@@ -69,11 +69,11 @@
   box: generic/ubuntu2004
   interfaces: [{'network_name': 'private_network', 'type': 'dhcp', 'auto_config': True}]
 - name: ubuntu2204
-  ci: false
+  ci: true
   box: generic/ubuntu2204
   interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
 - name: fedora37
-  ci: true
+  ci: false
   box: generic/fedora37
   interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
 - name: fedora38

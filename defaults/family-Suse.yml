@@ -1,0 +1,24 @@
+---
+
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm
+
+# slurm logging directory
+slurm_log_dir: /var/log/slurm
+
+# list of slurm packages
+slurm_packages:
+  slurmctld:
+    - slurm
+    - slurm-devel
+    - slurm-torque
+  slurmdbd:
+    # - slurm
+    - slurm-devel
+    - slurm-slurmdbd
+  slurmd:
+    # - slurm
+    - slurm-node
+  client:
+    - slurm
+    # - slurm-drmaa

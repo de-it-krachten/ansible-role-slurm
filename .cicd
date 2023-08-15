@@ -354,7 +354,7 @@ platforms:
       version: all
     molecule:
       docker:
-        image: "docker.io/dropveter/opensuse15-ansible:latest"
+        image: "docker.io/geerlingguy/docker-opensuseleap15-ansible:latest"
         pre_build_image: true
         privileged: true
         volumes:

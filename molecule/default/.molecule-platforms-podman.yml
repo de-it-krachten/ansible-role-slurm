@@ -74,10 +74,10 @@
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:ro
 - name: ubuntu2204
-  ci: false
+  ci: true
   image: docker.io/geerlingguy/docker-ubuntu2204-ansible:latest
 - name: fedora37
-  ci: true
+  ci: false
   image: docker.io/geerlingguy/docker-fedora37-ansible:latest
 - name: fedora38
   ci: false

@@ -41,11 +41,11 @@
   server_type: cx11
   image: ubuntu-20.04
 - name: ubuntu2204
-  ci: false
+  ci: true
   server_type: cx11
   image: ubuntu-22.04
 - name: fedora37
-  ci: true
+  ci: false
   server_type: cx11
   image: fedora-37
 - name: fedora38

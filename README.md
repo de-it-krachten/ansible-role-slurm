@@ -30,7 +30,7 @@ Supported platforms
 - Debian 11 (Bullseye)
 - Debian 12 (Bookworm)
 - Ubuntu 20.04 LTS
-- Fedora 37
+- Ubuntu 22.04 LTS
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
@@ -82,45 +82,10 @@ slurm_uid: 64030
 slurm_group: slurm
 slurm_gid: 64030
 
-# Slurm directories
-slurm_dirs:
-  slurmctld:
-    - { path: "{{ slurm_conf_dir }}" }
-    - { path: "{{ slurm_log_dir }}" }
-    - { path: /var/spool/slurmctld }
-  slurmdbd:
-    - { path: "{{ slurm_conf_dir }}" }
-    - { path: "{{ slurm_log_dir }}" }
-  slurmd:
-    - { path: "{{ slurm_conf_dir }}" }
-    - { path: "{{ slurm_log_dir }}" }
-    - { path: /var/spool/slurmd }
-
 # Slurm ports
 slurm_slurmctld_port: "6817"
 slurm_slurmd_port: "6818"
 slurm_slurmdbd_port: "6819"
-
-# Slurm firewall ports
-slurm_firewall_ports:
-  slurmctld:
-    - port: "{{ slurm_slurmctld_port }}"
-      proto: tcp
-    - port: '60001-63000'
-      proto: tcp
-  slurmd:
-    - port: "{{ slurm_slurmd_port }}"
-      proto: tcp
-    - port: '60001-63000'
-      proto: tcp
-  slurmdbd:
-    - port: "{{ slurm_slurmdbd_port }}"
-      proto: tcp
-
-# slurm partitions
-slurm_partitions:
-  - name: slurmall
-    nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
 
 # Set node to active
 slurm_node_active: true
@@ -130,10 +95,40 @@ slurm_jwt: false
 
 # token to be used
 slurm_jwt_token: jwt_hs256.key
+
+# slurm partitions
+slurm_partitions:
+  - name: slurmall
+    nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
 </pre></code>
 
+### defaults/family-Suse.yml
+<pre><code>
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm
 
-### vars/Ubuntu.yml
+# slurm logging directory
+slurm_log_dir: /var/log/slurm
+
+# list of slurm packages
+slurm_packages:
+  slurmctld:
+    - slurm
+    - slurm-devel
+    - slurm-torque
+  slurmdbd:
+    # - slurm
+    - slurm-devel
+    - slurm-slurmdbd
+  slurmd:
+    # - slurm
+    - slurm-node
+  client:
+    - slurm
+    # - slurm-drmaa
+</pre></code>
+
+### defaults/Ubuntu.yml
 <pre><code>
 # slurm configuration directory
 slurm_conf_dir: /etc/slurm-llnl
@@ -155,7 +150,7 @@ slurm_packages:
     - slurm-drmaa1
 </pre></code>
 
-### vars/family-RedHat.yml
+### defaults/family-RedHat.yml
 <pre><code>
 # slurm configuration directory
 slurm_conf_dir: /etc/slurm
@@ -189,7 +184,7 @@ slurm_packages:
     # - slurm-drmaa
 </pre></code>
 
-### vars/Debian.yml
+### defaults/Debian.yml
 <pre><code>
 # slurm configuration directory
 slurm_conf_dir: /etc/slurm
@@ -212,6 +207,40 @@ slurm_packages:
 </pre></code>
 
 
+### vars/override.yml
+<pre><code>
+# Slurm directories
+slurm_dirs:
+  slurmctld:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+    - { path: /var/spool/slurmctld }
+  slurmdbd:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+  slurmd:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+    - { path: /var/spool/slurmd }
+
+# Slurm firewall ports
+slurm_firewall_ports:
+  slurmctld:
+    - port: "{{ slurm_slurmctld_port }}"
+      proto: tcp
+    - port: '60001-63000'
+      proto: tcp
+  slurmd:
+    - port: "{{ slurm_slurmd_port }}"
+      proto: tcp
+    - port: '60001-63000'
+      proto: tcp
+  slurmdbd:
+    - port: "{{ slurm_slurmdbd_port }}"
+      proto: tcp
+</pre></code>
+
+
 
 ## Example Playbook
 ### molecule/default/converge.yml
@@ -222,7 +251,10 @@ slurm_packages:
   become: yes
   vars:
     # ansible_python_interpreter: /usr/libexec/platform-python
-    slurmd_package: "{{ 'slurm-slurmd' if ansible_os_family == 'RedHat' else 'slurmd' }}"
+    slurmd_package:
+      RedHat: slurm-slurmd
+      Debian: slurmd
+      Suse: slurm-node
     custom_facts_additional:
       - name: slurm
         group: slurm_nodes
@@ -240,7 +272,7 @@ slurm_packages:
 
     - name: Install slurmd on nodes
       package:
-        name: "{{ slurmd_package }}"
+        name: "{{ slurmd_package[ansible_os_family] }}"
         state: present
       when: "'slurm_nodes' in group_names"
 
@@ -264,7 +296,7 @@ slurm_packages:
   vars:
     munge_key: tests/munge.key
     munge_socket_mode: "0666"
-    mariadb_version: 10.4
+    mariadb_release: '10.11'
     mariadb_root_password: 'Abcd1234'
     innodb:
       innodb_buffer_pool_size: 4096M

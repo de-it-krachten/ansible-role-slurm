@@ -6,7 +6,10 @@
   become: yes
   vars:
     # ansible_python_interpreter: /usr/libexec/platform-python
-    slurmd_package: "{{ 'slurm-slurmd' if ansible_os_family == 'RedHat' else 'slurmd' }}"
+    slurmd_package:
+      RedHat: slurm-slurmd
+      Debian: slurmd
+      Suse: slurm-node
     custom_facts_additional:
       - name: slurm
         group: slurm_nodes
@@ -24,7 +27,7 @@
 
     - name: Install slurmd on nodes
       package:
-        name: "{{ slurmd_package }}"
+        name: "{{ slurmd_package[ansible_os_family] }}"
         state: present
       when: "'slurm_nodes' in group_names"
 
@@ -48,7 +51,7 @@
   vars:
     munge_key: tests/munge.key
     munge_socket_mode: "0666"
-    mariadb_version: 10.4
+    mariadb_release: '10.11'
     mariadb_root_password: 'Abcd1234'
     innodb:
       innodb_buffer_pool_size: 4096M

@@ -4,16 +4,8 @@
 CgroupAutomount=yes
 CgroupMountpoint=/sys/fs/cgroup
 ConstrainCores=yes
-#
-###
-#
-# Slurm cgroup support configuration file
-#
-# See man slurm.conf and man cgroup.conf for further
-# information on cgroup configuration parameters
-#--
-CgroupAutomount=yes
-ConstrainCores=yes
 ConstrainRAMSpace=yes
 ConstrainSwapSpace=yes
+{% if slurm_version is version('22', '<') %}
 TaskAffinity=no
+{% endif %}

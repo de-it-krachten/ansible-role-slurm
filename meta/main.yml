@@ -23,7 +23,5 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - focal
-    - name: Fedora
-      versions:
-        - all
+        - jammy
 dependencies: []

@@ -28,5 +28,4 @@
   when: vars[item.key] is undefined or (__defaults_vars[item.key] is defined and vars[item.key] == __defaults_vars[item.key])
   loop: "{{ __platform_vars | dict2items }}"
   loop_control:
-    label:
-      - "{{ item.key }}: {{ item.value }}"
+    label: "{{ item.key }}={{ item.value }}"

@@ -14,9 +14,9 @@ platforms:
 #  rhel8:
 #    ci: false
 #    supported: true
-#  rhel9:
-#    ci: false
-#    supported: false
+  rhel9:
+    ci: false
+    supported: false
   centos7:
     ci: false
     supported: false

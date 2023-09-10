@@ -26,7 +26,7 @@ JobRequeue=1
 #MaxStepCount=40000
 #MaxTasksPerNode=128
 MpiDefault=none
-{% if slurm_version is version('22', '<') %}
+{% if slurm_version is version('21.08', '<') %}
 DefaultStorageType=none
 {% endif %}
 #MpiParams=ports=#-#
@@ -60,7 +60,7 @@ SwitchType=switch/none
 #TaskEpilog=
 #TaskPlugin=task/affinity,task/cgroup
 TaskPlugin=task/affinity
-{% if slurm_version is version('22', '<') %}
+{% if slurm_version is version('21.08', '<') %}
 TaskPluginParam=Sched
 {% endif %}
 #TaskProlog=
@@ -138,7 +138,7 @@ AccountingStorageHost={{ slurm_db_host }}
 AccountingStoragePort={{ slurm_slurmdbd_port }}
 AccountingStorageType=accounting_storage/slurmdbd
 #AccountingStorageUser=
-{% if slurm_version is version('22', '>=') %}
+{% if slurm_version is version('21.08', '>=') %}
 AccountingStoreFlags=job_comment
 {% else %}
 AccountingStoreJobComment=YES

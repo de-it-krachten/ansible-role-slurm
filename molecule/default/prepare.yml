@@ -20,6 +20,7 @@
     ufw_distros:
       - debian10
       - debian11
+      - debian12
       - ubuntu1804
       - ubuntu2004
       - ubuntu2204
@@ -29,6 +30,7 @@
       - rhel9
       - fedora36
       - fedora37
+      - fedora38
       - centos8
       - centos8s
       - centos9s

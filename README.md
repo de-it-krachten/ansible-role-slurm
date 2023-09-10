@@ -21,7 +21,6 @@ None
 Supported platforms
 
 - Red Hat Enterprise Linux 8<sup>1</sup>
-- Red Hat Enterprise Linux 9<sup>1</sup>
 - RockyLinux 8
 - OracleLinux 8
 - AlmaLinux 8
@@ -100,6 +99,31 @@ slurm_jwt_token: jwt_hs256.key
 slurm_partitions:
   - name: slurmall
     nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
+</pre></code>
+
+### defaults/Ubuntu-22.yml
+<pre><code>
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm
+
+# slurm logging directory
+slurm_log_dir: /var/log/slurm
+
+# Slurm daemon config file
+slurm_parm_file: /etc/default/slurmd
+
+# list of slurm packages
+slurm_packages:
+  slurmctld:
+    - slurmctld
+  slurmdbd:
+    - slurmdbd
+  slurmd:
+    - slurmd
+    - slurm-client
+  client:
+    - slurm-client
+    - slurm-drmaa1
 </pre></code>
 
 ### defaults/family-Suse.yml

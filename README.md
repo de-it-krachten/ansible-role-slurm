@@ -110,19 +110,25 @@ slurm_conf_dir: /etc/slurm
 # slurm logging directory
 slurm_log_dir: /var/log/slurm
 
+# Slurm daemon config file
+slurm_parm_file: /etc/sysconfig/slurmd
+
 # list of slurm packages
 slurm_packages:
   slurmctld:
     - slurm
     - slurm-devel
     - slurm-torque
+    - slurm-munge
   slurmdbd:
     # - slurm
     - slurm-devel
     - slurm-slurmdbd
+    - slurm-munge
   slurmd:
     # - slurm
     - slurm-node
+    - slurm-munge
   client:
     - slurm
     # - slurm-drmaa
@@ -135,6 +141,9 @@ slurm_conf_dir: /etc/slurm-llnl
 
 # slurm logging directory
 slurm_log_dir: /var/log/slurm-llnl
+
+# Slurm daemon config file
+slurm_parm_file: /etc/default/slurmd
 
 # list of slurm packages
 slurm_packages:
@@ -157,6 +166,9 @@ slurm_conf_dir: /etc/slurm
 
 # slurm logging directory
 slurm_log_dir: /var/log/slurm
+
+# Slurm daemon config file
+slurm_parm_file: /etc/sysconfig/slurmd
 
 # list of slurm packages
 slurm_packages:
@@ -191,6 +203,9 @@ slurm_conf_dir: /etc/slurm
 
 # slurm logging directory
 slurm_log_dir: /var/log/slurm
+
+# Slurm daemon config file
+slurm_parm_file: /etc/default/slurmd
 
 # list of slurm packages
 slurm_packages:
@@ -268,7 +283,9 @@ slurm_firewall_ports:
     - name: Set slurm master ip
       set_fact:
         slurm_master_ip: "{{ hostvars[slurm_master_name]['ansible_default_ipv4']['address'] }}"
-      when: slurm_uses_dns is defined and not slurm_uses_dns|bool
+      when:
+        - slurm_master_ip is undefined
+        - slurm_uses_dns is defined and not slurm_uses_dns | bool
 
     - name: Install slurmd on nodes
       package:
@@ -280,8 +297,9 @@ slurm_firewall_ports:
     - { role: deitkrachten.facts }
     - { role: deitkrachten.epel, when: "ansible_os_family == 'RedHat'" }
     - { role: deitkrachten.chrony, when: "github_actions is undefined" }
-    - { role: deitkrachten.hosts, when: "slurm_uses_dns is defined and not slurm_uses_dns|bool" }
-
+    - role: deitkrachten.hosts
+      hosts_adapter: "{{ 'eth1' if lookup('env', 'MOLECULE_DRIVER_NAME') == 'vagrant' else 'default' }}"
+      when: "slurm_uses_dns is defined and not slurm_uses_dns|bool"
 
 - hosts: slurm_nodes
   gather_facts: yes

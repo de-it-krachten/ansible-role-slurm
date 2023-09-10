@@ -98,8 +98,6 @@
         master_ip: "{{ slurm_master_ip }}"
         db_ip: "{{ slurm_db_ip }}"
 
-
-
 - name: Add specific repositories
   ansible.builtin.include_tasks: pre-install.yml
 

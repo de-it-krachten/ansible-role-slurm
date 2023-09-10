@@ -6,6 +6,9 @@ slurm_conf_dir: /etc/slurm
 # slurm logging directory
 slurm_log_dir: /var/log/slurm
 
+# Slurm daemon config file
+slurm_parm_file: /etc/default/slurmd
+
 # list of slurm packages
 slurm_packages:
   slurmctld:

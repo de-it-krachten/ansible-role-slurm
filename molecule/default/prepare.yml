@@ -139,14 +139,22 @@
             state: latest
           when: update_all is defined and update_all | bool
 
+        - name: Remove conflicting packages
+          ansible.builtin.package:
+            name:
+              - busybox-tar
+            state: absent
+
         - name: Install default packages
           ansible.builtin.package:
             name:
-              - lsb-release
+              - lsb
               - iproute
               - python-xml
               - python3-xml
               - python3-rpm
+              - unzip
+              - tar
             state: present
 
     - name: Family Debian

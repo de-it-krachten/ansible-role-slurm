@@ -93,6 +93,7 @@ molecule:
   prepare:
     vars:
       prepare_firewall: true
+      #register_hosts: true
   nodes:
     - name: db
       groups:

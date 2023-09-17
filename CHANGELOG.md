@@ -1,3 +1,18 @@
+# [1.7.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.6.0...v1.7.0) (2023-09-17)
+
+
+### Bug Fixes
+
+* Fix loop label to string ([f3f752f](https://github.com/de-it-krachten/ansible-role-slurm/commit/f3f752fddb46e7c7e28154fc444bb888fcc38eb8))
+* Fix Ubuntu 22.04 LTS compatibility ([c275849](https://github.com/de-it-krachten/ansible-role-slurm/commit/c275849f96abb255cfd0f5599b43dfa45278265a))
+* Refactor code for SLES/OpenSUSE support ([530d6de](https://github.com/de-it-krachten/ansible-role-slurm/commit/530d6de918513bb2f98f112eb1a0938ef123fef7))
+* Remove SlurmDB IP from node config ([f254082](https://github.com/de-it-krachten/ansible-role-slurm/commit/f254082e397463b9f13c74624afe95e05d6955b9))
+
+
+### Features
+
+* Update supported platforms & CI ([e385d84](https://github.com/de-it-krachten/ansible-role-slurm/commit/e385d845514ac210a5a8a013899adf9624390d87))
+
 # [1.6.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.5.0...v1.6.0) (2023-06-23)
 
 

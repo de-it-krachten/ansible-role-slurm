@@ -12,11 +12,15 @@ galaxy_info:
     - name: EL
       versions:
         - '8'
-        - '9'
+    - name: opensuse
+      versions:
+        - all
     - name: Debian
       versions:
         - bullseye
+        - bookworm
     - name: Ubuntu
       versions:
         - focal
+        - jammy
 dependencies: []

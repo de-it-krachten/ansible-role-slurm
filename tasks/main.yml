@@ -1,17 +1,28 @@
 ---
 
 - name: Load variables based on OS type
-  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
-  vars:
-    params:
-      files:
-        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-        - "{{ ansible_distribution }}.yml"
-        - "family-{{ ansible_os_family }}-{{ ansible_distribution_major_version }}.yml"
-        - "family-{{ ansible_os_family }}.yml"
-        - default.yml
-      paths:
-        - 'vars'
+  ansible.builtin.include_tasks: vars.yml
+
+- name: Get variables that depend on the above
+  ansible.builtin.include_vars: vars/override.yml
+
+- name: Get slurm version (Suse)
+  when: ansible_os_family == 'Suse'
+  block:
+
+    - name: Get slurm version (Debian)  # noqa no-changed-when
+      ansible.builtin.shell: |
+        set -o pipefail
+        zypper info slurm 2>/dev/null | awk '/^Version/ {print $3}' | cut -f1-2 -d.
+      args:
+        executable: /bin/bash
+      changed_when: false
+      check_mode: false
+      register: _slurm_version
+
+    - name: Save slurm version
+      ansible.builtin.set_fact:
+        slurm_version: "{{ _slurm_version.stdout }}"
 
 - name: Get slurm version (Debian)
   when: ansible_os_family == 'Debian'
@@ -86,8 +97,6 @@
         roles: "{{ slurm_roles }}"
         master_ip: "{{ slurm_master_ip }}"
         db_ip: "{{ slurm_db_ip }}"
-
-
 
 - name: Add specific repositories
   ansible.builtin.include_tasks: pre-install.yml

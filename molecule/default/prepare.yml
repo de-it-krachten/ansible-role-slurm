@@ -20,6 +20,7 @@
     ufw_distros:
       - debian10
       - debian11
+      - debian12
       - ubuntu1804
       - ubuntu2004
       - ubuntu2204
@@ -29,6 +30,7 @@
       - rhel9
       - fedora36
       - fedora37
+      - fedora38
       - centos8
       - centos8s
       - centos9s
@@ -38,6 +40,9 @@
       - rocky9
       - almalinux8
       - almalinux9
+      - sles15
+      - opensuse15
+
     systemctl_alternative: False
     prepare_firewall: True
   roles:
@@ -56,6 +61,8 @@
         molecule_distro: >-
           {%- if ansible_distribution == 'Ubuntu' -%}
           {{ (ansible_distribution | lower) + (ansible_distribution_version | regex_replace('\.')) }}
+          {%- elif ansible_distribution == 'openSUSE Leap' -%}
+          {{ 'opensuse' + ansible_distribution_major_version }}
           {%- elif ansible_distribution == 'CentOS' and ansible_distribution_release == 'Stream' -%}
           {{ (ansible_distribution | lower) + ansible_distribution_major_version + 's' }}
           {%- else -%}
@@ -98,6 +105,60 @@
             state: present
             key: "{{ root_pubkey }}"
 
+    - name: Generic
+      block:
+
+        - name: Remove packages known to make CI fail
+          ansible.builtin.package:
+            name: "{{ packages_rm | default([]) }}"
+            state: absent
+
+    - name: Family Suse
+      when: ansible_os_family == 'Suse'
+      block:
+
+        - name: Configure to use proxy  # noqa template-instead-of-copy
+          ansible.builtin.copy:
+            content: |
+              PROXY_ENABLED="yes"
+              HTTP_PROXY="{{ http_proxy }}"
+              HTTPS_PROXY="{{ http_proxy }}"
+              NO_PROXY="localhost, 127.0.0.1"
+            dest: /etc/sysconfig/proxy
+            owner: root
+            group: root
+            mode: "0644"
+          when: proxy_use is defined and proxy_use | bool
+
+        - name: Update zypper cache
+          community.general.zypper:
+            name: zypper
+            update_cache: true
+
+        - name: Update all packages
+          community.general.zypper:
+            name: '*'
+            state: latest
+          when: update_all is defined and update_all | bool
+
+        - name: Remove conflicting packages
+          ansible.builtin.package:
+            name:
+              - busybox-tar
+            state: absent
+
+        - name: Install default packages
+          ansible.builtin.package:
+            name:
+              - lsb
+              - iproute
+              - python-xml
+              - python3-xml
+              - python3-rpm
+              - unzip
+              - tar
+            state: present
+
     - name: Family Debian
       when: ansible_os_family == 'Debian'
       block:
@@ -132,6 +193,7 @@
               - netbase
               - gnupg
               - ssh
+              - python3-apt
             state: present
 
     - name: Family RedHat (generic)
@@ -306,6 +368,10 @@
             name: deitkrachten.firewalld
           when: molecule_distro in firewalld_distros
 
+    - name: Install docker
+      ansible.builtin.include_role:
+        name: deitkrachten.docker
+      when: install_docker is defined and install_docker | bool
 
     - name: Reboot the server
       ansible.builtin.include_role:

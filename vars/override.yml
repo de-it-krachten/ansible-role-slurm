@@ -1,0 +1,31 @@
+---
+
+# Slurm directories
+slurm_dirs:
+  slurmctld:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+    - { path: /var/spool/slurmctld }
+  slurmdbd:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+  slurmd:
+    - { path: "{{ slurm_conf_dir }}" }
+    - { path: "{{ slurm_log_dir }}" }
+    - { path: /var/spool/slurmd }
+
+# Slurm firewall ports
+slurm_firewall_ports:
+  slurmctld:
+    - port: "{{ slurm_slurmctld_port }}"
+      proto: tcp
+    - port: '60001-63000'
+      proto: tcp
+  slurmd:
+    - port: "{{ slurm_slurmd_port }}"
+      proto: tcp
+    - port: '60001-63000'
+      proto: tcp
+  slurmdbd:
+    - port: "{{ slurm_slurmdbd_port }}"
+      proto: tcp

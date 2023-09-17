@@ -322,9 +322,78 @@ platforms:
           - network_name: private_network
             type: dhcp
             auto_config: true
+  sles15:
+    name: SUSE Linux Enterprise 15
+    ci: false
+    supported: true
+    galaxy:
+      name: opensuse
+      version: all
+#    molecule:
+#      docker:
+#        image: "robertdebock/opensuse"
+#        pre_build_image: true
+#        privileged: true
+#        volumes:
+#          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+#        cgroupns_mode: host
+#      podman:
+#        image: "docker.io/robertdebock/opensuse"
+#      vagrant:
+#        box: "generic/opensuse15"
+#        interfaces:
+#          - network_name: private_network
+#            type: dhcp
+#            auto_config: true
+  opensuse15:
+    name: openSUSE Leap 15
+    ci: true
+    supported: true
+    galaxy:
+      name: opensuse
+      version: all
+    molecule:
+      docker:
+        image: "docker.io/geerlingguy/docker-opensuseleap15-ansible:latest"
+        pre_build_image: true
+        privileged: true
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+        cgroupns_mode: host
+      podman:
+        image: "docker.io/dropveter/opensuse15-ansible:latest"
+      vagrant:
+        box: "generic/opensuse15"
+        interfaces:
+          - network_name: private_network
+            type: dhcp
+            auto_config: true
+  opensusetumbleweed15:
+    name: openSUSE Tumbleweed 15
+    ci: false
+    supported: false
+    galaxy:
+      name: opensuse
+      version: all
+    molecule:
+      docker:
+        image: "robertdebock/opensuse"
+        pre_build_image: true
+        privileged: true
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+        cgroupns_mode: host
+      podman:
+        image: "docker.io/robertdebock/opensuse"
+      vagrant:
+        box: "generic/opensuse15"
+        interfaces:
+          - network_name: private_network
+            type: dhcp
+            auto_config: true
   debian10:
     name: Debian 10 (Buster)
-    ci: true
+    ci: false
     supported: true
     galaxy:
       name: Debian
@@ -373,6 +442,32 @@ platforms:
             auto_config: true
       hetznercloud:
         image: debian-11
+        server_type: cx11
+  debian12:
+    name: Debian 12 (Bookworm)
+    ci: true
+    supported: true
+    galaxy:
+      name: Debian
+      version: bookworm
+    molecule:
+      docker:
+        image: "docker.io/geerlingguy/docker-debian12-ansible:latest"
+        pre_build_image: true
+        privileged: true
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+        cgroupns_mode: host
+      podman:
+        image: "docker.io/geerlingguy/docker-debian12-ansible:latest"
+      vagrant:
+        box: "generic/debian12"
+        interfaces:
+          - network_name: private_network
+            type: dhcp
+            auto_config: true
+      hetznercloud:
+        image: debian-12
         server_type: cx11
   ubuntu1804:
     name: Ubuntu 18.04 LTS
@@ -607,6 +702,10 @@ github:
       ansible: "ansible>6,<7"
       ansible_core: "ansible-core>2.14,<2.15"
       ansible_lint: "ansible-lint"
+    - name: ansible_2.15
+      ansible: "ansible>7,<8"
+      ansible_core: "ansible-core>2.15,<2.16"
+      ansible_lint: "ansible-lint"
 
 # Gitlab
 gitlab:
@@ -631,6 +730,7 @@ molecule:
       systemctl_alternative: false
   requirements:
     roles:
+      - deitkrachten.docker
       - deitkrachten.epel
       - deitkrachten.facts
       - deitkrachten.firewall

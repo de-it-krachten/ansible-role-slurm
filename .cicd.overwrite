@@ -1,5 +1,6 @@
 ---
 
+# Generic
 generic:
   role_description: |
     Installs & configures Slurm (HPC cluster software)<br>
@@ -13,9 +14,9 @@ platforms:
 #  rhel8:
 #    ci: false
 #    supported: true
-#  rhel9:
-#    ci: false
-#    supported: false
+  rhel9:
+    ci: false
+    supported: false
   centos7:
     ci: false
     supported: false
@@ -59,12 +60,9 @@ platforms:
 #  ubuntu2004:
 #    ci: true
 #    supported: true
-  ubuntu2204:
-    ci: false
-    supported: false
-  fedora36:
-    ci: false
-    supported: false
+#  ubuntu2204:
+#    ci: false
+#    supported: false
   fedora37:
     ci: false
     supported: false
@@ -75,11 +73,14 @@ platforms:
     ci: false
     supported: false
 
+# CI templates
 ci_templates:
   converge.yml:
     force: false
 
+# Molecule
 molecule:
+  driver: vagrant
   dns_server: false
   requirements:
     roles_extra:
@@ -92,6 +93,7 @@ molecule:
   prepare:
     vars:
       prepare_firewall: true
+      #register_hosts: true
   nodes:
     - name: db
       groups:

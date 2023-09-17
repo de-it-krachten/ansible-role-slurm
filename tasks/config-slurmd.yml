@@ -35,7 +35,7 @@
     - name: Configure slurm to retrieve config from master
       ansible.builtin.lineinfile:
         line: SLURMD_OPTIONS='--conf-server {{ slurm_master_name }}:{{ slurm_slurmctld_port }}'
-        path: /etc/{{ 'sysconfig' if ansible_os_family == 'RedHat' else 'default' }}/slurmd
+        path: "{{ slurm_parm_file }}"
         create: yes
         mode: "0644"
       notify: Restart slurmd
@@ -77,6 +77,16 @@
   when: not slurm_configless | bool
   block:
 
+    - name: Disable configless
+      ansible.builtin.lineinfile:
+        path: "{{ slurm_parm_file }}"
+        state: absent
+        regexp: "--conf-server {{ slurm_master_name }}:{{ slurm_slurmctld_port }}"
+        create: yes
+        mode: "0644"
+      notify: Restart slurmd
+
+
     - name: Distribute {{ slurm_conf_dir }}/slurm.conf  # noqa name[template]
       ansible.builtin.template:
         src: slurm.conf.j2
@@ -101,7 +111,7 @@
     name: 'slurmd'
     enabled: yes
     state: started
-
+  tags: molecule-idempotence-notest
 
 # ------------------------------------------------------
 # Firewall

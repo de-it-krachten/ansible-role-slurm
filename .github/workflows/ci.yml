@@ -46,6 +46,10 @@ jobs:
             # ansible: "ansible>6,<7"
             ansible: "ansible-core>2.14,<2.15"
             ansible_lint: "ansible-lint"
+          - name: "ansible_2.15"
+            # ansible: "ansible>7,<8"
+            ansible: "ansible-core>2.15,<2.16"
+            ansible_lint: "ansible-lint"
 
     steps:
       - name: Check out the codebase.
@@ -173,6 +177,22 @@ jobs:
             ansible_lint: "ansible-lint>6,<7"
             hetznercloud: False
 
+          # - name: opensuse15_2.9
+          #   runs_on: ubuntu-latest
+          #   distro: opensuse15
+          #   playbook: converge.yml
+          #   ansible: "ansible==2.9.27"
+          #   ansible_lint: "ansible-lint==5.4.0"
+          #   hetznercloud: False
+          # - name: opensuse15_2.14
+          - name: opensuse15
+            runs_on: ubuntu-latest
+            distro: opensuse15
+            playbook: converge.yml
+            ansible: "ansible-core>2.14,<2.15"
+            ansible_lint: "ansible-lint>6,<7"
+            hetznercloud: False
+
           # - name: debian11_2.9
           #   runs_on: ubuntu-latest
           #   distro: debian11
@@ -189,6 +209,22 @@ jobs:
             ansible_lint: "ansible-lint>6,<7"
             hetznercloud: True
 
+          # - name: debian12_2.9
+          #   runs_on: ubuntu-latest
+          #   distro: debian12
+          #   playbook: converge.yml
+          #   ansible: "ansible==2.9.27"
+          #   ansible_lint: "ansible-lint==5.4.0"
+          #   hetznercloud: True
+          # - name: debian12_2.14
+          - name: debian12
+            runs_on: ubuntu-latest
+            distro: debian12
+            playbook: converge.yml
+            ansible: "ansible-core>2.14,<2.15"
+            ansible_lint: "ansible-lint>6,<7"
+            hetznercloud: True
+
           # - name: ubuntu2004_2.9
           #   runs_on: ubuntu-latest
           #   distro: ubuntu2004
@@ -200,6 +236,22 @@ jobs:
           - name: ubuntu2004
             runs_on: ubuntu-latest
             distro: ubuntu2004
+            playbook: converge.yml
+            ansible: "ansible-core>2.14,<2.15"
+            ansible_lint: "ansible-lint>6,<7"
+            hetznercloud: True
+
+          # - name: ubuntu2204_2.9
+          #   runs_on: ubuntu-latest
+          #   distro: ubuntu2204
+          #   playbook: converge.yml
+          #   ansible: "ansible==2.9.27"
+          #   ansible_lint: "ansible-lint==5.4.0"
+          #   hetznercloud: True
+          # - name: ubuntu2204_2.14
+          - name: ubuntu2204
+            runs_on: ubuntu-latest
+            distro: ubuntu2204
             playbook: converge.yml
             ansible: "ansible-core>2.14,<2.15"
             ansible_lint: "ansible-lint>6,<7"

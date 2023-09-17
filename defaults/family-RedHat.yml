@@ -1,0 +1,35 @@
+---
+
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm
+
+# slurm logging directory
+slurm_log_dir: /var/log/slurm
+
+# Slurm daemon config file
+slurm_parm_file: /etc/sysconfig/slurmd
+
+# list of slurm packages
+slurm_packages:
+  slurmctld:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    - slurm-slurmctld
+    - slurm-torque
+    # - slurm-slurmdbd
+  slurmdbd:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    # - slurm-slurmctld
+    # - slurm-torque
+    - slurm-slurmdbd
+  slurmd:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    - slurm-slurmd
+  client:
+    - slurm
+    # - slurm-drmaa

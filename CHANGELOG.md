@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.7.0...v1.7.1) (2023-09-22)
+
+
+### Bug Fixes
+
+* Fix Ubuntu 22.04 LTS compatibility ([43f8f30](https://github.com/de-it-krachten/ansible-role-slurm/commit/43f8f3062bb758791ef81fb28e4ad2d1859d055e))
+
 # [1.7.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.6.0...v1.7.0) (2023-09-17)
 
 

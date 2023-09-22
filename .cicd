@@ -461,7 +461,7 @@ platforms:
       podman:
         image: "docker.io/geerlingguy/docker-debian12-ansible:latest"
       vagrant:
-        box: "generic/debian12"
+        box: "debian/bookworm64"
         interfaces:
           - network_name: private_network
             type: dhcp
@@ -711,6 +711,10 @@ github:
 gitlab:
   active: false
 
+# Axure DevOps
+ado:
+  active: false
+
 # molecule
 molecule:
   active: true
@@ -777,6 +781,10 @@ ci_templates:
     src: gitlab/templates/gitlab-ci.yml
     dest: .gitlab-ci.yml
     when: gitlab_active
+  azure-pipelines.yml:
+    src: ado/templates/azure-pipelines.yml
+    dest: azure-pipelines.yml
+    when: ado_active
   prepare.yml:
     src: molecule/templates/prepare.yml
     dest: molecule/default/prepare.yml

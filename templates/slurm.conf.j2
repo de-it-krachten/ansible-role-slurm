@@ -181,5 +181,7 @@ SlurmdLogFile={{ slurm_log_dir }}/slurmd.log
 {% endif %}
 {% endfor %}
 {% for partition in slurm_partitions %}
+{% if partition['nodes'] | length > 0 %}
 PartitionName={{ partition['name'] }} Nodes={{ partition['nodes'] | join(',') }} Default={{ partition['default'] | default('YES') }} MaxTime={{ partition['maxtime'] | default('INFINITE') }} State={{ partition['state'] | default('UP') }}
+{% endif %}
 {% endfor %}

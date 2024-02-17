@@ -26,41 +26,29 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "ansible_2.9"
-            # ansible: "ansible==2.9.27"
-            ansible: "ansible==2.9.27"
-            ansible_lint: "ansible-lint==5.4.0"
-          - name: "ansible_2.11"
-            # ansible: "ansible>4,<5"
-            ansible: "ansible-core>2.11,<2.12"
-            ansible_lint: "ansible-lint>5,<6"
-          - name: "ansible_2.12"
-            # ansible: "ansible>5,<6"
-            ansible: "ansible-core>2.12,<2.13"
-            ansible_lint: "ansible-lint>6,<7"
-          - name: "ansible_2.13"
-            # ansible: "ansible>6,<7"
-            ansible: "ansible-core>2.13,<2.14"
-            ansible_lint: "ansible-lint>6,<7"
           - name: "ansible_2.14"
-            # ansible: "ansible>6,<7"
+            # ansible: "ansible>7,<8"
             ansible: "ansible-core>2.14,<2.15"
             ansible_lint: "ansible-lint"
           - name: "ansible_2.15"
-            # ansible: "ansible>7,<8"
+            # ansible: "ansible>8,<9"
             ansible: "ansible-core>2.15,<2.16"
+            ansible_lint: "ansible-lint"
+          - name: "ansible_2.16"
+            # ansible: "ansible>9,<10"
+            ansible: "ansible-core>2.16,<2.17"
             ansible_lint: "ansible-lint"
 
     steps:
       - name: Check out the codebase.
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: "${{ github.repository }}"
 
       - name: Set up Python 3.
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.11'
 
 
       - name: Show runner info
@@ -77,7 +65,11 @@ jobs:
       - name: Install test dependencies.
         run: |
           sudo rm -f /usr/bin/yq
-          pip3 install "${{ matrix.ansible }}" "${{ matrix.ansible_lint }}" yamllint jmespath e2j2 yq
+          python3 -m venv ~/.venv
+          source ~/.venv/bin/activate
+          pip3 install pip wheel setuptools --upgrade
+          pip3 install "${{ matrix.ansible }}" "${{ matrix.ansible_lint }}" yamllint jmespath yq e2j2 jinja2-ansible-filters
+          pip3 list
 
       - name: Retrieve & install wrapper scripts
         run: |
@@ -89,10 +81,12 @@ jobs:
 
       - name: Install required galaxy collections
         run: |
+          source ~/.venv/bin/activate
           /usr/local/bin/ansible-collections.sh
 
       - name: For ansible 2.9, we need to perform some tweaking
         run: |
+          source ~/.venv/bin/activate
           ansible=$(pip show ansible 2>/dev/null | awk '/Version:/ {print $2}')
           ansible_core=$(pip show ansible-core 2>/dev/null | awk '/Version:/ {print $2}')
           ansible=${ansible:-$ansible_core}
@@ -110,6 +104,7 @@ jobs:
 
       - name: Show component versions
         run: |
+          source ~/.venv/bin/activate
           ansible --version
           ansible-lint --version
           yamllint --version
@@ -117,6 +112,7 @@ jobs:
       - name: Lint code.
         run: |
           set -e
+          source ~/.venv/bin/activate
           yamllint .
           ansible-lint.sh
 
@@ -261,15 +257,15 @@ jobs:
     steps:
 
       - name: Check out the codebase.
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: "${{ github.repository }}"
 
 
       - name: Set up Python 3.
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.11'
 
 
       - name: Show runner info
@@ -286,8 +282,10 @@ jobs:
       - name: Install test dependencies.
         run: |
           sudo rm -f /usr/bin/yq
-
-          pip3 install e2j2 yq
+          python3 -m venv ~/.venv
+          source ~/.venv/bin/activate
+          pip3 install pip wheel setuptools --upgrade
+          pip3 install yq e2j2 jinja2-ansible-filters
           pip3 install "${{ matrix.ansible }}" "${{ matrix.ansible_lint }}" "ansible-compat<4" "molecule<5" yamllint jmespath
 
           echo "MOLECULE_DRIVER = $MOLECULE_DRIVER"
@@ -309,6 +307,7 @@ jobs:
 
           pip3 install "requests<2.29" "urllib3<2"
 
+          pip3 list
         env:
           MOLECULE_DRIVER: ${{ vars.MOLECULE_DRIVER }}
 
@@ -322,10 +321,12 @@ jobs:
 
       - name: Install required galaxy collections
         run: |
+          source ~/.venv/bin/activate
           /usr/local/bin/ansible-collections.sh
 
       - name: For ansible 2.9, we need to perform some tweaking
         run: |
+          source ~/.venv/bin/activate
           ansible=$(pip show ansible 2>/dev/null | awk '/Version:/ {print $2}')
           ansible_core=$(pip show ansible-core 2>/dev/null | awk '/Version:/ {print $2}')
           ansible=${ansible:-$ansible_core}
@@ -347,13 +348,16 @@ jobs:
 
       - name: Show component versions
         run: |
+          source ~/.venv/bin/activate
           ansible --version
           ansible-lint --version
           yamllint --version
           molecule --version
 
       - name: Run Molecule tests.
-        run: molecule-test.sh -A
+        run: |
+          source ~/.venv/bin/activate
+          molecule-test.sh -A
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'

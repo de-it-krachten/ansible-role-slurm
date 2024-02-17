@@ -19,10 +19,33 @@ platforms:
 {% if platform.interfaces is defined %}
     interfaces: {{ platform.interfaces }}
 {% endif %}
+{% if platform.provider is defined %}
+    provider: {{ platform.provider }}
+{% endif %}
+{% if platform.provider_options is defined %}
+    provider_options: {{ platform.provider_options }}
+{% endif %}
+{% if platform.provider_raw_config_args is defined %}
+    provider_raw_config_args: {{ platform.provider_raw_config_args }}
+{% endif %}
+{% if platform.instance_raw_config_args is defined %}
+    instance_raw_config_args: {{ platform.instance_raw_config_args }}
+{% endif %}
+{% if not platform.name | regex_search('win2') %}
     config_options:
       ssh.keep_alive: yes
       ssh.remote_user: "'vagrant'"
-    groups: ['slurm_db']
+{% endif %}
+    groups:
+{% if platform.groups is undefined or platform.groups | length == 0 %}
+{% set __platform_groups = [ 'linux' ] %}
+{% else %}
+{% set __platform_groups = platform.groups %}
+{% endif %}
+{% for group in __platform_groups %}
+      - {{ group }}
+{% endfor %}
+      - {{ group }}
   - name: slurm-{{ platform.name }}-master
     box: "{{ platform.box }}"
     memory: {{ platform.memory | default(2048) }}
@@ -30,10 +53,33 @@ platforms:
 {% if platform.interfaces is defined %}
     interfaces: {{ platform.interfaces }}
 {% endif %}
+{% if platform.provider is defined %}
+    provider: {{ platform.provider }}
+{% endif %}
+{% if platform.provider_options is defined %}
+    provider_options: {{ platform.provider_options }}
+{% endif %}
+{% if platform.provider_raw_config_args is defined %}
+    provider_raw_config_args: {{ platform.provider_raw_config_args }}
+{% endif %}
+{% if platform.instance_raw_config_args is defined %}
+    instance_raw_config_args: {{ platform.instance_raw_config_args }}
+{% endif %}
+{% if not platform.name | regex_search('win2') %}
     config_options:
       ssh.keep_alive: yes
       ssh.remote_user: "'vagrant'"
-    groups: ['slurm_masters']
+{% endif %}
+    groups:
+{% if platform.groups is undefined or platform.groups | length == 0 %}
+{% set __platform_groups = [ 'linux' ] %}
+{% else %}
+{% set __platform_groups = platform.groups %}
+{% endif %}
+{% for group in __platform_groups %}
+      - {{ group }}
+{% endfor %}
+      - {{ group }}
   - name: slurm-{{ platform.name }}-worker
     box: "{{ platform.box }}"
     memory: {{ platform.memory | default(2048) }}
@@ -41,10 +87,33 @@ platforms:
 {% if platform.interfaces is defined %}
     interfaces: {{ platform.interfaces }}
 {% endif %}
+{% if platform.provider is defined %}
+    provider: {{ platform.provider }}
+{% endif %}
+{% if platform.provider_options is defined %}
+    provider_options: {{ platform.provider_options }}
+{% endif %}
+{% if platform.provider_raw_config_args is defined %}
+    provider_raw_config_args: {{ platform.provider_raw_config_args }}
+{% endif %}
+{% if platform.instance_raw_config_args is defined %}
+    instance_raw_config_args: {{ platform.instance_raw_config_args }}
+{% endif %}
+{% if not platform.name | regex_search('win2') %}
     config_options:
       ssh.keep_alive: yes
       ssh.remote_user: "'vagrant'"
-    groups: ['slurm_nodes']
+{% endif %}
+    groups:
+{% if platform.groups is undefined or platform.groups | length == 0 %}
+{% set __platform_groups = [ 'linux' ] %}
+{% else %}
+{% set __platform_groups = platform.groups %}
+{% endif %}
+{% for group in __platform_groups %}
+      - {{ group }}
+{% endfor %}
+      - {{ group }}
 {% endfor %}
 provisioner:
   name: ansible
@@ -56,16 +125,13 @@ provisioner:
 {% endif %}
   env:
     ANSIBLE_PIPELINING: "True"
+    ANSIBLE_VERBOSITY: 0
   lint:
     name: ansible-lint
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
   inventory:
-    group_vars:
-      all:
-        slurm_node_active: true
-        slurm_uses_dns: false
-
+    group_vars: {"linux": {"ansible_user": "vagrant", "ansible_password": "vagrant"}, "windows": {"ansible_user": "vagrant", "ansible_password": "vagrant", "ansible_become_user": "vagrant", "ansible_become_method": "runas", "ansible_connection": "ssh", "ansible_shell_type": "cmd"}, "all": {"slurm_uses_dns": false, "slurm_node_active": true}}
     host_vars:
 {% for platform in MOLECULE_DISTROS %}
       slurm-{{ platform.name }}-db:

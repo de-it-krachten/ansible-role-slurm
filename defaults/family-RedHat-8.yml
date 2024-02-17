@@ -1,0 +1,5 @@
+---
+
+# Slurm DRMAA RPM
+slurm_drmaa_rpm: >-
+  https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4.-20.11.el8.x86_64.rpm

@@ -14,7 +14,7 @@ See https://slurm.schedmd.com/documentation.html
 None
 
 #### Collections
-- community.general
+None
 
 ## Platforms
 
@@ -101,13 +101,88 @@ slurm_partitions:
     nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
 </pre></code>
 
-### defaults/Ubuntu-22.yml
+### defaults/Debian.yml
 <pre><code>
 # slurm configuration directory
 slurm_conf_dir: /etc/slurm
 
 # slurm logging directory
 slurm_log_dir: /var/log/slurm
+
+# Slurm daemon config file
+slurm_parm_file: /etc/default/slurmd
+
+# list of slurm packages
+slurm_packages:
+  slurmctld:
+    - slurmctld
+  slurmdbd:
+    - slurmdbd
+  slurmd:
+    - slurmd
+    - slurm-client
+  client:
+    - slurm-client
+    - slurm-drmaa
+</pre></code>
+
+### defaults/family-RedHat-8.yml
+<pre><code>
+# Slurm DRMAA RPM
+slurm_drmaa_rpm: >-
+  https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4.-20.11.el8.x86_64.rpm
+</pre></code>
+
+### defaults/family-RedHat.yml
+<pre><code>
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm
+
+# slurm logging directory
+slurm_log_dir: /var/log/slurm
+
+# Slurm daemon config file
+slurm_parm_file: /etc/sysconfig/slurmd
+
+# list of slurm packages
+slurm_packages:
+  slurmctld:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    - slurm-slurmctld
+    - slurm-torque
+    # - slurm-slurmdbd
+  slurmdbd:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    # - slurm-slurmctld
+    # - slurm-torque
+    - slurm-slurmdbd
+  slurmd:
+    - slurm
+    - slurm-devel
+    - slurm-perlapi
+    - slurm-slurmd
+  client:
+    - slurm
+    # - slurm-drmaa
+</pre></code>
+
+### defaults/Ubuntu.yml
+<pre><code>
+slurm_drmaa_repo_url: >-
+  https://ppa.launchpadcontent.net/natefoo/slurm-drmaa/ubuntu
+
+slurm_drmaa_key_url: >-
+  https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8de68488997c5c6ba19021136f2cc56412788738
+
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm-llnl
+
+# slurm logging directory
+slurm_log_dir: /var/log/slurm-llnl
 
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd
@@ -158,13 +233,20 @@ slurm_packages:
     # - slurm-drmaa
 </pre></code>
 
-### defaults/Ubuntu.yml
+### defaults/family-RedHat-9.yml
+<pre><code>
+# Slurm DRMAA RPM
+slurm_drmaa_rpm: >-
+  https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4.-22.05.el9.x86_64.rpm
+</pre></code>
+
+### defaults/Ubuntu-22.yml
 <pre><code>
 # slurm configuration directory
-slurm_conf_dir: /etc/slurm-llnl
+slurm_conf_dir: /etc/slurm
 
 # slurm logging directory
-slurm_log_dir: /var/log/slurm-llnl
+slurm_log_dir: /var/log/slurm
 
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd
@@ -181,68 +263,6 @@ slurm_packages:
   client:
     - slurm-client
     - slurm-drmaa1
-</pre></code>
-
-### defaults/family-RedHat.yml
-<pre><code>
-# slurm configuration directory
-slurm_conf_dir: /etc/slurm
-
-# slurm logging directory
-slurm_log_dir: /var/log/slurm
-
-# Slurm daemon config file
-slurm_parm_file: /etc/sysconfig/slurmd
-
-# list of slurm packages
-slurm_packages:
-  slurmctld:
-    - slurm
-    - slurm-devel
-    - slurm-perlapi
-    - slurm-slurmctld
-    - slurm-torque
-    # - slurm-slurmdbd
-  slurmdbd:
-    - slurm
-    - slurm-devel
-    - slurm-perlapi
-    # - slurm-slurmctld
-    # - slurm-torque
-    - slurm-slurmdbd
-  slurmd:
-    - slurm
-    - slurm-devel
-    - slurm-perlapi
-    - slurm-slurmd
-  client:
-    - slurm
-    # - slurm-drmaa
-</pre></code>
-
-### defaults/Debian.yml
-<pre><code>
-# slurm configuration directory
-slurm_conf_dir: /etc/slurm
-
-# slurm logging directory
-slurm_log_dir: /var/log/slurm
-
-# Slurm daemon config file
-slurm_parm_file: /etc/default/slurmd
-
-# list of slurm packages
-slurm_packages:
-  slurmctld:
-    - slurmctld
-  slurmdbd:
-    - slurmdbd
-  slurmd:
-    - slurmd
-    - slurm-client
-  client:
-    - slurm-client
-    - slurm-drmaa
 </pre></code>
 
 
@@ -286,10 +306,9 @@ slurm_firewall_ports:
 <pre><code>
 - name: sample playbook for role 'slurm'
   hosts: all
-  gather_facts: yes
-  become: yes
+  gather_facts: 'yes'
+  become: 'yes'
   vars:
-    # ansible_python_interpreter: /usr/libexec/platform-python
     slurmd_package:
       RedHat: slurm-slurmd
       Debian: slurmd
@@ -298,55 +317,52 @@ slurm_firewall_ports:
       - name: slurm
         group: slurm_nodes
   pre_tasks:
-
     - name: Set hostname
       hostname:
-        name: "{{ inventory_hostname | regex_replace('_','-') }}"
-      when: ansible_virtualization_type not in [ 'docker', 'container', 'containerd' ]
-
+        name: '{{ inventory_hostname | regex_replace(''_'',''-'') }}'
+      when: ansible_virtualization_type not in [ 'docker', 'container', 'containerd'
+        ]
     - name: Set slurm master ip
       set_fact:
-        slurm_master_ip: "{{ hostvars[slurm_master_name]['ansible_default_ipv4']['address'] }}"
+        slurm_master_ip: '{{ hostvars[slurm_master_name][''ansible_default_ipv4''][''address'']
+          }}'
       when:
         - slurm_master_ip is undefined
         - slurm_uses_dns is defined and not slurm_uses_dns | bool
-
     - name: Install slurmd on nodes
       package:
-        name: "{{ slurmd_package[ansible_os_family] }}"
+        name: '{{ slurmd_package[ansible_os_family] }}'
         state: present
-      when: "'slurm_nodes' in group_names"
-
+      when: '''slurm_nodes'' in group_names'
   roles:
-    - { role: deitkrachten.facts }
-    - { role: deitkrachten.epel, when: "ansible_os_family == 'RedHat'" }
-    - { role: deitkrachten.chrony, when: "github_actions is undefined" }
+    - role: deitkrachten.facts
+    - role: deitkrachten.epel
+      when: ansible_os_family == 'RedHat'
+    - role: deitkrachten.chrony
+      when: github_actions is undefined
     - role: deitkrachten.hosts
-      hosts_adapter: "{{ 'eth1' if lookup('env', 'MOLECULE_DRIVER_NAME') == 'vagrant' else 'default' }}"
-      when: "slurm_uses_dns is defined and not slurm_uses_dns|bool"
-
+      hosts_adapter: '{{ ''eth1'' if lookup(''env'', ''MOLECULE_DRIVER_NAME'') ==
+        ''vagrant'' else ''default'' }}'
+      when: slurm_uses_dns is defined and not slurm_uses_dns|bool
 - hosts: slurm_nodes
-  gather_facts: yes
-  become: yes
+  gather_facts: 'yes'
+  become: 'yes'
   tasks:
-
     - name: Display nodeinfo
       debug: var=ansible_local.slurm.nodeinfo
-
 - hosts: slurm_db
-  become: yes
+  become: 'yes'
   vars:
     munge_key: tests/munge.key
-    munge_socket_mode: "0666"
+    munge_socket_mode: '0666'
     mariadb_release: '10.11'
-    mariadb_root_password: 'Abcd1234'
+    mariadb_root_password: Abcd1234
     innodb:
       innodb_buffer_pool_size: 4096M
       innodb_log_file_size: 64M
       innodb_lock_wait_timeout: 900
     mariadb_db_name: testdb
     mariadb_db_user: testuser
-
   roles:
     - deitkrachten.mariadb
     - deitkrachten.munge
@@ -354,24 +370,22 @@ slurm_firewall_ports:
     - name: slurm
       include_role:
         name: slurm
-
 - hosts: slurm_masters
-  become: yes
+  become: 'yes'
   vars:
     munge_key: tests/munge.key
-    munge_socket_mode: "0666"
+    munge_socket_mode: '0666'
   roles:
     - deitkrachten.munge
   tasks:
     - name: slurm
       include_role:
         name: slurm
-
 - hosts: slurm_nodes
-  become: yes
+  become: 'yes'
   vars:
     munge_key: tests/munge.key
-    munge_socket_mode: "0666"
+    munge_socket_mode: '0666'
   roles:
     - deitkrachten.munge
   tasks:

@@ -140,16 +140,13 @@ provisioner:
 {% endif %}
   env:
     ANSIBLE_PIPELINING: "True"
+    ANSIBLE_VERBOSITY: 0
   lint:
     name: ansible-lint
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-converge.yml}
   inventory:
-    group_vars:
-      all:
-        slurm_node_active: true
-        slurm_uses_dns: false
-
+    group_vars: {"linux": {"ansible_user": "vagrant", "ansible_password": "vagrant"}, "windows": {"ansible_user": "vagrant", "ansible_password": "vagrant", "ansible_become_user": "vagrant", "ansible_become_method": "runas", "ansible_connection": "ssh", "ansible_shell_type": "cmd"}, "all": {"slurm_uses_dns": false, "slurm_node_active": true}}
     host_vars:
 {% for platform in MOLECULE_DISTROS %}
       slurm-{{ platform.name }}-db:

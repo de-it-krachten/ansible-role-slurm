@@ -1,13 +1,23 @@
 ---
 
 - name: Add slurm-drmaa PPA (Ubuntu)
-  ansible.builtin.apt_repository:
-    repo: ppa:natefoo/slurm-drmaa
-    state: present
   when:
     - ansible_distribution == "Ubuntu"
     - ansible_distribution_version is version('18.04', '>=')
     - "'client' in slurm_roles"
+  block:
+
+    - name: Import GPG key (Ubuntu)
+      ansible.builtin.apt_key:
+        url: "{{ slurm_drmaa_key_url }}"
+        validate_certs: no
+      when: slurm_drmaa_key_url is defined
+
+    - name: Add repository (Ubuntu)
+      ansible.builtin.apt_repository:
+        repo: "deb {{ slurm_drmaa_repo_url }} {{ ansible_distribution_release }} main"
+        state: present
+        filename: "natefoo-ppa"
 
 - name: Activate slurm repo (Debian)
   when:
@@ -36,12 +46,3 @@
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version | int == 7
-
-# - name: Add repository (RedHat >= 8)
-#   dnf:
-#     name: https://github.com/natefoo/slurm-drmaa/releases/download/1.1.3/slurm-drmaa-1.1.3-20.11.el8.x86_64.rpm
-#     state: present
-#     disable_gpg_check: yes
-#   when:
-#     - ansible_os_family == "RedHat"
-#     - ansible_distribution_major_version | int >=  8

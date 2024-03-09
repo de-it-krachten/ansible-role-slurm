@@ -84,3 +84,23 @@
   ci: false
   box: generic/alpine312
   interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
+- name: win2012r2
+  ci: false
+  box: jborean93/WindowsServer2012R2
+  groups: ['windows']
+  interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
+- name: win2016
+  ci: false
+  box: jborean93/WindowsServer2016
+  groups: ['windows']
+  interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
+- name: win2019
+  ci: false
+  box: jborean93/WindowsServer2019
+  groups: ['windows']
+  interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
+- name: win2022
+  ci: false
+  box: jborean93/WindowsServer2022
+  groups: ['windows']
+  interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]

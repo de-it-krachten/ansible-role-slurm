@@ -1,3 +1,11 @@
+## [1.7.2](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.7.1...v1.7.2) (2024-04-12)
+
+
+### Bug Fixes
+
+* Empty partitions are no longer created ([5e6b959](https://github.com/de-it-krachten/ansible-role-slurm/commit/5e6b959fb6cd02e51d3c048d2c9bd47c9ac2eff0))
+* Update DRMAA packages ([e5c3410](https://github.com/de-it-krachten/ansible-role-slurm/commit/e5c341028138bc83b76e9d66c1d939845fd3ca68))
+
 ## [1.7.1](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.7.0...v1.7.1) (2023-09-22)
 
 

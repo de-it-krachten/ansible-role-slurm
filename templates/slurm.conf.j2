@@ -180,7 +180,7 @@ SlurmdLogFile={{ slurm_log_dir }}/slurmd.log
 {{ hostvars[node]['ansible_local']['slurm']['nodeinfo'] }}
 {% endif %}
 {% endfor %}
-{% for partition in slurm_partitions | sort %}
+{% for partition in slurm_partitions %}
 {% if partition['nodes'] | length > 0 %}
 PartitionName={{ partition['name'] }} Nodes={{ partition['nodes'] | sort | join(',') }} Default={{ partition['default'] | default('YES') }} MaxTime={{ partition['maxtime'] | default('INFINITE') }} State={{ partition['state'] | default('UP') }}
 {% endif %}

@@ -1,3 +1,10 @@
+## [1.7.3](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.7.2...v1.7.3) (2024-04-12)
+
+
+### Bug Fixes
+
+* Fix for slurm.conf jinja rendering ([541b25a](https://github.com/de-it-krachten/ansible-role-slurm/commit/541b25a318e25127b585756a3ba567edc3f23dcf))
+
 ## [1.7.2](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.7.1...v1.7.2) (2024-04-12)
 
 

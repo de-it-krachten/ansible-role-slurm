@@ -175,11 +175,13 @@ SlurmdLogFile={{ slurm_log_dir }}/slurmd.log
 #
 #
 # COMPUTE NODES
-{% for node in groups['slurm_nodes'] %}
+{% for node in groups['slurm_nodes'] | sort %}
 {% if (hostvars[node]['slurm_node_active']|default(slurm_node_active)) %}
 {{ hostvars[node]['ansible_local']['slurm']['nodeinfo'] }}
 {% endif %}
 {% endfor %}
-{% for partition in slurm_partitions %}
-PartitionName={{ partition['name'] }} Nodes={{ partition['nodes'] | join(',') }} Default={{ partition['default'] | default('YES') }} MaxTime={{ partition['maxtime'] | default('INFINITE') }} State={{ partition['state'] | default('UP') }}
+{% for partition in slurm_partitions | sort %}
+{% if partition['nodes'] | length > 0 %}
+PartitionName={{ partition['name'] }} Nodes={{ partition['nodes'] | sort | join(',') }} Default={{ partition['default'] | default('YES') }} MaxTime={{ partition['maxtime'] | default('INFINITE') }} State={{ partition['state'] | default('UP') }}
+{% endif %}
 {% endfor %}

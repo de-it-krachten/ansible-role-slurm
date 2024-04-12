@@ -394,7 +394,7 @@ platforms:
   debian10:
     name: Debian 10 (Buster)
     ci: false
-    supported: true
+    supported: false
     galaxy:
       name: Debian
       version: buster
@@ -641,6 +641,66 @@ platforms:
           - network
         environment:
           DOCKER_TLS_CERTDIR: /certs
+  win2012r2:
+    name: Windows Server 2012 R2
+    ci: false
+    supported: false
+    galaxy:
+      name: Windows
+      version: all
+    molecule:
+      vagrant:
+        box: jborean93/WindowsServer2012R2
+        groups:
+          - windows
+        interfaces:
+          - network_name: private_network
+            type: dhcp
+  win2016:
+    name: Windows Server 2016
+    ci: false
+    supported: false
+    galaxy:
+      name: Windows
+      version: all
+    molecule:
+      vagrant:
+        box: jborean93/WindowsServer2016
+        groups:
+          - windows
+        interfaces:
+          - network_name: private_network
+            type: dhcp
+  win2019:
+    name: Windows Server 2019
+    ci: false
+    supported: false
+    galaxy:
+      name: Windows
+      version: all
+    molecule:
+      vagrant:
+        box: jborean93/WindowsServer2019
+        groups:
+          - windows
+        interfaces:
+          - network_name: private_network
+            type: dhcp
+  win2022:
+    name: Windows Server 2022
+    ci: false
+    supported: false
+    galaxy:
+      name: Windows
+      version: all
+    molecule:
+      vagrant:
+        box: jborean93/WindowsServer2022
+        groups:
+          - windows
+        interfaces:
+          - network_name: private_network
+            type: dhcp
 
 # List of platform deviations
 platforms_overwrite: {}
@@ -671,6 +731,7 @@ galaxy:
     - name: Fedora
       versions:
         - all
+  dependencies: []
 
 # Github
 github:
@@ -681,30 +742,35 @@ github:
   parallel: true
   owner: de-it-krachten
   repo: ansible-role-slurm
+  # https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html
   lint_matrix:
-    - name: ansible_2.9
-      ansible: "ansible==2.9.27"
-      ansible_core: "ansible==2.9.27"
-      ansible_lint: "ansible-lint==5.4.0"
-    - name: ansible_2.11
-      ansible: "ansible>4,<5"
-      ansible_core: "ansible-core>2.11,<2.12"
-      ansible_lint: "ansible-lint>5,<6"
-    - name: ansible_2.12
-      ansible: "ansible>5,<6"
-      ansible_core: "ansible-core>2.12,<2.13"
-      ansible_lint: "ansible-lint>6,<7"
-    - name: ansible_2.13
-      ansible: "ansible>6,<7"
-      ansible_core: "ansible-core>2.13,<2.14"
-      ansible_lint: "ansible-lint>6,<7"
-    - name: ansible_2.14
-      ansible: "ansible>6,<7"
-      ansible_core: "ansible-core>2.14,<2.15"
-      ansible_lint: "ansible-lint"
+    # - name: ansible_2.9
+    #   ansible: "ansible==2.9.27"
+    #   ansible_core: "ansible==2.9.27"
+    #   ansible_lint: "ansible-lint==5.4.0"
+    # - name: ansible_2.11
+    #   ansible: "ansible>4,<5"
+    #   ansible_core: "ansible-core>2.11,<2.12"
+    #   ansible_lint: "ansible-lint>5,<6"
+    # - name: ansible_2.12
+    #   ansible: "ansible>5,<6"
+    #   ansible_core: "ansible-core>2.12,<2.13"
+    #   ansible_lint: "ansible-lint>6,<7"
+    # - name: ansible_2.13
+    #   ansible: "ansible>6,<7"
+    #   ansible_core: "ansible-core>2.13,<2.14"
+    #   ansible_lint: "ansible-lint>6,<7"
+    # - name: ansible_2.14
+    #   ansible: "ansible>7,<8"
+    #   ansible_core: "ansible-core>2.14,<2.15"
+    #   ansible_lint: "ansible-lint"
     - name: ansible_2.15
-      ansible: "ansible>7,<8"
+      ansible: "ansible>8,<9"
       ansible_core: "ansible-core>2.15,<2.16"
+      ansible_lint: "ansible-lint"
+    - name: ansible_2.16
+      ansible: "ansible>9,<10"
+      ansible_core: "ansible-core>2.16,<2.17"
       ansible_lint: "ansible-lint"
 
 # Gitlab
@@ -725,6 +791,8 @@ molecule:
     - hetznercloud
     - podman
   driver: docker
+  ansible:
+   verbosity: 0
   converge:
     playbooks: []
     vars: {}
@@ -749,6 +817,17 @@ molecule:
   nodes:
     - name: node1
       groups: []
+  group_vars:
+    linux:
+      ansible_user: vagrant
+      ansible_password: vagrant
+    windows:
+      ansible_user: vagrant
+      ansible_password: vagrant
+      ansible_become_user: vagrant
+      ansible_become_method: runas
+      ansible_connection: ssh
+      ansible_shell_type: cmd
 
 # templates
 ci_templates:

@@ -7,7 +7,7 @@
 
 - name: Add slurm-drmaa
   ansible.builtin.dnf:
-    name: https://github.com/natefoo/slurm-drmaa/releases/download/1.1.3/slurm-drmaa-1.1.3-20.11.el8.x86_64.rpm
+    name: "{{ slurm_drmaa_rpm }}"
     state: present
     disable_gpg_check: yes
   when:

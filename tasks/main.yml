@@ -125,7 +125,7 @@
     - name: Include config.yml
       ansible.builtin.include_tasks: config.yml
 
-- name: Install slurmctld
+- name: Install slurmd
   when: "'slurmd' in slurm_roles"
   vars:
     slurm_role: slurmd

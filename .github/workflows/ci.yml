@@ -26,10 +26,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "ansible_2.14"
-            # ansible: "ansible>7,<8"
-            ansible: "ansible-core>2.14,<2.15"
-            ansible_lint: "ansible-lint"
           - name: "ansible_2.15"
             # ansible: "ansible>8,<9"
             ansible: "ansible-core>2.15,<2.16"

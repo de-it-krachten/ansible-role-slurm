@@ -41,7 +41,7 @@ ProctrackType=proctrack/linuxproc
 #PropagatePrioProcess=0
 #PropagateResourceLimits=
 #PropagateResourceLimitsExcept=
-#RebootProgram=
+RebootProgram=/root/bin/patch_update.sh
 ReturnToService=1
 #SallocDefaultCommand=
 SlurmctldPidFile=/var/run/slurmctld.pid
@@ -164,9 +164,9 @@ SlurmdLogFile={{ slurm_log_dir }}/slurmd.log
 #
 # POWER SAVE SUPPORT FOR IDLE NODES (optional)
 #SuspendProgram=
-#ResumeProgram=
+ResumeProgram=/root/bin/slurm_resume.sh
 #SuspendTimeout=
-#ResumeTimeout=
+ResumeTimeout=2400
 #ResumeRate=
 #SuspendExcNodes=
 #SuspendExcParts=

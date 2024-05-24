@@ -139,6 +139,13 @@ slurm_drmaa_rpm: >-
   https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4.-20.11.el8.x86_64.rpm
 </pre></code>
 
+### defaults/family-RedHat-9.yml
+<pre><code>
+# Slurm DRMAA RPM
+slurm_drmaa_rpm: >-
+  https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4.-22.05.el9.x86_64.rpm
+</pre></code>
+
 ### defaults/family-RedHat.yml
 <pre><code>
 # slurm configuration directory
@@ -176,37 +183,6 @@ slurm_packages:
     # - slurm-drmaa
 </pre></code>
 
-### defaults/Ubuntu.yml
-<pre><code>
-slurm_drmaa_repo_url: >-
-  https://ppa.launchpadcontent.net/natefoo/slurm-drmaa/ubuntu
-
-slurm_drmaa_key_url: >-
-  https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8de68488997c5c6ba19021136f2cc56412788738
-
-# slurm configuration directory
-slurm_conf_dir: /etc/slurm-llnl
-
-# slurm logging directory
-slurm_log_dir: /var/log/slurm-llnl
-
-# Slurm daemon config file
-slurm_parm_file: /etc/default/slurmd
-
-# list of slurm packages
-slurm_packages:
-  slurmctld:
-    - slurmctld
-  slurmdbd:
-    - slurmdbd
-  slurmd:
-    - slurmd
-    - slurm-client
-  client:
-    - slurm-client
-    - slurm-drmaa1
-</pre></code>
-
 ### defaults/family-Suse.yml
 <pre><code>
 # slurm configuration directory
@@ -239,11 +215,22 @@ slurm_packages:
     # - slurm-drmaa
 </pre></code>
 
-### defaults/family-RedHat-9.yml
+### defaults/Ubuntu-18.yml
 <pre><code>
-# Slurm DRMAA RPM
-slurm_drmaa_rpm: >-
-  https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4.-22.05.el9.x86_64.rpm
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm-llnl
+
+# slurm logging directory
+slurm_log_dir: /var/log/slurm-llnl
+</pre></code>
+
+### defaults/Ubuntu-20.yml
+<pre><code>
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm-llnl
+
+# slurm logging directory
+slurm_log_dir: /var/log/slurm-llnl
 </pre></code>
 
 ### defaults/Ubuntu-22.yml
@@ -253,6 +240,24 @@ slurm_conf_dir: /etc/slurm
 
 # slurm logging directory
 slurm_log_dir: /var/log/slurm
+</pre></code>
+
+### defaults/Ubuntu-24.yml
+<pre><code>
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm
+
+# slurm logging directory
+slurm_log_dir: /var/log/slurm
+</pre></code>
+
+### defaults/Ubuntu.yml
+<pre><code>
+slurm_drmaa_repo_url: >-
+  https://ppa.launchpadcontent.net/natefoo/slurm-drmaa/ubuntu
+
+slurm_drmaa_key_url: >-
+  https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8de68488997c5c6ba19021136f2cc56412788738
 
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd

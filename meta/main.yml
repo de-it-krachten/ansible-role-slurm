@@ -1,5 +1,4 @@
 ---
-
 galaxy_info:
   role_name: slurm
   namespace: de_it_krachten
@@ -7,20 +6,20 @@ galaxy_info:
   author: Mark van Huijstee
   company: De IT Krachten BV
   license: MIT
-  min_ansible_version: '2.9'
+  min_ansible_version: "2.9"
   platforms:
     - name: EL
       versions:
-        - '8'
+        - "8"
     - name: opensuse
       versions:
-        - all
+        - "all"
     - name: Debian
       versions:
-        - bullseye
-        - bookworm
+        - "bullseye"
+        - "bookworm"
     - name: Ubuntu
       versions:
-        - focal
-        - jammy
+        - "focal"
+        - "jammy"
 dependencies: []

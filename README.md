@@ -30,6 +30,7 @@ Supported platforms
 - Debian 12 (Bookworm)
 - Ubuntu 20.04 LTS
 - Ubuntu 22.04 LTS
+- Ubuntu 24.04 LTS
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
@@ -99,6 +100,11 @@ slurm_jwt_token: jwt_hs256.key
 slurm_partitions:
   - name: slurmall
     nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
+
+# Reboot/resume commands
+# slurm_reboot_program:
+# slurm_resume_program:
+# slurm_resume_timeout:
 </pre></code>
 
 ### defaults/Debian.yml

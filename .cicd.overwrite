@@ -69,6 +69,12 @@ platforms:
   fedora38:
     ci: false
     supported: false
+  fedora39:
+    ci: false
+    supported: false
+  fedora40:
+    ci: false
+    supported: false
   alpine:
     ci: false
     supported: false

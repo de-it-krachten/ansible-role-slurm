@@ -62,3 +62,8 @@ slurm_jwt_token: jwt_hs256.key
 slurm_partitions:
   - name: slurmall
     nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
+
+# Reboot/resume commands
+# slurm_reboot_program:
+# slurm_resume_program:
+# slurm_resume_timeout:

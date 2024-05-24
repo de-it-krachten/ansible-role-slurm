@@ -249,6 +249,22 @@ jobs:
             ansible_lint: "ansible-lint>6,<7"
             hetznercloud: True
 
+          # - name: ubuntu2404_2.9
+          #   runs_on: ubuntu-latest
+          #   distro: ubuntu2404
+          #   playbook: converge.yml
+          #   ansible: "ansible==2.9.27"
+          #   ansible_lint: "ansible-lint==5.4.0"
+          #   hetznercloud: True
+          # - name: ubuntu2404_2.14
+          - name: ubuntu2404
+            runs_on: ubuntu-latest
+            distro: ubuntu2404
+            playbook: converge.yml
+            ansible: "ansible-core>2.14,<2.15"
+            ansible_lint: "ansible-lint>6,<7"
+            hetznercloud: True
+
 
     steps:
 

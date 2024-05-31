@@ -819,26 +819,6 @@ github:
   repo: ansible-role-slurm
   # https://docs.ansible.com/ansible/latest/reference_appendices/release_and_maintenance.html
   lint_matrix:
-    # - name: ansible_2.9
-    #   ansible: "ansible==2.9.27"
-    #   ansible_core: "ansible==2.9.27"
-    #   ansible_lint: "ansible-lint==5.4.0"
-    # - name: ansible_2.11
-    #   ansible: "ansible>4,<5"
-    #   ansible_core: "ansible-core>2.11,<2.12"
-    #   ansible_lint: "ansible-lint>5,<6"
-    # - name: ansible_2.12
-    #   ansible: "ansible>5,<6"
-    #   ansible_core: "ansible-core>2.12,<2.13"
-    #   ansible_lint: "ansible-lint>6,<7"
-    # - name: ansible_2.13
-    #   ansible: "ansible>6,<7"
-    #   ansible_core: "ansible-core>2.13,<2.14"
-    #   ansible_lint: "ansible-lint>6,<7"
-    # - name: ansible_2.14
-    #   ansible: "ansible>7,<8"
-    #   ansible_core: "ansible-core>2.14,<2.15"
-    #   ansible_lint: "ansible-lint"
     - name: ansible_2.15
       ansible: "ansible>8,<9"
       ansible_core: "ansible-core>2.15,<2.16"

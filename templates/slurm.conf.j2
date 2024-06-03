@@ -41,7 +41,9 @@ ProctrackType=proctrack/linuxproc
 #PropagatePrioProcess=0
 #PropagateResourceLimits=
 #PropagateResourceLimitsExcept=
-#RebootProgram=
+{% if slurm_reboot_program is defined %}
+RebootProgram={{ slurm_reboot_program }}
+{% endif %}
 ReturnToService=1
 #SallocDefaultCommand=
 SlurmctldPidFile=/var/run/slurmctld.pid
@@ -110,7 +112,7 @@ DefMemPerCPU=5   #uncomment this to put default memory usage
 #SchedulerTimeSlice=30
 SchedulerType=sched/backfill
 SchedulerParameters=kill_invalid_depend,defer,bf_continue
-SelectType=select/cons_res
+SelectType=select/cons_tres
 SelectTypeParameters=CR_CPU_Memory
 #
 #
@@ -164,9 +166,13 @@ SlurmdLogFile={{ slurm_log_dir }}/slurmd.log
 #
 # POWER SAVE SUPPORT FOR IDLE NODES (optional)
 #SuspendProgram=
-#ResumeProgram=
+{% if slurm_resume_program is defined %}
+ResumeProgram={{ slurm_resume_program }}
+{% endif %}
 #SuspendTimeout=
-#ResumeTimeout=
+{% if slurm_resume_timeout is defined %}
+ResumeTimeout={{ slurm_resume_timeout }}
+{% endif %}
 #ResumeRate=
 #SuspendExcNodes=
 #SuspendExcParts=

@@ -6,12 +6,6 @@ slurm_drmaa_repo_url: >-
 slurm_drmaa_key_url: >-
   https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8de68488997c5c6ba19021136f2cc56412788738
 
-# slurm configuration directory
-slurm_conf_dir: /etc/slurm-llnl
-
-# slurm logging directory
-slurm_log_dir: /var/log/slurm-llnl
-
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd
 

@@ -1,3 +1,17 @@
+# [1.8.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.7.3...v1.8.0) (2024-06-03)
+
+
+### Bug Fixes
+
+* SelectType from 'select/cons_res' to 'select/cons_tres' ([5a1586f](https://github.com/de-it-krachten/ansible-role-slurm/commit/5a1586f42276d29a4d4e81b87f204a069b629594))
+
+
+### Features
+
+* Add support for slurm reboot commands ([6bc8414](https://github.com/de-it-krachten/ansible-role-slurm/commit/6bc8414ff34e4597fb7e071ae61f4a5dea80eda2))
+* Add support for Ubuntu 24.04 LTS + Fedora 40 ([f4ebbf2](https://github.com/de-it-krachten/ansible-role-slurm/commit/f4ebbf2a392a858e0089d63fb6240795c20725f6))
+* Add support for Ubuntu 2404 LTS ([d356674](https://github.com/de-it-krachten/ansible-role-slurm/commit/d356674f496bceda17b68b3f6ffc30a24cce2266))
+
 ## [1.7.3](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.7.2...v1.7.3) (2024-04-12)
 
 

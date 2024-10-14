@@ -1,1 +1,7 @@
-Ubuntu-20.yml
+---
+
+# slurm configuration directory
+slurm_conf_dir: /etc/slurm-llnl
+
+# slurm logging directory
+slurm_log_dir: /var/log/slurm-llnl

@@ -18,7 +18,7 @@ platforms:
   rhel7:
     name: Red Hat Enterprise Linux 7
     ci: false
-    supported: true
+    supported: false
     galaxy:
       name: EL
       version: 7
@@ -71,8 +71,8 @@ platforms:
         pre_build_image: false
   centos7:
     name: CentOS 7
-    ci: true
-    supported: true
+    ci: false
+    supported: false
     galaxy:
       name: EL
       version: 7

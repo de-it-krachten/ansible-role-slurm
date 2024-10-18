@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.8.0...v1.8.1) (2024-10-18)
+
+
+### Bug Fixes
+
+* Replace symlinks for defaults/Ubuntu-(18|22).yml to actual files ([a38f8b8](https://github.com/de-it-krachten/ansible-role-slurm/commit/a38f8b89f6057e4ab1206af4c3005fdae176f7cb))
+
 # [1.8.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.7.3...v1.8.0) (2024-06-03)
 
 

@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.8.1...v1.9.0) (2024-12-29)
+
+
+### Features
+
+* Update supported platforms & CI ([3ff857f](https://github.com/de-it-krachten/ansible-role-slurm/commit/3ff857fe3e9365bd9ade536213926e897a6dcf88))
+
 ## [1.8.1](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.8.0...v1.8.1) (2024-10-18)
 
 

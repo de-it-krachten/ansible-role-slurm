@@ -91,6 +91,9 @@
 - name: fedora40
   ci: false
   image: docker.io/geerlingguy/docker-fedora40-ansible:latest
+- name: fedora41
+  ci: false
+  image: docker.io/geerlingguy/docker-fedora41-ansible:latest
 - name: alpine3
   ci: false
   image: docker.io/dropveter/alpine-python3

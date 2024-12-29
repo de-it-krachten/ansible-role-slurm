@@ -376,6 +376,7 @@
               - openssh-clients
               - iproute
               - glibc-langpack-en
+              - gnupg2
             state: present
 
         - name: Activate epel repository

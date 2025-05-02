@@ -12,3 +12,8 @@
     uid: "{{ slurm_uid }}"
 #    home: /nonexistent
 #    shell: /usr/sbin/nologin
+
+- name: Disable password expiration
+  ansible.builtin.command:
+    cmd: chage -I -1 -m 0 -M -1 -E -1 {{ slurm_user }}
+  changed_when: no

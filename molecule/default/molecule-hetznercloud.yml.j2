@@ -3,7 +3,7 @@
 dependency:
   name: galaxy
 driver:
-  name: hetznercloud
+  name: molecule_hetznercloud
 lint: |
   set -e
   yamllint .
@@ -13,17 +13,17 @@ lint: |
 platforms:
 {% for platform in MOLECULE_DISTROS %}
   - name: slurm-{{ platform.name }}-db
-    server_type: "{{ platform.server_type | default('cx11') }}"
+    server_type: "{{ platform.server_type | default('cx22') }}"
     image: "{{ platform.image }}"
     location: "{{ platform.location | default('hel1') }}"
     groups: ['slurm_db']
   - name: slurm-{{ platform.name }}-master
-    server_type: "{{ platform.server_type | default('cx11') }}"
+    server_type: "{{ platform.server_type | default('cx22') }}"
     image: "{{ platform.image }}"
     location: "{{ platform.location | default('hel1') }}"
     groups: ['slurm_masters']
   - name: slurm-{{ platform.name }}-worker
-    server_type: "{{ platform.server_type | default('cx11') }}"
+    server_type: "{{ platform.server_type | default('cx22') }}"
     image: "{{ platform.image }}"
     location: "{{ platform.location | default('hel1') }}"
     groups: ['slurm_nodes']

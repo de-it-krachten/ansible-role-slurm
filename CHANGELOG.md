@@ -1,3 +1,10 @@
+## [1.9.1](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.9.0...v1.9.1) (2025-08-11)
+
+
+### Bug Fixes
+
+* Disable password expiration for slurm user ([e70f047](https://github.com/de-it-krachten/ansible-role-slurm/commit/e70f047f7a1c3b9938fc88b02f3511c3eaea4ab5))
+
 # [1.9.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.8.1...v1.9.0) (2024-12-29)
 
 

@@ -12,6 +12,7 @@ galaxy_info:
     - name: EL
       versions:
         - '8'
+        - '9'
     - name: opensuse
       versions:
         - all
@@ -21,6 +22,5 @@ galaxy_info:
         - bookworm
     - name: Ubuntu
       versions:
-        - focal
         - jammy
 dependencies: []

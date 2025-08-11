@@ -8,65 +8,25 @@ generic:
 
 # Supported platforms
 platforms:
-  rhel7:
+  rhel10:
     ci: false
     supported: false
-#  rhel8:
-#    ci: false
-#    supported: true
-  rhel9:
+  rockylinux10:
     ci: false
     supported: false
-  centos7:
+  almalinux10:
     ci: false
     supported: false
-#  centos8:
-#    ci: false
-#    supported: false
-#  centos8s:
-#    ci: false
-#    supported: false
-#  centos9s:
-#    ci: false
-#    supported: false
-#  rockylinux8:
-#    ci: true
-#    supported: true
-  rockylinux9:
+  oraclelinux10:
     ci: false
     supported: false
-#  oraclelinux8:
-#    ci: true
-#    supported: true
-  oraclelinux9:
-    ci: false
-    supported: false
-#  almalinux8:
-#    ci: true
-#    supported: true
-  almalinux9:
-    ci: false
-    supported: false
-  debian10:
-    ci: false
-    supported: false
-#  debian11:
-#    # ci: true
-#    ci: false
-#    supported: true
-#  ubuntu1804:
-#    ci: false
-#    supported: false
-#  ubuntu2004:
-#    ci: true
-#    supported: true
-#  ubuntu2204:
-#    ci: false
-#    supported: false
-  fedora40:
+  debian13:
     ci: false
     supported: false
   fedora41:
+    ci: false
+    supported: false
+  fedora42:
     ci: false
     supported: false
   alpine:

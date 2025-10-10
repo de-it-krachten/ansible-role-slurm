@@ -46,6 +46,7 @@
     owner: "{{ slurm_user }}"
     group: "{{ slurm_group }}"
     mode: '0644'
+    backup: true
   register: _slurmctld
   when: slurm_conf_update | bool
 
@@ -56,6 +57,7 @@
     owner: "{{ slurm_user }}"
     group: "{{ slurm_group }}"
     mode: '0600'
+    backup: true
   register: _croup
 
 - name: Enable slurmctld

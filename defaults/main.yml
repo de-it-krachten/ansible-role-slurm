@@ -63,6 +63,9 @@ slurm_partitions:
   - name: slurmall
     nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
 
+# Install slurm drmaa
+slurm_install_drmaa: true
+
 # Reboot/resume commands
 # slurm_reboot_program:
 # slurm_resume_program:

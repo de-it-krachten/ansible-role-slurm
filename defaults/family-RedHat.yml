@@ -32,4 +32,5 @@ slurm_packages:
     - slurm-slurmd
   client:
     - slurm
-    # - slurm-drmaa
+  drmaa:
+    - slurm-drmaa

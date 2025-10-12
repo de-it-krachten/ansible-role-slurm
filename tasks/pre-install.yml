@@ -5,6 +5,7 @@
     - ansible_distribution == "Ubuntu"
     - ansible_distribution_version is version('18.04', '>=')
     - "'client' in slurm_roles"
+    - slurm_install_drmaa | bool
   block:
 
     - name: Import GPG key (Ubuntu)
@@ -24,6 +25,7 @@
     - ansible_distribution == "Debian"
     - ansible_distribution_version is version('11', '>=')
     - "'client' in slurm_roles"
+    - slurm_install_drmaa | bool
   block:
 
     - name: Import GPG key (Debian)
@@ -46,3 +48,4 @@
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version | int == 7
+    - slurm_install_drmaa | bool

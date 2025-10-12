@@ -27,4 +27,5 @@ slurm_packages:
     - slurm-munge
   client:
     - slurm
-    # - slurm-drmaa
+#  drmaa:
+#    - slurm-drmaa

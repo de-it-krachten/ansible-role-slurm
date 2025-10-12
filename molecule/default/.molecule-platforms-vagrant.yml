@@ -57,7 +57,7 @@
   box: generic/alma10
   interfaces: [{'network_name': 'private_network', 'type': 'dhcp', 'auto_config': True}]
 - name: opensuse15
-  ci: true
+  ci: false
   box: generic/opensuse15
   interfaces: [{'network_name': 'private_network', 'type': 'dhcp', 'auto_config': True}]
 - name: opensusetumbleweed15

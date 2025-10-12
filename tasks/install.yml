@@ -5,7 +5,7 @@
     name: "{{ slurm_packages[slurm_role] }}"
     state: present
 
-- name: Add slurm-drmaa
+- name: Add slurm-drmaa (RedHat)
   ansible.builtin.dnf:
     name: "{{ slurm_drmaa_rpm }}"
     state: present
@@ -14,3 +14,14 @@
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version | int >=  8
     - slurm_role == 'client'
+    - slurm_install_drmaa | bool
+
+- name: Add slurm-drmaa (Debian/Ubuntu)
+  ansible.builtin.apt:
+    name: "{{ slurm_packages['drmaa'] }}"
+    state: present
+  when:
+    - ansible_os_family == "Debian"
+    - slurm_role == 'client'
+    - slurm_packages['drmaa'] is defined
+    - slurm_install_drmaa | bool

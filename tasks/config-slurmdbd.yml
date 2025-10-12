@@ -36,6 +36,7 @@
     owner: "{{ slurm_user }}"
     group: "{{ slurm_group }}"
     mode: '0600'
+    backup: true
   register: _slurmdbd
 
 - name: Enable the slurmdbd on this control node

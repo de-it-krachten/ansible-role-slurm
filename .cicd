@@ -1045,7 +1045,7 @@ github:
 gitlab:
   active: false
 
-# Axure DevOps
+# Azure DevOps
 ado:
   active: false
 

@@ -1,3 +1,12 @@
+# [1.10.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.9.1...v1.10.0) (2025-10-12)
+
+
+### Features
+
+* Drop support for SLES/OpenSuse ([bb55f08](https://github.com/de-it-krachten/ansible-role-slurm/commit/bb55f0894af89ab16320f3638806b28d680527bd))
+* Introduction of boolean 'slurm_install_drmaa' ([686eaef](https://github.com/de-it-krachten/ansible-role-slurm/commit/686eaefe67c8aec8736d2faa93f1ae5cd7829f03))
+* Support for all-in-one (master/db/node) ([c9805dc](https://github.com/de-it-krachten/ansible-role-slurm/commit/c9805dc2db6c95474ff793067d1a045041b90427))
+
 ## [1.9.1](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.9.0...v1.9.1) (2025-08-11)
 
 

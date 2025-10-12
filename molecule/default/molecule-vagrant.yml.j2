@@ -31,11 +31,9 @@ platforms:
 {% if platform.instance_raw_config_args is defined %}
     instance_raw_config_args: {{ platform.instance_raw_config_args }}
 {% endif %}
-{% if not platform.name | regex_search('win2') %}
     config_options:
       ssh.keep_alive: yes
       ssh.remote_user: "vagrant"
-{% endif %}
     groups:
 {% if platform.groups is undefined or platform.groups | length == 0 %}
 {% set __platform_groups = [ 'linux' ] %}
@@ -65,11 +63,9 @@ platforms:
 {% if platform.instance_raw_config_args is defined %}
     instance_raw_config_args: {{ platform.instance_raw_config_args }}
 {% endif %}
-{% if not platform.name | regex_search('win2') %}
     config_options:
       ssh.keep_alive: yes
       ssh.remote_user: "vagrant"
-{% endif %}
     groups:
 {% if platform.groups is undefined or platform.groups | length == 0 %}
 {% set __platform_groups = [ 'linux' ] %}
@@ -99,11 +95,9 @@ platforms:
 {% if platform.instance_raw_config_args is defined %}
     instance_raw_config_args: {{ platform.instance_raw_config_args }}
 {% endif %}
-{% if not platform.name | regex_search('win2') %}
     config_options:
       ssh.keep_alive: yes
       ssh.remote_user: "vagrant"
-{% endif %}
     groups:
 {% if platform.groups is undefined or platform.groups | length == 0 %}
 {% set __platform_groups = [ 'linux' ] %}

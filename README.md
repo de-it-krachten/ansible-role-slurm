@@ -28,8 +28,6 @@ Supported platforms
 - OracleLinux 9
 - AlmaLinux 8
 - AlmaLinux 9
-- SUSE Linux Enterprise 15<sup>1</sup>
-- openSUSE Leap 15
 - Debian 11 (Bullseye)
 - Debian 12 (Bookworm)
 - Ubuntu 22.04 LTS
@@ -104,6 +102,9 @@ slurm_partitions:
   - name: slurmall
     nodes: "{{ groups['slurm_nodes'] | map('regex_replace', '\\..*') | list }}"
 
+# Install slurm drmaa
+slurm_install_drmaa: true
+
 # Reboot/resume commands
 # slurm_reboot_program:
 # slurm_resume_program:
@@ -132,6 +133,7 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
+  drmaa:
     - slurm-drmaa
 </pre></code>
 
@@ -183,7 +185,8 @@ slurm_packages:
     - slurm-slurmd
   client:
     - slurm
-    # - slurm-drmaa
+  drmaa:
+    - slurm-drmaa
 </pre></code>
 
 ### defaults/family-Suse.yml
@@ -215,7 +218,8 @@ slurm_packages:
     - slurm-munge
   client:
     - slurm
-    # - slurm-drmaa
+#  drmaa:
+#    - slurm-drmaa
 </pre></code>
 
 ### defaults/Ubuntu-18.yml
@@ -276,6 +280,7 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
+  drmaa:
     - slurm-drmaa1
 </pre></code>
 

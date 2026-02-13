@@ -36,6 +36,7 @@ Supported platforms
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
 
+
 ## Role Variables
 ### defaults/main.yml
 <pre><code>
@@ -113,6 +114,20 @@ slurm_install_drmaa: true
 
 ### defaults/Debian.yml
 <pre><code>
+# Slurm DRMAA repo name
+slurm_drmaa_repo_name: galaxy-depot
+
+# Slurm DRMAA PPA repo
+slurm_drmaa_repo_url: >-
+  https://depot.galaxyproject.org/apt
+
+# Slurm DRMAA PPA gpg url
+slurm_drmaa_key_url: >-
+  https://depot.galaxyproject.org/apt/galaxy-depot.gpg
+
+# Slurm DRMAA PPA gpg key
+slurm_drmaa_key_file: /etc/apt/trusted.gpg.d/galaxy-depot.gpg
+
 # slurm configuration directory
 slurm_conf_dir: /etc/slurm
 
@@ -260,11 +275,19 @@ slurm_log_dir: /var/log/slurm
 
 ### defaults/Ubuntu.yml
 <pre><code>
+# Slurm DRMAA repo name
+slurm_drmaa_repo_name: natefoo-ppa
+
+# Slurm DRMAA PPA repo
 slurm_drmaa_repo_url: >-
   https://ppa.launchpadcontent.net/natefoo/slurm-drmaa/ubuntu
 
+# Slurm DRMAA PPA gpg url
 slurm_drmaa_key_url: >-
   https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8de68488997c5c6ba19021136f2cc56412788738
+
+# Slurm DRMAA PPA gpg key
+slurm_drmaa_key_file: /etc/apt/trusted.gpg.d/natefoo-ppa.gpg
 
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd

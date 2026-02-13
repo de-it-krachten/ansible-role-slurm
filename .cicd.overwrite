@@ -35,6 +35,9 @@ platforms:
   fedora42:
     ci: false
     supported: false
+  fedora43:
+    ci: false
+    supported: false
   alpine:
     ci: false
     supported: false

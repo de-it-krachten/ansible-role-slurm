@@ -2,42 +2,61 @@
 
 - name: Add slurm-drmaa PPA (Ubuntu)
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version is version('18.04', '>=')
+    - ansible_os_family == 'Debian'
     - "'client' in slurm_roles"
     - slurm_install_drmaa | bool
+  vars:
+    slurm_drmaa_key_tmp: "/tmp/{{ slurm_drmaa_key_url | basename }}"
   block:
 
-    - name: Import GPG key (Ubuntu)
-      ansible.builtin.apt_key:
+    - name: Download the GPG key
+      ansible.builtin.get_url:
         url: "{{ slurm_drmaa_key_url }}"
-        validate_certs: no
-      when: slurm_drmaa_key_url is defined
+        dest: "{{ slurm_drmaa_key_tmp }}"
+        owner: root
+        group: root
+        mode: "0644"
+      changed_when: false
 
-    - name: Add repository (Ubuntu)
+    - name: Convert APT key into binary format
+      ansible.builtin.command:
+        cmd: >-
+          gpg
+          --batch
+          --yes
+          --no-tty
+          --dearmor
+          -o {{ slurm_drmaa_key_tmp }}1
+          {{ slurm_drmaa_key_tmp }}
+      changed_when: false
+      tags: molecule-idempotence-notest
+
+    - name: Update APT key
+      ansible.builtin.copy:
+        src: "{{ slurm_drmaa_key_tmp }}1"
+        dest: "{{ slurm_drmaa_key_file }}"
+        mode: "0644"
+        remote_src: true
+
+    - name: Delete temporary files
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      changed_when: false
+      loop:
+        - "{{ slurm_drmaa_key_tmp }}"
+        - "{{ slurm_drmaa_key_tmp }}1"
+
+    - name: Add official repository
       ansible.builtin.apt_repository:
-        repo: "deb {{ slurm_drmaa_repo_url }} {{ ansible_distribution_release }} main"
+        repo: >-
+          deb
+          [arch=amd64,arm64 signed-by={{ slurm_drmaa_key_file }}]
+          {{ slurm_drmaa_repo_url }}
+          {{ ansible_distribution_release }}
+          main
         state: present
-        filename: "natefoo-ppa"
-
-- name: Activate slurm repo (Debian)
-  when:
-    - ansible_distribution == "Debian"
-    - ansible_distribution_version is version('11', '>=')
-    - "'client' in slurm_roles"
-    - slurm_install_drmaa | bool
-  block:
-
-    - name: Import GPG key (Debian)
-      ansible.builtin.apt_key:
-        keyserver: hkp://pool.sks-keyservers.net
-        id: 18381AC8832160AF
-
-    - name: Add slurm-drmaa (Debian)
-      ansible.builtin.apt_repository:
-        repo: "deb https://depot.galaxyproject.org/apt/ {{ ansible_distribution_release }} main"
-        state: present
-        filename: galaxy-depot
+        filename: "{{ slurm_drmaa_repo_name }}"
 
 - name: Add repository (RedHat 7)
   ansible.builtin.yum_repository:

@@ -1,5 +1,19 @@
 ---
 
+# Slurm DRMAA repo name
+slurm_drmaa_repo_name: galaxy-depot
+
+# Slurm DRMAA PPA repo
+slurm_drmaa_repo_url: >-
+  https://depot.galaxyproject.org/apt
+
+# Slurm DRMAA PPA gpg url
+slurm_drmaa_key_url: >-
+  https://depot.galaxyproject.org/apt/galaxy-depot.gpg
+
+# Slurm DRMAA PPA gpg key
+slurm_drmaa_key_file: /etc/apt/trusted.gpg.d/galaxy-depot.gpg
+
 # slurm configuration directory
 slurm_conf_dir: /etc/slurm
 

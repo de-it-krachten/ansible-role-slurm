@@ -84,3 +84,7 @@
   ci: false
   server_type: cx22
   image: fedora-42
+- name: fedora43
+  ci: false
+  server_type: cx22
+  image: fedora-43

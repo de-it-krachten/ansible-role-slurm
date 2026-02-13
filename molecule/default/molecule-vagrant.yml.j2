@@ -16,7 +16,7 @@ platforms:
     box: "{{ platform.box }}"
     memory: {{ platform.memory | default(2048) }}
     cpus: {{ platform.cpus | default(2) }}
-{% if platform.interfaces is defined %}
+{% if platform.interfaces | default([]) | length > 0 %}
     interfaces: {{ platform.interfaces }}
 {% endif %}
 {% if platform.provider is defined %}
@@ -48,7 +48,7 @@ platforms:
     box: "{{ platform.box }}"
     memory: {{ platform.memory | default(2048) }}
     cpus: {{ platform.cpus | default(2) }}
-{% if platform.interfaces is defined %}
+{% if platform.interfaces | default([]) | length > 0 %}
     interfaces: {{ platform.interfaces }}
 {% endif %}
 {% if platform.provider is defined %}
@@ -80,7 +80,7 @@ platforms:
     box: "{{ platform.box }}"
     memory: {{ platform.memory | default(2048) }}
     cpus: {{ platform.cpus | default(2) }}
-{% if platform.interfaces is defined %}
+{% if platform.interfaces | default([]) | length > 0 %}
     interfaces: {{ platform.interfaces }}
 {% endif %}
 {% if platform.provider is defined %}

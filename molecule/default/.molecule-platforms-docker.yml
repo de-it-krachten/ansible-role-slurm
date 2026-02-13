@@ -272,6 +272,14 @@
   cgroupns_mode: host
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:rw
+- name: fedora43
+  ci: false
+  image: docker.io/geerlingguy/docker-fedora43-ansible:latest
+  privileged: true
+  pre_build_image: true
+  cgroupns_mode: host
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:rw
 - name: alpine3
   ci: false
   image: docker.io/dropveter/alpine-python3
@@ -284,7 +292,7 @@
   ci: false
   image: docker.io/dropveter/docker-dind-ansible:latest
   privileged: true
-  pre_build_image: false
+  pre_build_image: true
   cgroupns_mode: host
   environment:
     DOCKER_TLS_CERTDIR: /certs

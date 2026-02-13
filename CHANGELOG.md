@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.10.0...v1.10.1) (2026-02-13)
+
+
+### Bug Fixes
+
+* Update APT repo setup ([04ba5c9](https://github.com/de-it-krachten/ansible-role-slurm/commit/04ba5c930ef8ff5225a28241fcf4a1c8d135ff35))
+
 # [1.10.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.9.1...v1.10.0) (2025-10-12)
 
 

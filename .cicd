@@ -441,10 +441,10 @@ platforms:
   sles15:
     name: SUSE Linux Enterprise 15
     ci: false
-    supported: true
+    supported: false
     galaxy:
-      name: opensuse
-      version: 15
+      name: SLES
+      version: all
 #    molecule:
 #      docker:
 #        image: "robertdebock/opensuse"
@@ -461,16 +461,39 @@ platforms:
 #          - network_name: private_network
 #            type: dhcp
 #            auto_config: true
+  sles16:
+    name: SUSE Linux Enterprise 16
+    ci: false
+    supported: false
+    galaxy:
+      name: SLES
+      version: all
+#    molecule:
+#      docker:
+#        image: "robertdebock/opensuse"
+#        pre_build_image: true
+#        privileged: true
+#        volumes:
+#          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+#        cgroupns_mode: host
+#      podman:
+#        image: "docker.io/robertdebock/opensuse"
+#      vagrant:
+#        box: "generic/opensuse16"
+#        interfaces:
+#          - network_name: private_network
+#            type: dhcp
+#            auto_config: true
   opensuse15:
     name: openSUSE Leap 15
-    ci: true
-    supported: true
+    ci: false
+    supported: false
     galaxy:
       name: opensuse
-      version: 15
+      version: all
     molecule:
       docker:
-        image: "docker.io/geerlingguy/docker-opensuseleap15-ansible:latest"
+        image: "docker.io/dropveter/opensuse15-ansible:latest"
         pre_build_image: true
         privileged: true
         volumes:
@@ -484,29 +507,52 @@ platforms:
           - network_name: private_network
             type: dhcp
             auto_config: true
-  opensusetumbleweed15:
-    name: openSUSE Tumbleweed 15
+  opensuse16:
+    name: openSUSE Leap 16
     ci: false
     supported: false
     galaxy:
       name: opensuse
-      version: 15
+      version: all
     molecule:
       docker:
-        image: "robertdebock/opensuse"
+        image: "docker.io/dropveter/opensuse16-ansible:latest"
         pre_build_image: true
         privileged: true
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:rw
         cgroupns_mode: host
       podman:
-        image: "docker.io/robertdebock/opensuse"
+        image: "docker.io/dropveter/opensuse16-ansible:latest"
       vagrant:
-        box: "generic/opensuse15"
+        box: "generic/opensuse16"
         interfaces:
           - network_name: private_network
             type: dhcp
             auto_config: true
+  opensusetumbleweed:
+    name: openSUSE Tumbleweed
+    ci: false
+    supported: false
+    galaxy:
+      name: opensuse
+      version: all
+#    molecule:
+#      docker:
+#        image: "robertdebock/opensuse"
+#        pre_build_image: true
+#        privileged: true
+#        volumes:
+#          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+#        cgroupns_mode: host
+#      podman:
+#        image: "docker.io/robertdebock/opensuse"
+#      vagrant:
+#        box: "generic/opensuse15"
+#        interfaces:
+#          - network_name: private_network
+#            type: dhcp
+#            auto_config: true
   debian10:
     name: Debian 10 (Buster)
     ci: false

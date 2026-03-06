@@ -93,18 +93,21 @@ jobs:
 
       - name: Retrieve & install wrapper scripts
         run: |
-          set -e
+
+          release_url=https://github.com/de-it-krachten/cicd-tools/releases/download/v1.6.0/cicd-tools_1.6.0.deb
+          api_url=https://api.github.com/repos/de-it-krachten/cicd-tools/releases/latest
 
           # Install requirements
           sudo apt install curl jq -y
 
           # Get latest release download URL for .deb asset
-          api_url="https://api.github.com/repos/de-it-krachten/cicd-tools/releases/latest"
           url=$(curl -s $api_url | jq -r '.assets[] | select(.name | endswith(".deb")) | .browser_download_url')
+          url=${url:-$release_url}
+
           file=$(basename $url)
-          curl -s -L -o $file -s $url
+          curl -s -L -o $file -s $url || exit 1
           echo "Install package '$file'"
-          sudo dpkg -i $file
+          sudo dpkg -i $file || exit 1
 
       - name: Install required galaxy collections
         run: |
@@ -321,18 +324,21 @@ jobs:
 
       - name: Retrieve & install wrapper scripts
         run: |
-          set -e
+
+          release_url=https://github.com/de-it-krachten/cicd-tools/releases/download/v1.6.0/cicd-tools_1.6.0.deb
+          api_url=https://api.github.com/repos/de-it-krachten/cicd-tools/releases/latest
 
           # Install requirements
           sudo apt install curl jq -y
 
           # Get latest release download URL for .deb asset
-          api_url="https://api.github.com/repos/de-it-krachten/cicd-tools/releases/latest"
           url=$(curl -s $api_url | jq -r '.assets[] | select(.name | endswith(".deb")) | .browser_download_url')
+          url=${url:-$release_url}
+
           file=$(basename $url)
-          curl -s -L -o $file -s $url
+          curl -s -L -o $file -s $url || exit 1
           echo "Install package '$file'"
-          sudo dpkg -i $file
+          sudo dpkg -i $file || exit 1
 
       - name: Install required galaxy collections
         run: |

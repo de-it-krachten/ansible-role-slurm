@@ -383,6 +383,8 @@
               - iproute
               - glibc-langpack-en
               - gnupg2
+              - policycoreutils
+              - policycoreutils-python-utils
             state: present
 
         - name: Activate epel repository

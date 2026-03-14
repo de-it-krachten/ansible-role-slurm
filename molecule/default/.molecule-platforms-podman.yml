@@ -55,6 +55,9 @@
 - name: oraclelinux10
   ci: false
   image: docker.io/dropveter/oraclelinux10-ansible
+- name: olam8
+  ci: false
+  image: docker.io/dropveter/olam:latest
 - name: almalinux8
   ci: true
   image: docker.io/dropveter/almalinux8-ansible

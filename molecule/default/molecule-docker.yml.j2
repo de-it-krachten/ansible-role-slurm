@@ -34,6 +34,12 @@ platforms:
 {% for platform in MOLECULE_DISTROS %}
   - name: slurm-{{ platform.name }}-db
     image: "{{ platform.image }}"
+{% if platform.cap_add is defined %}
+    cap_add:
+{% for cap in platform.cap_add %}
+      - {{ cap }}
+{% endfor %}
+{% endif %}
 {% if platform.kernel_memory is defined %}
     kernel_memory: {{ platform.kernel_memory }}
 {% endif %}
@@ -73,6 +79,12 @@ platforms:
     groups: ['slurm_db']
   - name: slurm-{{ platform.name }}-master
     image: "{{ platform.image }}"
+{% if platform.cap_add is defined %}
+    cap_add:
+{% for cap in platform.cap_add %}
+      - {{ cap }}
+{% endfor %}
+{% endif %}
 {% if platform.kernel_memory is defined %}
     kernel_memory: {{ platform.kernel_memory }}
 {% endif %}
@@ -112,6 +124,12 @@ platforms:
     groups: ['slurm_masters']
   - name: slurm-{{ platform.name }}-worker
     image: "{{ platform.image }}"
+{% if platform.cap_add is defined %}
+    cap_add:
+{% for cap in platform.cap_add %}
+      - {{ cap }}
+{% endfor %}
+{% endif %}
 {% if platform.kernel_memory is defined %}
     kernel_memory: {{ platform.kernel_memory }}
 {% endif %}

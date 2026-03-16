@@ -120,6 +120,16 @@
   cgroupns_mode: host
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:rw
+- name: olam8
+  ci: false
+  image: docker.io/dropveter/olam:latest
+  privileged: true
+  pre_build_image: true
+  cgroupns_mode: host
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:rw
+  ports:
+    - 443:443
 - name: almalinux8
   ci: true
   image: docker.io/dropveter/almalinux8-ansible
@@ -146,15 +156,15 @@
     - /sys/fs/cgroup:/sys/fs/cgroup:rw
 - name: opensuse15
   ci: false
-  image: docker.io/geerlingguy/docker-opensuseleap15-ansible:latest
+  image: docker.io/dropveter/opensuse15-ansible:latest
   privileged: true
   pre_build_image: true
   cgroupns_mode: host
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:rw
-- name: opensusetumbleweed15
+- name: opensuse16
   ci: false
-  image: robertdebock/opensuse
+  image: docker.io/dropveter/opensuse16-ansible:latest
   privileged: true
   pre_build_image: true
   cgroupns_mode: host

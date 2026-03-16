@@ -42,12 +42,12 @@ jobs:
     steps:
 
       - name: Check out the codebase.
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: "${{ github.repository }}"
 
       - name: Set up Python3.
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "${{ matrix.python }}"
 
@@ -93,18 +93,43 @@ jobs:
 
       - name: Retrieve & install wrapper scripts
         run: |
-          set -e
+
+          cicd_version=${{ vars.cicd_version }}
 
           # Install requirements
+          echo "== Installing dependencies"
           sudo apt install curl jq -y
 
-          # Get latest release download URL for .deb asset
-          api_url="https://api.github.com/repos/de-it-krachten/cicd-tools/releases/latest"
-          url=$(curl -s $api_url | jq -r '.assets[] | select(.name | endswith(".deb")) | .browser_download_url')
-          file=$(basename $url)
-          curl -s -L -o $file -s $url
-          echo "Install package '$file'"
-          sudo dpkg -i $file
+          # If no package version was given, get the latest
+          if [[ -z $cicd_version ]]
+          then
+            echo "== Retrieving cicd_tools version"
+
+            # API uri to query
+            api_url=https://api.github.com/repos/de-it-krachten/cicd-tools/releases/latest
+
+            # Get latest release download URL for .deb asset
+            cicd_version=$(curl -s $api_url | jq -r '.tag_name' | sed "s/null//" | sed "s/^v//")
+
+          fi
+
+          # If still no version found, fall back onto a default
+          if [[ -z $cicd_version ]]
+          then
+            echo "== Fallback to default version '1.6.0'"
+            cicd_version=1.6.0
+          fi
+
+          # Construct url
+          release_url=https://github.com/de-it-krachten/cicd-tools/releases/download/v${cicd_version}/cicd-tools_${cicd_version}.deb
+
+          # Download package
+          echo "== Downloading package '$release_url'"
+          file=$(basename $release_url)
+          curl -s -L -o $file -s $release_url || exit 1
+
+          echo "== Installing package '$file'"
+          sudo dpkg -i $file || exit 1
 
       - name: Install required galaxy collections
         run: |
@@ -246,13 +271,13 @@ jobs:
     steps:
 
       - name: Check out the codebase.
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: "${{ github.repository }}"
 
 
       - name: Set up Python3.
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "${{ matrix.python }}"
 
@@ -321,18 +346,43 @@ jobs:
 
       - name: Retrieve & install wrapper scripts
         run: |
-          set -e
+
+          cicd_version=${{ vars.cicd_version }}
 
           # Install requirements
+          echo "== Installing dependencies"
           sudo apt install curl jq -y
 
-          # Get latest release download URL for .deb asset
-          api_url="https://api.github.com/repos/de-it-krachten/cicd-tools/releases/latest"
-          url=$(curl -s $api_url | jq -r '.assets[] | select(.name | endswith(".deb")) | .browser_download_url')
-          file=$(basename $url)
-          curl -s -L -o $file -s $url
-          echo "Install package '$file'"
-          sudo dpkg -i $file
+          # If no package version was given, get the latest
+          if [[ -z $cicd_version ]]
+          then
+            echo "== Retrieving cicd_tools version"
+
+            # API uri to query
+            api_url=https://api.github.com/repos/de-it-krachten/cicd-tools/releases/latest
+
+            # Get latest release download URL for .deb asset
+            cicd_version=$(curl -s $api_url | jq -r '.tag_name' | sed "s/null//" | sed "s/^v//")
+
+          fi
+
+          # If still no version found, fall back onto a default
+          if [[ -z $cicd_version ]]
+          then
+            echo "== Fallback to default version '1.6.0'"
+            cicd_version=1.6.0
+          fi
+
+          # Construct url
+          release_url=https://github.com/de-it-krachten/cicd-tools/releases/download/v${cicd_version}/cicd-tools_${cicd_version}.deb
+
+          # Download package
+          echo "== Downloading package '$release_url'"
+          file=$(basename $release_url)
+          curl -s -L -o $file -s $release_url || exit 1
+
+          echo "== Installing package '$file'"
+          sudo dpkg -i $file || exit 1
 
       - name: Install required galaxy collections
         run: |

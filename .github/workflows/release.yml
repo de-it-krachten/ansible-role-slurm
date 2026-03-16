@@ -5,6 +5,7 @@ on:
       - main
       - master
   workflow_dispatch:
+
 jobs:
   release:
     name: release
@@ -15,13 +16,16 @@ jobs:
       repository-projects: write
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Use Node.js 20
-        uses: actions/setup-node@v4
+
+      - name: Checkout
+        uses: actions/checkout@v6
+
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Install package dependencies
         run: |

@@ -60,6 +60,10 @@
   ci: true
   server_type: cx22
   image: ubuntu-24.04
+- name: ubuntu2604
+  ci: true
+  server_type: cx22
+  image: ubuntu-26.04
 - name: fedora37
   ci: false
   server_type: cx22

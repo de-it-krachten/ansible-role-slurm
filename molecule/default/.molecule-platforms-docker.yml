@@ -234,6 +234,14 @@
   cgroupns_mode: host
   volumes:
     - /sys/fs/cgroup:/sys/fs/cgroup:rw
+- name: ubuntu2604
+  ci: true
+  image: docker.io/geerlingguy/docker-ubuntu2604-ansible:latest
+  privileged: true
+  pre_build_image: true
+  cgroupns_mode: host
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:rw
 - name: fedora37
   ci: false
   image: docker.io/geerlingguy/docker-fedora37-ansible:latest

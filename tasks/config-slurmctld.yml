@@ -116,7 +116,7 @@
 
 - name: Recreate list of users that should be present or absent
   ansible.builtin.set_fact:
-    __slurm_users: "{{ lookup('template', 'slurm_users.j2') | from_json }}"
+    __slurm_users: "{{ lookup('template', 'slurm_users.j2') | from_yaml }}"
 
 - name: Create all users
   ansible.builtin.command:

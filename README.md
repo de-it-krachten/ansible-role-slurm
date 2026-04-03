@@ -32,6 +32,7 @@ Supported platforms
 - Debian 12 (Bookworm)
 - Ubuntu 22.04 LTS
 - Ubuntu 24.04 LTS
+- Ubuntu 26.04 LTS
 
 Note:
 <sup>1</sup> : no automated testing is performed on these platforms
@@ -156,14 +157,14 @@ slurm_packages:
 <pre><code>
 # Slurm DRMAA RPM
 slurm_drmaa_rpm: >-
-  https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4.-20.11.el8.x86_64.rpm
+  https://github.com/natefoo/slurm-drmaa/releases/download/1.1.5/slurm-drmaa-1.1.5-20.11.el8.x86_64.rpm
 </pre></code>
 
 ### defaults/family-RedHat-9.yml
 <pre><code>
 # Slurm DRMAA RPM
 slurm_drmaa_rpm: >-
-  https://github.com/natefoo/slurm-drmaa/releases/download/1.1.4/slurm-drmaa-1.1.4.-22.05.el9.x86_64.rpm
+  https://github.com/natefoo/slurm-drmaa/releases/download/1.1.5/slurm-drmaa-1.1.5-22.05.el9.x86_64.rpm
 </pre></code>
 
 ### defaults/family-RedHat.yml
@@ -246,25 +247,7 @@ slurm_conf_dir: /etc/slurm-llnl
 slurm_log_dir: /var/log/slurm-llnl
 </pre></code>
 
-### defaults/Ubuntu-20.yml
-<pre><code>
-# slurm configuration directory
-slurm_conf_dir: /etc/slurm-llnl
-
-# slurm logging directory
-slurm_log_dir: /var/log/slurm-llnl
-</pre></code>
-
 ### defaults/Ubuntu-22.yml
-<pre><code>
-# slurm configuration directory
-slurm_conf_dir: /etc/slurm
-
-# slurm logging directory
-slurm_log_dir: /var/log/slurm
-</pre></code>
-
-### defaults/Ubuntu-24.yml
 <pre><code>
 # slurm configuration directory
 slurm_conf_dir: /etc/slurm

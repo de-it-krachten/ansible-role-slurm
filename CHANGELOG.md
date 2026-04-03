@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.10.1...v1.11.0) (2026-04-03)
+
+
+### Features
+
+* Added support for Ubuntu 26.04 LTS ([2a212ae](https://github.com/de-it-krachten/ansible-role-slurm/commit/2a212ae49cc835b3b8e4f38c8d0815045f30df06))
+
 ## [1.10.1](https://github.com/de-it-krachten/ansible-role-slurm/compare/v1.10.0...v1.10.1) (2026-02-13)
 
 

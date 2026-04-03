@@ -1,0 +1,12 @@
+[
+  {% for user in slurm_users %}
+  {% if user.name is undefined %}
+  {
+    "name": "{{ user }}",
+    "state": "present"
+  }{% if not loop.last %},{%endif %}
+  {% else %}
+  {{ user }}{% if not loop.last %},{%endif %}
+  {% endif %}
+  {% endfor %}
+]

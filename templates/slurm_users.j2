@@ -1,0 +1,5 @@
+---
+{% for user in slurm_users | default([]) %}
+- name: "{{ user.name | default(user) }}"
+  state: "{{ user.state | default('present') }}"
+{% endfor %}

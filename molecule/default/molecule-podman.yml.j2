@@ -20,10 +20,10 @@ platforms:
 {% if platform.memory is defined %}
     memory: {{ platform.memory }}
 {% endif %}
-    rhsm: {{ platform.rhsm | default(False) }}
+    # rhsm: {{ platform.rhsm | default(False) }}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
 {% if platform.environment is defined %}
-    environment:
+    env:
 {% for key, value in platform.environment.items() %}
       {{ key }}: "{{ value }}"
 {% endfor %}
@@ -59,10 +59,10 @@ platforms:
 {% if platform.memory is defined %}
     memory: {{ platform.memory }}
 {% endif %}
-    rhsm: {{ platform.rhsm | default(False) }}
+    # rhsm: {{ platform.rhsm | default(False) }}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
 {% if platform.environment is defined %}
-    environment:
+    env:
 {% for key, value in platform.environment.items() %}
       {{ key }}: "{{ value }}"
 {% endfor %}
@@ -98,10 +98,10 @@ platforms:
 {% if platform.memory is defined %}
     memory: {{ platform.memory }}
 {% endif %}
-    rhsm: {{ platform.rhsm | default(False) }}
+    # rhsm: {{ platform.rhsm | default(False) }}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
 {% if platform.environment is defined %}
-    environment:
+    env:
 {% for key, value in platform.environment.items() %}
       {{ key }}: "{{ value }}"
 {% endfor %}
@@ -151,18 +151,18 @@ provisioner:
 {% for platform in MOLECULE_DISTROS %}
       slurm-{{ platform.name }}-db:
         slurm_db_host: slurm-{{ platform.name }}-db
-        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
-        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
         slurm_master_name: slurm-{{ platform.name }}-master
       slurm-{{ platform.name }}-master:
         slurm_db_host: slurm-{{ platform.name }}-db
-        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
-        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
         slurm_master_name: slurm-{{ platform.name }}-master
       slurm-{{ platform.name }}-worker:
         slurm_db_host: slurm-{{ platform.name }}-db
-        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
-        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
         slurm_master_name: slurm-{{ platform.name }}-master
 
 {% endfor %}

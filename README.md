@@ -345,24 +345,24 @@ slurm_firewall_ports:
     - name: Set hostname
       hostname:
         name: '{{ inventory_hostname | regex_replace(''_'',''-'') }}'
-      when: ansible_virtualization_type not in [ 'docker', 'container', 'containerd'
+      when: ansible_facts.virtualization_type not in [ 'docker', 'container', 'containerd'
         ]
     - name: Set slurm master ip
       set_fact:
-        slurm_master_ip: '{{ hostvars[slurm_master_name][''ansible_default_ipv4''][''address'']
+        slurm_master_ip: '{{ hostvars[slurm_master_name][''ansible_facts.default_ipv4''][''address'']
           }}'
       when:
         - slurm_master_ip is undefined
         - slurm_uses_dns is defined and not slurm_uses_dns | bool
     - name: Install slurmd on nodes
       package:
-        name: '{{ slurmd_package[ansible_os_family] }}'
+        name: '{{ slurmd_package[ansible_facts.os_family] }}'
         state: present
       when: '''slurm_nodes'' in group_names'
   roles:
     - role: deitkrachten.facts
     - role: deitkrachten.epel
-      when: ansible_os_family == 'RedHat'
+      when: ansible_facts.os_family == 'RedHat'
     - role: deitkrachten.chrony
       when: github_actions is undefined
     - role: deitkrachten.hosts

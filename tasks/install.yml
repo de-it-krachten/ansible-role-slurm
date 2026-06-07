@@ -11,8 +11,8 @@
     state: present
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version | int >=  8
+    - ansible_facts.os_family == "RedHat"
+    - ansible_facts.distribution_major_version | int >=  8
     - slurm_role == 'client'
     - slurm_install_drmaa | bool
 
@@ -21,7 +21,7 @@
     name: "{{ slurm_packages['drmaa'] }}"
     state: present
   when:
-    - ansible_os_family == "Debian"
+    - ansible_facts.os_family == "Debian"
     - slurm_role == 'client'
     - slurm_packages['drmaa'] is defined
     - slurm_install_drmaa | bool

@@ -7,7 +7,7 @@
   ansible.builtin.include_vars: vars/override.yml
 
 - name: Get slurm version (Suse)
-  when: ansible_os_family == 'Suse'
+  when: ansible_facts.os_family == 'Suse'
   block:
 
     - name: Get slurm version (Debian)  # noqa no-changed-when
@@ -25,7 +25,7 @@
         slurm_version: "{{ _slurm_version.stdout }}"
 
 - name: Get slurm version (Debian)
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts.os_family == 'Debian'
   block:
 
     - name: Get slurm version (Debian)  # noqa no-changed-when
@@ -43,7 +43,7 @@
         slurm_version: "{{ _slurm_version.stdout }}"
 
 - name: Get slurm version (RedHat)
-  when: ansible_os_family == 'RedHat'
+  when: ansible_facts.os_family == 'RedHat'
   block:
 
     - name: Get slurm version (RedHat)  # noqa no-changed-when

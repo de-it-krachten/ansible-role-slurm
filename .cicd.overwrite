@@ -23,10 +23,10 @@ platforms:
   debian13:
     supported: false
     ci: false
-  fedora42:
+  fedora43:
     supported: false
     ci: false
-  fedora43:
+  fedora44:
     supported: false
     ci: false
 

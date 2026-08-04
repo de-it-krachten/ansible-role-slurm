@@ -23,10 +23,10 @@ platforms:
   debian13:
     supported: false
     ci: false
-  fedora42:
+  fedora43:
     supported: false
     ci: false
-  fedora43:
+  fedora44:
     supported: false
     ci: false
 
@@ -68,19 +68,19 @@ molecule:
   host_vars:
     slurm-{{ platform.name }}-db:
       slurm_db_host: "slurm-{{ platform.name }}-db"
-      slurm_db_ip: "hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']"
+      slurm_db_ip: "hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']"
       slurm_master_name: "slurm-{{ platform.name }}-master"
-      slurm_master_ip: "hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']"
+      slurm_master_ip: "hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']"
     slurm-{{ platform.name }}-master:
       slurm_db_host: "slurm-{{ platform.name }}-db"
-      slurm_db_ip: "hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']"
+      slurm_db_ip: "hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']"
       slurm_master_name: "slurm-{{ platform.name }}-master"
-      slurm_master_ip: "hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']"
+      slurm_master_ip: "hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']"
     slurm-{{ platform.name }}-worker:
       slurm_db_host: "slurm-{{ platform.name }}-db"
-      slurm_db_ip: "hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']"
+      slurm_db_ip: "hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']"
       slurm_master_name: "slurm-{{ platform.name }}-master"
-      slurm_master_ip: "hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']"
+      slurm_master_ip: "hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']"
 
 # Github
 github:

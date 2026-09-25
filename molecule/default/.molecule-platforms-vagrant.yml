@@ -130,6 +130,10 @@
   ci: false
   box: generic/fedora43
   interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
+- name: fedora44
+  ci: false
+  box: generic/fedora44
+  interfaces: [{'network_name': 'private_network', 'type': 'dhcp'}]
 - name: alpine3
   ci: false
   box: generic/alpine312

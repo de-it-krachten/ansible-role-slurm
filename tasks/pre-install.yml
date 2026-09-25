@@ -2,7 +2,7 @@
 
 - name: Add slurm-drmaa PPA (Ubuntu)
   when:
-    - ansible_os_family == 'Debian'
+    - ansible_facts.os_family == 'Debian'
     - "'client' in slurm_roles"
     - slurm_install_drmaa | bool
   vars:
@@ -53,7 +53,7 @@
           deb
           [arch=amd64,arm64 signed-by={{ slurm_drmaa_key_file }}]
           {{ slurm_drmaa_repo_url }}
-          {{ ansible_distribution_release }}
+          {{ ansible_facts.distribution_release }}
           main
         state: present
         filename: "{{ slurm_drmaa_repo_name }}"
@@ -65,6 +65,6 @@
     baseurl: https://depot.galaxyproject.org/yum/el/$releasever/$basearch/
     gpgcheck: no
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version | int == 7
+    - ansible_facts.os_family == "RedHat"
+    - ansible_facts.distribution_major_version | int == 7
     - slurm_install_drmaa | bool

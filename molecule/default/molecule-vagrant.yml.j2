@@ -131,18 +131,18 @@ provisioner:
 {% for platform in MOLECULE_DISTROS %}
       slurm-{{ platform.name }}-db:
         slurm_db_host: slurm-{{ platform.name }}-db
-        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
-        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
         slurm_master_name: slurm-{{ platform.name }}-master
       slurm-{{ platform.name }}-master:
         slurm_db_host: slurm-{{ platform.name }}-db
-        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
-        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
         slurm_master_name: slurm-{{ platform.name }}-master
       slurm-{{ platform.name }}-worker:
         slurm_db_host: slurm-{{ platform.name }}-db
-        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
-        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
         slurm_master_name: slurm-{{ platform.name }}-master
 
 {% endfor %}

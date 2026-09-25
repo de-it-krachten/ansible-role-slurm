@@ -29,3 +29,6 @@ slurm_firewall_ports:
   slurmdbd:
     - port: "{{ slurm_slurmdbd_port }}"
       proto: tcp
+  client:
+    - port: '60001-63000'
+      proto: tcp

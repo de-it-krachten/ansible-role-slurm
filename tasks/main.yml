@@ -146,3 +146,6 @@
       ansible.builtin.include_tasks: users.yml
     - name: Include install.yml
       ansible.builtin.include_tasks: install.yml
+    - name: Include config.yml
+      ansible.builtin.include_tasks: config.yml
+

@@ -8,6 +8,7 @@ slurm_log_dir: /var/log/slurm
 
 # Slurm daemon config file
 slurm_parm_file: /etc/sysconfig/slurmd
+sackd_parm_file: /etc/sysconfig/sackd
 
 # list of slurm packages
 slurm_packages:

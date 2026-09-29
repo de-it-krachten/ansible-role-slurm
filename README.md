@@ -71,6 +71,8 @@ slurm_group2role_mapping:
     role: slurmdbd
   - group: slurm_nodes
     role: slurmd
+  - group: slurm_clients
+    role: client
 
 # Should root be disable from slurm
 slurm_disable_root: 'YES'
@@ -137,6 +139,7 @@ slurm_log_dir: /var/log/slurm
 
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd
+sackd_parm_file: /etc/default/sackd
 
 # list of slurm packages
 slurm_packages:
@@ -149,6 +152,7 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
+    - sackd
   drmaa:
     - slurm-drmaa
 </pre></code>
@@ -177,6 +181,7 @@ slurm_log_dir: /var/log/slurm
 
 # Slurm daemon config file
 slurm_parm_file: /etc/sysconfig/slurmd
+sackd_parm_file: /etc/sysconfig/sackd
 
 # list of slurm packages
 slurm_packages:
@@ -275,6 +280,7 @@ slurm_drmaa_key_file: /etc/apt/trusted.gpg.d/natefoo-ppa.gpg
 
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd
+sackd_parm_file: /etc/default/sackd
 
 # list of slurm packages
 slurm_packages:
@@ -287,6 +293,7 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
+    - sackd
   drmaa:
     - slurm-drmaa1
 </pre></code>
@@ -411,6 +418,17 @@ slurm_firewall_ports:
       include_role:
         name: slurm
 - hosts: slurm_nodes
+  become: 'yes'
+  vars:
+    munge_key: tests/munge.key
+    munge_socket_mode: '0666'
+  roles:
+    - deitkrachten.munge
+  tasks:
+    - name: slurm
+      include_role:
+        name: slurm
+- hosts: slurm_clients
   become: 'yes'
   vars:
     munge_key: tests/munge.key

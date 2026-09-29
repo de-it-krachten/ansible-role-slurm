@@ -94,3 +94,15 @@
     - name: slurm
       include_role:
         name: ansible-role-slurm
+
+- hosts: slurm_clients
+  become: yes
+  vars:
+    munge_key: tests/munge.key
+    munge_socket_mode: "0666"
+  roles:
+    - deitkrachten.munge
+  tasks:
+    - name: slurm
+      include_role:
+        name: ansible-role-slurm

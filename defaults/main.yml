@@ -30,6 +30,8 @@ slurm_group2role_mapping:
     role: slurmdbd
   - group: slurm_nodes
     role: slurmd
+  - group: slurm_clients
+    role: client
 
 # Should root be disable from slurm
 slurm_disable_root: 'YES'

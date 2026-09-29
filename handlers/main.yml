@@ -9,3 +9,8 @@
   ansible.builtin.service:
     name: slurmctld
     state: restarted
+
+- name: Restart sackd
+  ansible.builtin.service:
+    name: sackd
+    state: restarted

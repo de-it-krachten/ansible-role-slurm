@@ -1,13 +1,36 @@
 ---
 
-# ------------------------------------------------------
-# Firewall
-# ------------------------------------------------------
+# ---------------------------------------------------------
+# slurm (client)
+# ---------------------------------------------------------
 
-- name: Open firewall ports for Slurm client daemon
-  ansible.builtin.include_role:
-    name: deitkrachten.firewall
-  vars:
-    firewall_ports: "{{ slurm_firewall_ports['client'] }}"
-  when:
-    - slurm_firewall | bool
+- name: Configless configuration
+  when: slurm_configless | bool
+  block:
+
+    - name: Configure sackd to retrieve config from master
+      ansible.builtin.lineinfile:
+        line: SACKD_OPTIONS='--conf-server {{ slurm_master_name }}:{{ slurm_slurmctld_port }}'
+        path: "{{ sackd_parm_file }}"
+        create: yes
+        mode: "0644"
+      notify: Restart sackd
+
+- name: Non-configless configuration
+  when: not slurm_configless | bool
+  block:
+
+    - name: Disable configless
+      ansible.builtin.lineinfile:
+        path: "{{ sackd_parm_file }}"
+        state: absent
+        regexp: "--conf-server {{ slurm_master_name }}:{{ slurm_slurmctld_port }}"
+        create: yes
+        mode: "0644"
+      notify: Restart sackd
+
+- name: Enable sackd
+  ansible.builtin.service:
+    name: sackd
+    enabled: true
+    state: started

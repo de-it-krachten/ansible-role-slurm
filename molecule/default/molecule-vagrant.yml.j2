@@ -108,6 +108,38 @@ platforms:
       - {{ group }}
 {% endfor %}
       - {{ group }}
+  - name: slurm-{{ platform.name }}-client
+    box: "{{ platform.box }}"
+    memory: {{ platform.memory | default(2048) }}
+    cpus: {{ platform.cpus | default(2) }}
+{% if platform.interfaces | default([]) | length > 0 %}
+    interfaces: {{ platform.interfaces }}
+{% endif %}
+{% if platform.provider is defined %}
+    provider: {{ platform.provider }}
+{% endif %}
+{% if platform.provider_options is defined %}
+    provider_options: {{ platform.provider_options }}
+{% endif %}
+{% if platform.provider_raw_config_args is defined %}
+    provider_raw_config_args: {{ platform.provider_raw_config_args }}
+{% endif %}
+{% if platform.instance_raw_config_args is defined %}
+    instance_raw_config_args: {{ platform.instance_raw_config_args }}
+{% endif %}
+    config_options:
+      ssh.keep_alive: yes
+      ssh.remote_user: "vagrant"
+    groups:
+{% if platform.groups is undefined or platform.groups | length == 0 %}
+{% set __platform_groups = [ 'linux' ] %}
+{% else %}
+{% set __platform_groups = platform.groups %}
+{% endif %}
+{% for group in __platform_groups %}
+      - {{ group }}
+{% endfor %}
+      - {{ group }}
 {% endfor %}
 provisioner:
   name: ansible
@@ -129,6 +161,11 @@ provisioner:
     group_vars: {"linux": {"ansible_user": "vagrant", "ansible_password": "vagrant"}, "windows": {"ansible_user": "vagrant", "ansible_password": "vagrant", "ansible_become_user": "vagrant", "ansible_become_method": "runas", "ansible_connection": "ssh", "ansible_shell_type": "cmd"}, "all": {"slurm_uses_dns": false, "slurm_node_active": true}}
     host_vars:
 {% for platform in MOLECULE_DISTROS %}
+      slurm-{{ platform.name }}-client:
+        slurm_db_host: slurm-{{ platform.name }}-db
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
+        slurm_master_name: slurm-{{ platform.name }}-master
       slurm-{{ platform.name }}-db:
         slurm_db_host: slurm-{{ platform.name }}-db
         slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']

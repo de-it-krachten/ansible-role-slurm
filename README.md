@@ -201,6 +201,7 @@ slurm_packages:
     - slurm-slurmd
   client:
     - slurm
+    - slurm-sackd
   drmaa:
     - slurm-drmaa
 </pre></code>
@@ -321,6 +322,9 @@ slurm_firewall_ports:
       proto: tcp
   slurmdbd:
     - port: "{{ slurm_slurmdbd_port }}"
+      proto: tcp
+  client:
+    - port: '60001-63000'
       proto: tcp
 </pre></code>
 

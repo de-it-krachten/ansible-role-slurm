@@ -27,6 +27,11 @@ platforms:
     image: "{{ platform.image }}"
     location: "{{ platform.location | default('hel1') }}"
     groups: ['slurm_nodes']
+  - name: slurm-{{ platform.name }}-client
+    server_type: "{{ platform.server_type | default('cx22') }}"
+    image: "{{ platform.image }}"
+    location: "{{ platform.location | default('hel1') }}"
+    groups: ['slurm_clients']
 {% endfor %}
 provisioner:
   name: ansible
@@ -47,6 +52,11 @@ provisioner:
     group_vars: {"linux": {"ansible_user": "vagrant", "ansible_password": "vagrant"}, "windows": {"ansible_user": "vagrant", "ansible_password": "vagrant", "ansible_become_user": "vagrant", "ansible_become_method": "runas", "ansible_connection": "ssh", "ansible_shell_type": "cmd"}, "all": {"slurm_uses_dns": false, "slurm_node_active": true}}
     host_vars:
 {% for platform in MOLECULE_DISTROS %}
+      slurm-{{ platform.name }}-client:
+        slurm_db_host: slurm-{{ platform.name }}-db
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
+        slurm_master_name: slurm-{{ platform.name }}-master
       slurm-{{ platform.name }}-db:
         slurm_db_host: slurm-{{ platform.name }}-db
         slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']

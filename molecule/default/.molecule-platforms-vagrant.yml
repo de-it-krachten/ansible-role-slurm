@@ -1,5 +1,4 @@
 ---
-
 - name: centos7
   ci: false
   box: cloud-image/centos-7
@@ -54,7 +53,7 @@
   ci: false
   box: cloud-image/debian-10
 - name: debian11
-  ci: true
+  ci: false
   box: cloud-image/debian-11
 - name: debian12
   ci: true

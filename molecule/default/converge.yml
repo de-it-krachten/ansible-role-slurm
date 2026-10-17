@@ -44,7 +44,15 @@
 - hosts: slurm_nodes
   gather_facts: yes
   become: yes
+  roles:
+    - deitkrachten.munge
   tasks:
+ 
+    - name: slurm
+      include_role:
+        name: ansible-role-slurm 
+      vars:
+        slurm_prepare_only: true 
 
     - name: Display nodeinfo
       debug: var=ansible_local.slurm.nodeinfo

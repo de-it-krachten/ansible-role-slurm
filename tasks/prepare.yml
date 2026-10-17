@@ -19,7 +19,7 @@
     mode: "0755"
   register: __slurm_fact
 
-- name: Get slurm facts
+- name: Get slurm facts  # noqa no-handler
   ansible.builtin.setup:
   when: __slurm_fact is changed
 

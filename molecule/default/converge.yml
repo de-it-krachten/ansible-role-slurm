@@ -44,8 +44,6 @@
 - hosts: slurm_nodes
   gather_facts: yes
   become: yes
-  roles:
-    - deitkrachten.munge
   tasks:
  
     - name: slurm

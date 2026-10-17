@@ -390,6 +390,11 @@ slurm_firewall_ports:
   gather_facts: 'yes'
   become: 'yes'
   tasks:
+    - name: slurm
+      include_role:
+        name: slurm
+      vars:
+        slurm_prepare_only: true
     - name: Display nodeinfo
       debug: var=ansible_local.slurm.nodeinfo
 - hosts: slurm_db

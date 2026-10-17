@@ -43,7 +43,7 @@ ci_templates:
 
 # Molecule
 molecule:
-  driver: vagrant
+  driver: docker
   dns_server: false
   requirements:
     roles_extra:

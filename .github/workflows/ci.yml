@@ -67,7 +67,7 @@ jobs:
         id: app-token
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.APP_ID }}
+          client-id: ${{ vars.APP_CLIENT_ID }}
           private-key: ${{ env.APP_PRIVATE_KEY }}
 
       - name: Export token for all subsequent steps
@@ -375,7 +375,7 @@ jobs:
         run: |
           ansible="${{ matrix.venv }}"
           source /usr/local/venv/$ansible/bin/activate
-          /usr/local/bin/molecule-test.sh -A -x -v -r vagrant
+          /usr/local/bin/molecule-test.sh -A -x -v -r docker
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
@@ -613,7 +613,7 @@ jobs:
         run: |
           ansible="${{ matrix.venv }}"
           source /usr/local/venv/$ansible/bin/activate
-          /usr/local/bin/molecule-test.sh -A -x -v -r vagrant
+          /usr/local/bin/molecule-test.sh -A -x -v -r docker
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'

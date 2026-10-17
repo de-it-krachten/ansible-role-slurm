@@ -183,7 +183,7 @@ ResumeTimeout={{ slurm_resume_timeout }}
 # COMPUTE NODES
 {% for node in groups['slurm_nodes'] | sort %}
 {% if (hostvars[node]['slurm_node_active']|default(slurm_node_active)) %}
-{{ hostvars[node]['ansible_local']['slurm']['nodeinfo'] }}
+{{ hostvars[node]['ansible_local']['slurm']['nodeinfo'] }} MemSpecLimit={{ hostvars[node]['slurm_memspeclimit'] }}
 {% endif %}
 {% endfor %}
 {% for partition in slurm_partitions %}

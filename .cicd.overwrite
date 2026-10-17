@@ -30,6 +30,12 @@ platforms:
     supported: false
     ci: false
 
+# Dependencies
+dependencies:
+  roles:
+    - deitkrachten.facts
+    - deitkrachten.munge
+
 # CI templates
 ci_templates:
   converge.yml:

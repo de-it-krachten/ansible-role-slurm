@@ -101,50 +101,58 @@
 - name: Add specific repositories
   ansible.builtin.include_tasks: pre-install.yml
 
-- name: Install slurmdbd
-  when: "'slurmdbd' in slurm_roles"
-  vars:
-    slurm_role: slurmdbd
-  block:
-    - name: Include users.yml
-      ansible.builtin.include_tasks: users.yml
-    - name: Include install.yml
-      ansible.builtin.include_tasks: install.yml
-    - name: Include config.yml
-      ansible.builtin.include_tasks: config.yml
-
-- name: Install slurmctld
-  when: "'slurmctld' in slurm_roles"
-  vars:
-    slurm_role: slurmctld
-  block:
-    - name: Include users.yml
-      ansible.builtin.include_tasks: users.yml
-    - name: Include install.yml
-      ansible.builtin.include_tasks: install.yml
-    - name: Include config.yml
-      ansible.builtin.include_tasks: config.yml
-
-- name: Install slurmd
+- name: Execute minimal install on nodes
+  ansible.builtin.include_tasks: prepare.yml
   when: "'slurmd' in slurm_roles"
-  vars:
-    slurm_role: slurmd
-  block:
-    - name: Include users.yml
-      ansible.builtin.include_tasks: users.yml
-    - name: Include install.yml
-      ansible.builtin.include_tasks: install.yml
-    - name: Include config.yml
-      ansible.builtin.include_tasks: config.yml
 
-- name: Install slurm (client)
-  when: "'client' in slurm_roles"
-  vars:
-    slurm_role: client
+- name: UInitialize full slurm cluster
+  when: not slurm_prepare_only | bool
   block:
-    - name: Include users.yml
-      ansible.builtin.include_tasks: users.yml
-    - name: Include install.yml
-      ansible.builtin.include_tasks: install.yml
-    - name: Include config.yml
-      ansible.builtin.include_tasks: config.yml
+
+    - name: Install slurmdbd
+      when: "'slurmdbd' in slurm_roles"
+      vars:
+        slurm_role: slurmdbd
+      block:
+        - name: Include users.yml
+          ansible.builtin.include_tasks: users.yml
+        - name: Include install.yml
+          ansible.builtin.include_tasks: install.yml
+        - name: Include config.yml
+          ansible.builtin.include_tasks: config.yml
+
+    - name: Install slurmctld
+      when: "'slurmctld' in slurm_roles"
+      vars:
+        slurm_role: slurmctld
+      block:
+        - name: Include users.yml
+          ansible.builtin.include_tasks: users.yml
+        - name: Include install.yml
+          ansible.builtin.include_tasks: install.yml
+        - name: Include config.yml
+          ansible.builtin.include_tasks: config.yml
+
+    - name: Install slurmd
+      when: "'slurmd' in slurm_roles"
+      vars:
+        slurm_role: slurmd
+      block:
+        - name: Include users.yml
+          ansible.builtin.include_tasks: users.yml
+        - name: Include install.yml
+          ansible.builtin.include_tasks: install.yml
+        - name: Include config.yml
+          ansible.builtin.include_tasks: config.yml
+
+    - name: Install slurm (client)
+      when: "'client' in slurm_roles"
+      vars:
+        slurm_role: client
+      block:
+        - name: Include users.yml
+          ansible.builtin.include_tasks: users.yml
+        - name: Include install.yml
+          ansible.builtin.include_tasks: install.yml
+        - name: Include config.yml
+          ansible.builtin.include_tasks: config.yml

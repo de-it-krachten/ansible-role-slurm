@@ -1,0 +1,34 @@
+---
+
+- name: Install slurm node package (RedHat/CentOS)
+  ansible.builtin.dnf:
+    name: slurm-slurmd
+    state: present
+  when: ansible_os_family == 'RedHat'
+
+- name: Install slurm node package (Ubuntu/Debian)
+  ansible.builtin.apt:
+    name: slurmd
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: Distribute slurm fact
+  ansible.builtin.template:
+    src: templates/slurm.fact.j2
+    dest: /etc/ansible/facts.d/slurm.fact
+    mode: "0755"
+  register: __slurm_fact
+
+- name: Get slurm facts
+  ansible.builtin.setup:
+  when: __slurm_fact is changed
+
+- name: Show slurm nodeinfo
+  ansible.builtin.debug:
+    var: ansible_local['slurm']
+
+- name: Set slurm_memspeclimit
+  ansible.builtin.set_fact:
+    slurm_memspeclimit: "{{ ansible_local['slurm']['recommended_memspeclimit_mb'] }}"
+  when: slurm_memspeclimit == 'auto'
+

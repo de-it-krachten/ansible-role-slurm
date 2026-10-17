@@ -11,7 +11,8 @@ See https://slurm.schedmd.com/documentation.html
 ## Dependencies
 
 #### Roles
-None
+- deitkrachten.facts
+- deitkrachten.munge
 
 #### Collections
 None
@@ -53,14 +54,20 @@ slurm_users:
 # Slurm firewall rules should be applied
 slurm_firewall: true
 
-# run slurm workers in configless mode
+# Run slurm workers in configless mode
 slurm_configless: auto
+
+# Set memory size reserved for OS
+slurm_memspeclimit: auto
 
 # slurm roles
 slurm_roles: []
 
 # Should slurm.conf be updated
 slurm_conf_update: true
+
+# Only preprare slurn nodes
+slurm_prepare_only: false
 
 # slurm group2role mapping (members of these groups will be assigned these roles)
 slurm_group2role_mapping:

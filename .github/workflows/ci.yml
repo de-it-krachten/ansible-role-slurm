@@ -375,7 +375,7 @@ jobs:
         run: |
           ansible="${{ matrix.venv }}"
           source /usr/local/venv/$ansible/bin/activate
-          /usr/local/bin/molecule-test.sh -A -x -v -r vagrant
+          /usr/local/bin/molecule-test.sh -A -x -v -r docker
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
@@ -613,7 +613,7 @@ jobs:
         run: |
           ansible="${{ matrix.venv }}"
           source /usr/local/venv/$ansible/bin/activate
-          /usr/local/bin/molecule-test.sh -A -x -v -r vagrant
+          /usr/local/bin/molecule-test.sh -A -x -v -r docker
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'

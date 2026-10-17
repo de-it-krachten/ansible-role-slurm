@@ -3,9 +3,14 @@
 ###
 CgroupAutomount=yes
 CgroupMountpoint=/sys/fs/cgroup
+{% if slurm_version is version('22.05', '>=') %}
+CgroupPlugin=cgroup/v2
+{% else %}
+CgroupPlugin=cgroup/v1
+{% endif %}
 ConstrainCores=yes
 ConstrainRAMSpace=yes
 ConstrainSwapSpace=yes
-{% if slurm_version is version('22', '<') %}
+{% if slurm_version is version('22.05', '<') %}
 TaskAffinity=no
 {% endif %}

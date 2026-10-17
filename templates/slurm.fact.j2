@@ -1,0 +1,21 @@
+#!/bin/bash
+
+Slurm_nodeinfo=$(/usr/sbin/slurmd -C 2>/dev/null | head -1)
+Slurm_nodeinfo=${Slurm_nodeinfo:-'NA'}
+
+# Memory measurement
+mem_line=$(free -m | awk '/^Mem:/{print $2, $7}')
+total_mem_mb=$(echo "$mem_line" | awk '{print $1}')
+avail_mem_mb=$(echo "$mem_line" | awk '{print $2}')
+system_overhead_mb=$((total_mem_mb - avail_mem_mb))
+
+slurmd_mb=$(ps -o rss= -C slurmd 2>/dev/null | awk '{print int($1/1024)}')
+slurmd_mb=${slurmd_mb:-0}
+
+slurmstepd_mb=$(ps -o rss= -C slurmstepd 2>/dev/null | awk '{print int($1/1024)}')
+slurmstepd_mb=${slurmstepd_mb:-0}
+
+# 20% buffer, rounded up to nearest 256 MB
+recommended=$(( (system_overhead_mb * 12 / 10 + 255) / 256 * 256 ))
+
+echo "{ \"nodeinfo\": \"$Slurm_nodeinfo\", \"total_mem_mb\": $total_mem_mb, \"available_mem_mb\": $avail_mem_mb, \"system_overhead_mb\": $system_overhead_mb, \"slurmd_mb\": $slurmd_mb, \"slurmstepd_mb\": $slurmstepd_mb, \"recommended_memspeclimit_mb\": $recommended }"

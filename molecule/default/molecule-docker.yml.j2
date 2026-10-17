@@ -34,9 +34,9 @@ platforms:
 {% for platform in MOLECULE_DISTROS %}
   - name: slurm-{{ platform.name }}-db
     image: "{{ platform.image }}"
-{% if platform.cap_add is defined %}
-    cap_add:
-{% for cap in platform.cap_add %}
+{% if platform.capabilities is defined %}
+    capabilities:
+{% for cap in platform.capabilities %}
       - {{ cap }}
 {% endfor %}
 {% endif %}
@@ -46,10 +46,10 @@ platforms:
 {% if platform.memory is defined %}
     memory: {{ platform.memory }}
 {% endif %}
-    rhsm: {{ platform.rhsm | default(False) }}
+    # rhsm: {{ platform.rhsm | default(False) }}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
 {% if platform.environment is defined %}
-    environment:
+    env:
 {% for key, value in platform.environment.items() %}
       {{ key }}: "{{ value }}"
 {% endfor %}
@@ -74,14 +74,15 @@ platforms:
     cgroupns_mode: {{ platform.cgroupns_mode }}
 {% endif %}
     privileged: {{ platform.privileged | default(True) }}
+    capabilities: {{ platform.capabilities | default([]) }}
     pre_build_image: {{ platform.pre_build_image | default(True) }}
     dockerfile: Dockerfile.{{ platform.name }}.j2
     groups: ['slurm_db']
   - name: slurm-{{ platform.name }}-master
     image: "{{ platform.image }}"
-{% if platform.cap_add is defined %}
-    cap_add:
-{% for cap in platform.cap_add %}
+{% if platform.capabilities is defined %}
+    capabilities:
+{% for cap in platform.capabilities %}
       - {{ cap }}
 {% endfor %}
 {% endif %}
@@ -91,10 +92,10 @@ platforms:
 {% if platform.memory is defined %}
     memory: {{ platform.memory }}
 {% endif %}
-    rhsm: {{ platform.rhsm | default(False) }}
+    # rhsm: {{ platform.rhsm | default(False) }}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
 {% if platform.environment is defined %}
-    environment:
+    env:
 {% for key, value in platform.environment.items() %}
       {{ key }}: "{{ value }}"
 {% endfor %}
@@ -119,14 +120,15 @@ platforms:
     cgroupns_mode: {{ platform.cgroupns_mode }}
 {% endif %}
     privileged: {{ platform.privileged | default(True) }}
+    capabilities: {{ platform.capabilities | default([]) }}
     pre_build_image: {{ platform.pre_build_image | default(True) }}
     dockerfile: Dockerfile.{{ platform.name }}.j2
     groups: ['slurm_masters']
   - name: slurm-{{ platform.name }}-worker
     image: "{{ platform.image }}"
-{% if platform.cap_add is defined %}
-    cap_add:
-{% for cap in platform.cap_add %}
+{% if platform.capabilities is defined %}
+    capabilities:
+{% for cap in platform.capabilities %}
       - {{ cap }}
 {% endfor %}
 {% endif %}
@@ -136,10 +138,10 @@ platforms:
 {% if platform.memory is defined %}
     memory: {{ platform.memory }}
 {% endif %}
-    rhsm: {{ platform.rhsm | default(False) }}
+    # rhsm: {{ platform.rhsm | default(False) }}
     command: ${MOLECULE_DOCKER_COMMAND:-""}
 {% if platform.environment is defined %}
-    environment:
+    env:
 {% for key, value in platform.environment.items() %}
       {{ key }}: "{{ value }}"
 {% endfor %}
@@ -164,9 +166,56 @@ platforms:
     cgroupns_mode: {{ platform.cgroupns_mode }}
 {% endif %}
     privileged: {{ platform.privileged | default(True) }}
+    capabilities: {{ platform.capabilities | default([]) }}
     pre_build_image: {{ platform.pre_build_image | default(True) }}
     dockerfile: Dockerfile.{{ platform.name }}.j2
     groups: ['slurm_nodes']
+  - name: slurm-{{ platform.name }}-client
+    image: "{{ platform.image }}"
+{% if platform.capabilities is defined %}
+    capabilities:
+{% for cap in platform.capabilities %}
+      - {{ cap }}
+{% endfor %}
+{% endif %}
+{% if platform.kernel_memory is defined %}
+    kernel_memory: {{ platform.kernel_memory }}
+{% endif %}
+{% if platform.memory is defined %}
+    memory: {{ platform.memory }}
+{% endif %}
+    # rhsm: {{ platform.rhsm | default(False) }}
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+{% if platform.environment is defined %}
+    env:
+{% for key, value in platform.environment.items() %}
+      {{ key }}: "{{ value }}"
+{% endfor %}
+{% endif %}
+    volumes:
+{% for volume in platform.volumes %}
+      - {{ volume }}
+{% endfor %}
+{% if platform.networks is defined %}
+    networks:
+{% for network in platform.networks %}
+      - name: slurm-{{ network }}
+{% endfor %}
+{% endif %}
+{% if platform.ports is defined %}
+    published_ports:
+{% for port in platform.ports %}
+      - {{ port }}
+{% endfor %}
+{% endif %}
+{% if platform.cgroupns_mode is defined %}
+    cgroupns_mode: {{ platform.cgroupns_mode }}
+{% endif %}
+    privileged: {{ platform.privileged | default(True) }}
+    capabilities: {{ platform.capabilities | default([]) }}
+    pre_build_image: {{ platform.pre_build_image | default(True) }}
+    dockerfile: Dockerfile.{{ platform.name }}.j2
+    groups: ['slurm_clients']
 {% endfor %}
 provisioner:
   name: ansible
@@ -187,20 +236,25 @@ provisioner:
     group_vars: {"linux": {"ansible_user": "vagrant", "ansible_password": "vagrant"}, "windows": {"ansible_user": "vagrant", "ansible_password": "vagrant", "ansible_become_user": "vagrant", "ansible_become_method": "runas", "ansible_connection": "ssh", "ansible_shell_type": "cmd"}, "all": {"slurm_uses_dns": false, "slurm_node_active": true}}
     host_vars:
 {% for platform in MOLECULE_DISTROS %}
+      slurm-{{ platform.name }}-client:
+        slurm_db_host: slurm-{{ platform.name }}-db
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
+        slurm_master_name: slurm-{{ platform.name }}-master
       slurm-{{ platform.name }}-db:
         slurm_db_host: slurm-{{ platform.name }}-db
-        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
-        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
         slurm_master_name: slurm-{{ platform.name }}-master
       slurm-{{ platform.name }}-master:
         slurm_db_host: slurm-{{ platform.name }}-db
-        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
-        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
         slurm_master_name: slurm-{{ platform.name }}-master
       slurm-{{ platform.name }}-worker:
         slurm_db_host: slurm-{{ platform.name }}-db
-        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_default_ipv4']['address']
-        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_default_ipv4']['address']
+        slurm_db_ip: hostvars['slurm-{{ platform.name }}-db']['ansible_facts']['default_ipv4']['address']
+        slurm_master_ip: hostvars['slurm-{{ platform.name }}-master']['ansible_facts']['default_ipv4']['address']
         slurm_master_name: slurm-{{ platform.name }}-master
 
 {% endfor %}

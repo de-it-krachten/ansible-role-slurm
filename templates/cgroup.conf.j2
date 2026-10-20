@@ -1,7 +1,7 @@
 ###
 # Slurm cgroup support configuration file
 ###
-CgroupAutomount=yes
+#CgroupAutomount=yes
 CgroupMountpoint=/sys/fs/cgroup
 {% if slurm_version is version('22.05', '>=') %}
 CgroupPlugin=cgroup/v2

@@ -28,7 +28,6 @@ Supported platforms
 - OracleLinux 9
 - AlmaLinux 8
 - AlmaLinux 9
-- Debian 11 (Bullseye)
 - Debian 12 (Bookworm)
 - Ubuntu 22.04 LTS
 - Ubuntu 24.04 LTS
@@ -71,6 +70,8 @@ slurm_group2role_mapping:
     role: slurmdbd
   - group: slurm_nodes
     role: slurmd
+  - group: slurm_clients
+    role: client
 
 # Should root be disable from slurm
 slurm_disable_root: 'YES'
@@ -137,6 +138,7 @@ slurm_log_dir: /var/log/slurm
 
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd
+sackd_parm_file: /etc/default/sackd
 
 # list of slurm packages
 slurm_packages:
@@ -149,6 +151,7 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
+    - sackd
   drmaa:
     - slurm-drmaa
 </pre></code>
@@ -177,6 +180,7 @@ slurm_log_dir: /var/log/slurm
 
 # Slurm daemon config file
 slurm_parm_file: /etc/sysconfig/slurmd
+sackd_parm_file: /etc/sysconfig/sackd
 
 # list of slurm packages
 slurm_packages:
@@ -201,6 +205,7 @@ slurm_packages:
     - slurm-slurmd
   client:
     - slurm
+    - slurm-sackd
   drmaa:
     - slurm-drmaa
 </pre></code>
@@ -274,6 +279,7 @@ slurm_drmaa_key_file: /etc/apt/trusted.gpg.d/natefoo-ppa.gpg
 
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd
+sackd_parm_file: /etc/default/sackd
 
 # list of slurm packages
 slurm_packages:
@@ -286,6 +292,7 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
+    - sackd
   drmaa:
     - slurm-drmaa1
 </pre></code>
@@ -322,6 +329,9 @@ slurm_firewall_ports:
   slurmdbd:
     - port: "{{ slurm_slurmdbd_port }}"
       proto: tcp
+  client:
+    - port: '60001-63000'
+      proto: tcp
 </pre></code>
 
 
@@ -345,24 +355,24 @@ slurm_firewall_ports:
     - name: Set hostname
       hostname:
         name: '{{ inventory_hostname | regex_replace(''_'',''-'') }}'
-      when: ansible_virtualization_type not in [ 'docker', 'container', 'containerd'
+      when: ansible_facts.virtualization_type not in [ 'docker', 'container', 'containerd'
         ]
     - name: Set slurm master ip
       set_fact:
-        slurm_master_ip: '{{ hostvars[slurm_master_name][''ansible_default_ipv4''][''address'']
+        slurm_master_ip: '{{ hostvars[slurm_master_name][''ansible_facts.default_ipv4''][''address'']
           }}'
       when:
         - slurm_master_ip is undefined
         - slurm_uses_dns is defined and not slurm_uses_dns | bool
     - name: Install slurmd on nodes
       package:
-        name: '{{ slurmd_package[ansible_os_family] }}'
+        name: '{{ slurmd_package[ansible_facts.os_family] }}'
         state: present
       when: '''slurm_nodes'' in group_names'
   roles:
     - role: deitkrachten.facts
     - role: deitkrachten.epel
-      when: ansible_os_family == 'RedHat'
+      when: ansible_facts.os_family == 'RedHat'
     - role: deitkrachten.chrony
       when: github_actions is undefined
     - role: deitkrachten.hosts
@@ -407,6 +417,17 @@ slurm_firewall_ports:
       include_role:
         name: slurm
 - hosts: slurm_nodes
+  become: 'yes'
+  vars:
+    munge_key: tests/munge.key
+    munge_socket_mode: '0666'
+  roles:
+    - deitkrachten.munge
+  tasks:
+    - name: slurm
+      include_role:
+        name: slurm
+- hosts: slurm_clients
   become: 'yes'
   vars:
     munge_key: tests/munge.key

@@ -16,6 +16,7 @@ slurm_drmaa_key_file: /etc/apt/trusted.gpg.d/natefoo-ppa.gpg
 
 # Slurm daemon config file
 slurm_parm_file: /etc/default/slurmd
+sackd_parm_file: /etc/default/sackd
 
 # list of slurm packages
 slurm_packages:
@@ -28,5 +29,6 @@ slurm_packages:
     - slurm-client
   client:
     - slurm-client
+    - sackd
   drmaa:
     - slurm-drmaa1
